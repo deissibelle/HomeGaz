@@ -1,0 +1,549 @@
+-- Merging decision tree log ---
+meta-data#com.google.android.geo.API_KEY
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:28:9-30:47
+	android:value
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:30:13-44
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:29:13-58
+manifest
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:2:1-44:12
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:2:1-44:12
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:2:1-44:12
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:2:1-44:12
+MERGED from [com.google.maps.android:maps-compose:4.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\26912b3d9e0f80f6559653e5db059ebf\transformed\maps-compose-4.3.0\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.maps.android:maps-ktx:5.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f6f182eb789d0b86af534ca856484b5d\transformed\maps-ktx-5.0.0\AndroidManifest.xml:18:1-23:12
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:17:1-44:12
+MERGED from [com.google.android.gms:play-services-location:21.0.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\486697106596ec6eaf6ee4c9524a801a\transformed\play-services-location-21.0.1\AndroidManifest.xml:2:1-9:12
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:16:1-24:12
+MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7fd95c35fc3cf0d484fa03f268ebe747\transformed\hilt-navigation-compose-1.1.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.hilt:hilt-navigation:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b33a1e702d1f0b9759710e0e8eeed4c6\transformed\hilt-navigation-1.1.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-common:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\19fd3d4b314a379a631d686e2b29d4a7\transformed\navigation-common-2.7.5\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-runtime:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f641f6b56a7f8c5d87287d47328d89ef\transformed\navigation-runtime-2.7.5\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\afc52dcc9b58ad283d8f38afafe34b4a\transformed\navigation-common-ktx-2.7.5\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8212d8ff61674c74b36becf70f263b59\transformed\navigation-runtime-ktx-2.7.5\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.navigation:navigation-compose:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32cf2b41f836ac4e8f0b1bffdedea101\transformed\navigation-compose-2.7.5\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4816d2f9741c2f0a67324af814f49720\transformed\material3-1.1.2\AndroidManifest.xml:17:1-22:12
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f530acf19a1b9173d772b52b71322835\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:17:1-23:12
+MERGED from [com.google.accompanist:accompanist-pager-indicators:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9a151176901ba767cba776680bc9d345\transformed\accompanist-pager-indicators-0.32.0\AndroidManifest.xml:17:1-23:12
+MERGED from [com.google.accompanist:accompanist-pager:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\aa290c648ded4746dee1645ee1807fb0\transformed\accompanist-pager-0.32.0\AndroidManifest.xml:17:1-23:12
+MERGED from [dev.chrisbanes.snapper:snapper:0.2.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0cfede1ec8b63308dfd96eaef1e3616e\transformed\snapper-0.2.2\AndroidManifest.xml:17:1-24:12
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32a9daeda6dff85ae48e92b50251831e\transformed\coil-compose-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e5449ebfd36405c4d755209d6e6426d2\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-ripple-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e8ae06cae306e488a6030edd3505470f\transformed\material-ripple-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\877f3875c642e63c4fb98a7389e1d3b5\transformed\material-icons-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-icons-extended-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\11e69a660a1a06a9c1ac27e5fc66a14e\transformed\material-icons-extended-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.material:material-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9d3c96f682ce0b97a8f1696de2586d30\transformed\material-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4408b1200d1704af1cccff1fe5e19843\transformed\animation-core-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.animation:animation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dcb0c4e4ed3721625624af0a0ff9c764\transformed\animation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bac3ba4850dad6473868a8c00c7e3719\transformed\foundation-layout-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.foundation:foundation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\69380bb732e9b2c8bb6e8085375fd809\transformed\foundation-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\fa55b12fa74905cf814f1ac9d65c2bdb\transformed\ui-tooling-data-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-unit-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0b78167487514b0326581b9482743c7f\transformed\ui-unit-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-geometry-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dbe1f5f2d5e1696b35578c4e1230bd93\transformed\ui-geometry-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-util-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\785925d988c204faf51d272c13e9265d\transformed\ui-util-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-text-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e7bcd4e12f14acb0ac2db8c7e182d88b\transformed\ui-text-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d091f39a3ceee8a0e00bdb1d57777c5\transformed\ui-tooling-preview-release\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:17:1-28:12
+MERGED from [androidx.compose.ui:ui-graphics-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e95ff71ab587476996ff80958ae26abf\transformed\ui-graphics-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:17:1-28:12
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d1c484fea0e06f953b1aed8667ffe33\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.compose.ui:ui-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\83315b2b9c4da9c62bff5e6f011cc2e3\transformed\ui-release\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.dagger:hilt-android:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e30d333ca9aa57024181e885ccec5b83\transformed\hilt-android-2.48\AndroidManifest.xml:16:1-19:12
+MERGED from [androidx.fragment:fragment:1.5.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e4726a17ce017a56a362ea92d28ff932\transformed\fragment-1.5.1\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.activity:activity:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\135e24587c50e7b7f4e60d6dd30d189e\transformed\activity-1.8.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.activity:activity-ktx:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9fa18da1110e7f5c710c16edd5e212ff\transformed\activity-ktx-1.8.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.activity:activity-compose:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d5020e7d34c6611d39a7c7c67086f706\transformed\activity-compose-1.8.1\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\5245aa8a8babaccf9acc70d06d3e8446\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6c5b1ccf10482f73a05824365ea141e1\transformed\savedstate-1.2.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bdc0d4938e8f5a07ec1207432b2d8987\transformed\loader-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:17:1-35:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\047c088d4179c3e49bb34f6af86cd133\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8cdfa039a01edc1c76ea4e6fa5e9f6f6\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\99118c4b53a0971c742978c3e8859b6c\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d6ba7389d8c61e14a15506b15434e28e\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0ffff4081600fd1f8ebdc63fa420e7f7\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\06cba6076a306124558dc3a864d4b2de\transformed\coil-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\eb23c85e5cd6d686ee274e4e24e48906\transformed\coil-base-2.5.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\df0cc5f321f2c9483bf68d59fbe5a5d4\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7289e97c6c234ad0458df942fa87f5a3\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\12c67a3b98e3d320e8e67320b2bc11e5\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f069ed108221bbdfec629ce12ee1a9af\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:17:1-31:12
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4e748154772127affd4bd478276c498a\transformed\room-ktx-2.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2a8da42ea41454f731aba3511f1fba04\transformed\runtime-saveable-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.compose.runtime:runtime-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\ad7947969d9bfcc83c3b89afcdaedbf4\transformed\runtime-release\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\270b817264c5dd1f3feedfadca7cbd2a\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dfc3d74e9d36eb1fc51394ba07dfe57b\transformed\datastore-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\71b42780b2df1f9e33e6b47fa374d0ea\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:2:1-6:12
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:16:1-26:12
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\220cc1853022f8cb82f1df0ad730ab0c\transformed\viewpager-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1c388ce473acaf46bbfe058cd572b515\transformed\autofill-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f1bbe1315c461d2fbedb0df29efff987\transformed\customview-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e864032c229329f7ba65fb7bfafce6a1\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\67540483bb98423be597ea98217e2354\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\963ca48ad8b0f39c077795e0ad6d3192\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:17:1-30:12
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\cc33c810ece45249b6a585b0fd2d9c92\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:17:1-23:12
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3738589e854e197c8f82e57b427d1e30\transformed\core-ktx-1.12.0\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\37eecf333842335ab3ce1d49a4f9cd35\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\25a1205e1d681693005c342c860d8d54\transformed\sqlite-2.4.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bde9dcc9ce85fc032a46d17d0eebece8\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:17:1-22:12
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6978ef544f5b49a93b26ac272eeff499\transformed\napier-debug\AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1f068faea8155d080f5fa1aa4580a485\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b5f0d4cdc939df7197ca8d1651d9e3f6\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d09d82c5b2bc88cb037580c453c322a1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
+MERGED from [androidx.databinding:viewbinding:7.4.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2920f329fc8950f3f1bf87c3553678d6\transformed\viewbinding-7.4.2\AndroidManifest.xml:2:1-7:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9ab7d7cdb4795ba5bcee9bef285ac480\transformed\tracing-1.0.0\AndroidManifest.xml:17:1-24:12
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bfb05e1a2944f44351dc080b75c81acd\transformed\exifinterface-1.3.6\AndroidManifest.xml:17:1-24:12
+MERGED from [com.google.dagger:dagger-lint-aar:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d11fe6ab6e1540daa9a0d8f8f97ee89\transformed\dagger-lint-aar-2.48\AndroidManifest.xml:16:1-19:12
+	package
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+	xmlns:tools
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:3:5-51
+	android:versionCode
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:2:11-69
+uses-feature#android.hardware.telephony
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:6:5-8:36
+	android:required
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:8:9-33
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:7:9-50
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:10:5-67
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:24:5-67
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:24:5-67
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:10:22-64
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:11:5-79
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:11:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:12:5-81
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:12:22-78
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:13:5-79
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:23:5-79
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:23:5-79
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:13:22-76
+uses-permission#android.permission.ACCESS_BACKGROUND_LOCATION
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:14:5-85
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:14:22-82
+uses-permission#android.permission.READ_SMS
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:15:5-67
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:15:22-64
+uses-permission#android.permission.RECEIVE_SMS
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:16:5-70
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:16:22-67
+application
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:18:5-42:19
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:18:5-42:19
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:36:5-42:19
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:36:5-42:19
+MERGED from [com.google.android.gms:play-services-location:21.0.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\486697106596ec6eaf6ee4c9524a801a\transformed\play-services-location-21.0.1\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-location:21.0.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\486697106596ec6eaf6ee4c9524a801a\transformed\play-services-location-21.0.1\AndroidManifest.xml:7:5-20
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:19:5-23:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:22:5-26:19
+MERGED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\71b42780b2df1f9e33e6b47fa374d0ea\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\71b42780b2df1f9e33e6b47fa374d0ea\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:5:5-20
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:20:5-24:19
+MERGED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d09d82c5b2bc88cb037580c453c322a1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d09d82c5b2bc88cb037580c453c322a1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
+	android:extractNativeLibs
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+	android:appComponentFactory
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
+	android:supportsRtl
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:22:9-35
+	android:label
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:21:9-41
+	tools:targetApi
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:25:9-29
+	android:allowBackup
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:20:9-35
+	android:theme
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:23:9-45
+	android:usesCleartextTraffic
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:19:9-43
+activity#com.homegaz.app.MainActivity
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:32:9-41:20
+	android:windowSoftInputMode
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:36:13-55
+	android:exported
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:34:13-36
+	android:theme
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:35:13-49
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:33:13-41
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:37:13-40:29
+action#android.intent.action.MAIN
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:38:17-69
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:38:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:39:17-77
+	android:name
+		ADDED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml:39:27-74
+uses-sdk
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+MERGED from [com.google.maps.android:maps-compose:4.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\26912b3d9e0f80f6559653e5db059ebf\transformed\maps-compose-4.3.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.maps.android:maps-compose:4.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\26912b3d9e0f80f6559653e5db059ebf\transformed\maps-compose-4.3.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.maps.android:maps-ktx:5.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f6f182eb789d0b86af534ca856484b5d\transformed\maps-ktx-5.0.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.maps.android:maps-ktx:5.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f6f182eb789d0b86af534ca856484b5d\transformed\maps-ktx-5.0.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.android.gms:play-services-location:21.0.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\486697106596ec6eaf6ee4c9524a801a\transformed\play-services-location-21.0.1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-location:21.0.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\486697106596ec6eaf6ee4c9524a801a\transformed\play-services-location-21.0.1\AndroidManifest.xml:5:5-44
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7fd95c35fc3cf0d484fa03f268ebe747\transformed\hilt-navigation-compose-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7fd95c35fc3cf0d484fa03f268ebe747\transformed\hilt-navigation-compose-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b33a1e702d1f0b9759710e0e8eeed4c6\transformed\hilt-navigation-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.hilt:hilt-navigation:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b33a1e702d1f0b9759710e0e8eeed4c6\transformed\hilt-navigation-1.1.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\19fd3d4b314a379a631d686e2b29d4a7\transformed\navigation-common-2.7.5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\19fd3d4b314a379a631d686e2b29d4a7\transformed\navigation-common-2.7.5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f641f6b56a7f8c5d87287d47328d89ef\transformed\navigation-runtime-2.7.5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-runtime:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f641f6b56a7f8c5d87287d47328d89ef\transformed\navigation-runtime-2.7.5\AndroidManifest.xml:20:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\afc52dcc9b58ad283d8f38afafe34b4a\transformed\navigation-common-ktx-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-common-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\afc52dcc9b58ad283d8f38afafe34b4a\transformed\navigation-common-ktx-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8212d8ff61674c74b36becf70f263b59\transformed\navigation-runtime-ktx-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8212d8ff61674c74b36becf70f263b59\transformed\navigation-runtime-ktx-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32cf2b41f836ac4e8f0b1bffdedea101\transformed\navigation-compose-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.navigation:navigation-compose:2.7.5] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32cf2b41f836ac4e8f0b1bffdedea101\transformed\navigation-compose-2.7.5\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4816d2f9741c2f0a67324af814f49720\transformed\material3-1.1.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.material3:material3:1.1.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4816d2f9741c2f0a67324af814f49720\transformed\material3-1.1.2\AndroidManifest.xml:20:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f530acf19a1b9173d772b52b71322835\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f530acf19a1b9173d772b52b71322835\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-pager-indicators:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9a151176901ba767cba776680bc9d345\transformed\accompanist-pager-indicators-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-pager-indicators:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9a151176901ba767cba776680bc9d345\transformed\accompanist-pager-indicators-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-pager:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\aa290c648ded4746dee1645ee1807fb0\transformed\accompanist-pager-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-pager:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\aa290c648ded4746dee1645ee1807fb0\transformed\accompanist-pager-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [dev.chrisbanes.snapper:snapper:0.2.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0cfede1ec8b63308dfd96eaef1e3616e\transformed\snapper-0.2.2\AndroidManifest.xml:20:5-22:41
+MERGED from [dev.chrisbanes.snapper:snapper:0.2.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0cfede1ec8b63308dfd96eaef1e3616e\transformed\snapper-0.2.2\AndroidManifest.xml:20:5-22:41
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32a9daeda6dff85ae48e92b50251831e\transformed\coil-compose-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-compose:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\32a9daeda6dff85ae48e92b50251831e\transformed\coil-compose-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e5449ebfd36405c4d755209d6e6426d2\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-compose-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e5449ebfd36405c4d755209d6e6426d2\transformed\coil-compose-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e8ae06cae306e488a6030edd3505470f\transformed\material-ripple-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-ripple-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e8ae06cae306e488a6030edd3505470f\transformed\material-ripple-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\877f3875c642e63c4fb98a7389e1d3b5\transformed\material-icons-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\877f3875c642e63c4fb98a7389e1d3b5\transformed\material-icons-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\11e69a660a1a06a9c1ac27e5fc66a14e\transformed\material-icons-extended-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-icons-extended-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\11e69a660a1a06a9c1ac27e5fc66a14e\transformed\material-icons-extended-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9d3c96f682ce0b97a8f1696de2586d30\transformed\material-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.material:material-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9d3c96f682ce0b97a8f1696de2586d30\transformed\material-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4408b1200d1704af1cccff1fe5e19843\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-core-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4408b1200d1704af1cccff1fe5e19843\transformed\animation-core-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dcb0c4e4ed3721625624af0a0ff9c764\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.animation:animation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dcb0c4e4ed3721625624af0a0ff9c764\transformed\animation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bac3ba4850dad6473868a8c00c7e3719\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-layout-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bac3ba4850dad6473868a8c00c7e3719\transformed\foundation-layout-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\69380bb732e9b2c8bb6e8085375fd809\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.foundation:foundation-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\69380bb732e9b2c8bb6e8085375fd809\transformed\foundation-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\fa55b12fa74905cf814f1ac9d65c2bdb\transformed\ui-tooling-data-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-data-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\fa55b12fa74905cf814f1ac9d65c2bdb\transformed\ui-tooling-data-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0b78167487514b0326581b9482743c7f\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-unit-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0b78167487514b0326581b9482743c7f\transformed\ui-unit-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dbe1f5f2d5e1696b35578c4e1230bd93\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-geometry-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dbe1f5f2d5e1696b35578c4e1230bd93\transformed\ui-geometry-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\785925d988c204faf51d272c13e9265d\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-util-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\785925d988c204faf51d272c13e9265d\transformed\ui-util-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e7bcd4e12f14acb0ac2db8c7e182d88b\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-text-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e7bcd4e12f14acb0ac2db8c7e182d88b\transformed\ui-text-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d091f39a3ceee8a0e00bdb1d57777c5\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-preview-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d091f39a3ceee8a0e00bdb1d57777c5\transformed\ui-tooling-preview-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e95ff71ab587476996ff80958ae26abf\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-graphics-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e95ff71ab587476996ff80958ae26abf\transformed\ui-graphics-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:20:5-44
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d1c484fea0e06f953b1aed8667ffe33\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-drawablepainter:0.32.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d1c484fea0e06f953b1aed8667ffe33\transformed\accompanist-drawablepainter-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.compose.ui:ui-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\83315b2b9c4da9c62bff5e6f011cc2e3\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.ui:ui-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\83315b2b9c4da9c62bff5e6f011cc2e3\transformed\ui-release\AndroidManifest.xml:5:5-44
+MERGED from [com.google.dagger:hilt-android:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e30d333ca9aa57024181e885ccec5b83\transformed\hilt-android-2.48\AndroidManifest.xml:18:3-42
+MERGED from [com.google.dagger:hilt-android:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e30d333ca9aa57024181e885ccec5b83\transformed\hilt-android-2.48\AndroidManifest.xml:18:3-42
+MERGED from [androidx.fragment:fragment:1.5.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e4726a17ce017a56a362ea92d28ff932\transformed\fragment-1.5.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.fragment:fragment:1.5.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e4726a17ce017a56a362ea92d28ff932\transformed\fragment-1.5.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.activity:activity:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\135e24587c50e7b7f4e60d6dd30d189e\transformed\activity-1.8.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\135e24587c50e7b7f4e60d6dd30d189e\transformed\activity-1.8.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9fa18da1110e7f5c710c16edd5e212ff\transformed\activity-ktx-1.8.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-ktx:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9fa18da1110e7f5c710c16edd5e212ff\transformed\activity-ktx-1.8.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d5020e7d34c6611d39a7c7c67086f706\transformed\activity-compose-1.8.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.activity:activity-compose:1.8.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d5020e7d34c6611d39a7c7c67086f706\transformed\activity-compose-1.8.1\AndroidManifest.xml:5:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\5245aa8a8babaccf9acc70d06d3e8446\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate-ktx:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\5245aa8a8babaccf9acc70d06d3e8446\transformed\savedstate-ktx-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6c5b1ccf10482f73a05824365ea141e1\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.savedstate:savedstate:1.2.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6c5b1ccf10482f73a05824365ea141e1\transformed\savedstate-1.2.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bdc0d4938e8f5a07ec1207432b2d8987\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.loader:loader:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bdc0d4938e8f5a07ec1207432b2d8987\transformed\loader-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\047c088d4179c3e49bb34f6af86cd133\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\047c088d4179c3e49bb34f6af86cd133\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8cdfa039a01edc1c76ea4e6fa5e9f6f6\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8cdfa039a01edc1c76ea4e6fa5e9f6f6\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\99118c4b53a0971c742978c3e8859b6c\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\99118c4b53a0971c742978c3e8859b6c\transformed\lifecycle-viewmodel-savedstate-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d6ba7389d8c61e14a15506b15434e28e\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d6ba7389d8c61e14a15506b15434e28e\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0ffff4081600fd1f8ebdc63fa420e7f7\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\0ffff4081600fd1f8ebdc63fa420e7f7\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\06cba6076a306124558dc3a864d4b2de\transformed\coil-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\06cba6076a306124558dc3a864d4b2de\transformed\coil-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\eb23c85e5cd6d686ee274e4e24e48906\transformed\coil-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [io.coil-kt:coil-base:2.5.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\eb23c85e5cd6d686ee274e4e24e48906\transformed\coil-base-2.5.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\df0cc5f321f2c9483bf68d59fbe5a5d4\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\df0cc5f321f2c9483bf68d59fbe5a5d4\transformed\lifecycle-runtime-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7289e97c6c234ad0458df942fa87f5a3\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\7289e97c6c234ad0458df942fa87f5a3\transformed\lifecycle-viewmodel-compose-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\12c67a3b98e3d320e8e67320b2bc11e5\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-compose:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\12c67a3b98e3d320e8e67320b2bc11e5\transformed\lifecycle-runtime-compose-2.6.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f069ed108221bbdfec629ce12ee1a9af\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f069ed108221bbdfec629ce12ee1a9af\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4e748154772127affd4bd478276c498a\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\4e748154772127affd4bd478276c498a\transformed\room-ktx-2.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2a8da42ea41454f731aba3511f1fba04\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2a8da42ea41454f731aba3511f1fba04\transformed\runtime-saveable-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\ad7947969d9bfcc83c3b89afcdaedbf4\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.compose.runtime:runtime-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\ad7947969d9bfcc83c3b89afcdaedbf4\transformed\runtime-release\AndroidManifest.xml:5:5-44
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\270b817264c5dd1f3feedfadca7cbd2a\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore-preferences:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\270b817264c5dd1f3feedfadca7cbd2a\transformed\datastore-preferences-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dfc3d74e9d36eb1fc51394ba07dfe57b\transformed\datastore-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.datastore:datastore:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\dfc3d74e9d36eb1fc51394ba07dfe57b\transformed\datastore-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\71b42780b2df1f9e33e6b47fa374d0ea\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-tasks:18.0.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\71b42780b2df1f9e33e6b47fa374d0ea\transformed\play-services-tasks-18.0.2\AndroidManifest.xml:4:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:18:5-43
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\220cc1853022f8cb82f1df0ad730ab0c\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\220cc1853022f8cb82f1df0ad730ab0c\transformed\viewpager-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1c388ce473acaf46bbfe058cd572b515\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1c388ce473acaf46bbfe058cd572b515\transformed\autofill-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f1bbe1315c461d2fbedb0df29efff987\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\f1bbe1315c461d2fbedb0df29efff987\transformed\customview-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e864032c229329f7ba65fb7bfafce6a1\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\e864032c229329f7ba65fb7bfafce6a1\transformed\appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\67540483bb98423be597ea98217e2354\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\67540483bb98423be597ea98217e2354\transformed\vectordrawable-animated-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\963ca48ad8b0f39c077795e0ad6d3192\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\963ca48ad8b0f39c077795e0ad6d3192\transformed\vectordrawable-1.1.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\cc33c810ece45249b6a585b0fd2d9c92\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\cc33c810ece45249b6a585b0fd2d9c92\transformed\customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3738589e854e197c8f82e57b427d1e30\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3738589e854e197c8f82e57b427d1e30\transformed\core-ktx-1.12.0\AndroidManifest.xml:5:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\37eecf333842335ab3ce1d49a4f9cd35\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\37eecf333842335ab3ce1d49a4f9cd35\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\25a1205e1d681693005c342c860d8d54\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\25a1205e1d681693005c342c860d8d54\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bde9dcc9ce85fc032a46d17d0eebece8\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.annotation:annotation-experimental:1.3.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bde9dcc9ce85fc032a46d17d0eebece8\transformed\annotation-experimental-1.3.0\AndroidManifest.xml:20:5-44
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6978ef544f5b49a93b26ac272eeff499\transformed\napier-debug\AndroidManifest.xml:7:5-9:41
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6978ef544f5b49a93b26ac272eeff499\transformed\napier-debug\AndroidManifest.xml:7:5-9:41
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1f068faea8155d080f5fa1aa4580a485\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1f068faea8155d080f5fa1aa4580a485\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b5f0d4cdc939df7197ca8d1651d9e3f6\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b5f0d4cdc939df7197ca8d1651d9e3f6\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d09d82c5b2bc88cb037580c453c322a1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d09d82c5b2bc88cb037580c453c322a1\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.databinding:viewbinding:7.4.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2920f329fc8950f3f1bf87c3553678d6\transformed\viewbinding-7.4.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.databinding:viewbinding:7.4.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\2920f329fc8950f3f1bf87c3553678d6\transformed\viewbinding-7.4.2\AndroidManifest.xml:5:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9ab7d7cdb4795ba5bcee9bef285ac480\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\9ab7d7cdb4795ba5bcee9bef285ac480\transformed\tracing-1.0.0\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bfb05e1a2944f44351dc080b75c81acd\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\bfb05e1a2944f44351dc080b75c81acd\transformed\exifinterface-1.3.6\AndroidManifest.xml:20:5-22:41
+MERGED from [com.google.dagger:dagger-lint-aar:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d11fe6ab6e1540daa9a0d8f8f97ee89\transformed\dagger-lint-aar-2.48\AndroidManifest.xml:18:3-42
+MERGED from [com.google.dagger:dagger-lint-aar:2.48] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d11fe6ab6e1540daa9a0d8f8f97ee89\transformed\dagger-lint-aar-2.48\AndroidManifest.xml:18:3-42
+	android:targetSdkVersion
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\sibelle\Downloads\homegaz-app\app\src\main\AndroidManifest.xml
+uses-feature#0x00020000
+ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:26:5-28:35
+	android:glEsVersion
+		ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:27:9-41
+	android:required
+		ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:28:9-32
+queries
+ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:30:5-34:15
+package#com.google.android.apps.maps
+ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:33:9-64
+	android:name
+		ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:33:18-61
+uses-library#org.apache.http.legacy
+ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:39:9-41:40
+	android:required
+		ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:41:13-37
+	android:name
+		ADDED from [com.google.android.gms:play-services-maps:18.2.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\29411afbf7864b7784fa666ffc1b324c\transformed\play-services-maps-18.2.0\AndroidManifest.xml:40:13-50
+activity#com.google.android.gms.common.api.GoogleApiActivity
+ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:20:9-22:45
+	android:exported
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:22:19-43
+	android:theme
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:21:19-78
+	android:name
+		ADDED from [com.google.android.gms:play-services-base:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\649ae5e30ec881f74f1e8a24b61c3a39\transformed\play-services-base-18.1.0\AndroidManifest.xml:20:19-85
+activity#androidx.compose.ui.tooling.PreviewActivity
+ADDED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-tooling-android:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\8a1942f05143a6bcc757fdf687f4c021\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+activity#androidx.activity.ComponentActivity
+ADDED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:23:9-25:39
+	android:exported
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:25:13-36
+	android:name
+		ADDED from [androidx.compose.ui:ui-test-manifest:1.5.4] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\d4f1100791ed8d39aa683c059303836e\transformed\ui-test-manifest-1.5.4\AndroidManifest.xml:24:13-63
+provider#androidx.startup.InitializationProvider
+ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:24:9-32:20
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\394767e13708f9c85a0cfc4410075751\transformed\startup-runtime-1.1.1\AndroidManifest.xml:26:9-30:34
+	tools:node
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:28:13-31
+	android:authorities
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:26:13-68
+	android:exported
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:27:13-37
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:25:13-67
+meta-data#androidx.emoji2.text.EmojiCompatInitializer
+ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.emoji2:emoji2:1.4.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\3f480283a8d95f963141be7ef40057ef\transformed\emoji2-1.4.0\AndroidManifest.xml:30:17-75
+meta-data#androidx.lifecycle.ProcessLifecycleInitializer
+ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1d456f884b5c5fa0f18d0b136831f456\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+service#androidx.room.MultiInstanceInvalidationService
+ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+	android:exported
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+	tools:ignore
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:28:13-60
+	android:directBootAware
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+	android:name
+		ADDED from [androidx.room:room-runtime:2.6.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b9abaec929791a76bdeb5ecfb2489cba\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+meta-data#com.google.android.gms.version
+ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:21:9-23:69
+	android:value
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:23:13-66
+	android:name
+		ADDED from [com.google.android.gms:play-services-basement:18.1.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\6a790a4236e51887f73ec27c68479e32\transformed\play-services-basement-18.1.0\AndroidManifest.xml:22:13-58
+permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+permission#com.homegaz.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:22:5-24:47
+	android:protectionLevel
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:24:9-44
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:23:9-81
+uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+uses-permission#com.homegaz.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:26:5-97
+	android:name
+		ADDED from [androidx.core:core:1.12.0] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\b3265ea5044655788df9fd721c414903\transformed\core-1.12.0\AndroidManifest.xml:26:22-94
+meta-data#androidx.profileinstaller.ProfileInstallerInitializer
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+	android:value
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+receiver#androidx.profileinstaller.ProfileInstallReceiver
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+	android:enabled
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+	android:exported
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+	android:permission
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+	android:directBootAware
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+intent-filter#action:name:androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+action#androidx.profileinstaller.action.INSTALL_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+intent-filter#action:name:androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+action#androidx.profileinstaller.action.SKIP_FILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+intent-filter#action:name:androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+action#androidx.profileinstaller.action.SAVE_PROFILE
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+intent-filter#action:name:androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+action#androidx.profileinstaller.action.BENCHMARK_OPERATION
+ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+	android:name
+		ADDED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\sibelle\AndroidStudioProjects\Enterprise-Front\caches\transforms-4\1efbc72e197caf75ee20379de5aeaff9\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92

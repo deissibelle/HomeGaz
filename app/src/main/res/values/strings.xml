@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HomeGaz</string>
+    
+    <!-- Auth Strings -->
+    <string name="welcome">Bienvenue sur HomeGaz</string>
+    <string name="register">S\'inscrire</string>
+    <string name="login">Se connecter</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="email">E-mail</string>
+    <string name="password">Mot de passe</string>
+    <string name="phone">Téléphone</string>
+    <string name="forgot_password">Mot de passe oublié ?</string>
+    <string name="reset_password">Réinitialiser le mot de passe</string>
+    
+    <!-- Onboarding Strings -->
+    <string name="skip">Passer</string>
+    <string name="next">Suivant</string>
+    <string name="get_started">Commencer</string>
+    
+    <!-- Home Strings -->
+    <string name="find_gas">Trouvez votre gaz</string>
+    <string name="view_map">Voir la carte</string>
+    <string name="how_it_works">Comment ça marche</string>
+    <string name="available_brands">Marques disponibles</string>
+    
+    <!-- Map Strings -->
+    <string name="gas_points">Points de distribution</string>
+    <string name="filters">Filtres</string>
+    <string name="apply_filters">Appliquer les filtres</string>
+    
+    <!-- Reservation Strings -->
+    <string name="reservation">Réservation</string>
+    <string name="weight">Poids</string>
+    <string name="quantity">Quantité</string>
+    <string name="delivery_mode">Mode de livraison</string>
+    <string name="pickup">Retrait</string>
+    <string name="delivery">Livraison</string>
+    <string name="total">Total</string>
+    
+    <!-- Payment Strings -->
+    <string name="payment">Paiement</string>
+    <string name="orange_money">Orange Money</string>
+    <string name="mtn_momo">MTN Mobile Money</string>
+    <string name="cash">Espèces</string>
+    <string name="pay_now">Payer maintenant</string>
+    
+    <!-- Orders Strings -->
+    <string name="my_orders">Mes commandes</string>
+    <string name="order_details">Détails de la commande</string>
+    <string name="track_order">Suivre la commande</string>
+    <string name="cancel_order">Annuler la commande</string>
+    
+    <!-- Common Strings -->
+    <string name="loading">Chargement…</string>
+    <string name="error">Erreur</string>
+    <string name="retry">Réessayer</string>
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+    <string name="save">Enregistrer</string>
+    <string name="delete">Supprimer</string>
+    <string name="edit">Modifier</string>
+    <string name="search">Rechercher</string>
+</resources>
