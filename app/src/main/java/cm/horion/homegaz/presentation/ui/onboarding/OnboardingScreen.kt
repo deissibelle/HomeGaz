@@ -80,14 +80,12 @@ fun OnboardingScreen(
             } else {
                 Spacer(modifier = Modifier.height(56.dp))
             }
-
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f)
             ) { page ->
                 OnboardingPageContent(pages[page])
             }
-
             // Dots
             Row(
                 modifier = Modifier
@@ -197,9 +195,7 @@ fun OnboardingPageContent(page: Onboarding) {
                 .aspectRatio(215f / 55f),
             contentScale = ContentScale.Fit
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
+        Spacer(modifier = Modifier.height(10.dp))
         // Main image
         Image(
             painter = painterResource(page.image),

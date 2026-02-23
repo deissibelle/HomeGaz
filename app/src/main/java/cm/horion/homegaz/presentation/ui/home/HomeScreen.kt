@@ -2,340 +2,202 @@
 
 package cm.horion.homegaz.presentation.ui.home
 
-
-import androidx.compose.foundation.background
+import android.Manifest
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.DistributionPoint
+import cm.horion.homegaz.domain.UiMarker
+import cm.horion.homegaz.presentation.ui.components.BottomNavBar
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
-import com.google.accompanist.permissions.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
-
-
-
-
-private val FAKE_POINTS = listOf(
-    DistributionPoint("1", "Algo Gaz",    latitude = 3.850, longitude = 11.500),
-    DistributionPoint("2", "Globus Gaz",  latitude = 3.851, longitude = 11.505),
-    DistributionPoint("3", "InterCom",    latitude = 3.849, longitude = 11.508),
-    DistributionPoint("4", "Optimun Gaz", latitude = 3.847, longitude = 11.512),
-    DistributionPoint("5", "Comex",       latitude = 3.852, longitude = 11.510),
+// Données
+val markers = listOf(
+    UiMarker(299f, 185f, 31f, 38f),
+    UiMarker(19f, 249f, 31f, 38f),
+    UiMarker(168f, 223f, 42f, 51f),
+    UiMarker(210f, 304f, 54f, 65f),
+    UiMarker(14f, 445f, 42f, 51f),
+    UiMarker(25f, 585f, 31f, 37f),
+    UiMarker(181f, 604f, 31f, 37f),
+    UiMarker(123f, 688f, 31f, 37f),
+    UiMarker(255f, 695f, 31f, 37f),
 )
 
-private val DISTRIBUTOR_OPTIONS = listOf("SCTM", "Tradex", "Total", "Bocom", "Globus")
-private val WEIGHT_OPTIONS      = listOf("6kg", "12kg", "38kg")
+private val DISTRIBUTOR_OPTIONS = listOf("SCTM", "Tradex", "Total")
+private val DISTANCE_OPTIONS = listOf("100 m", "500 m", "1 km")
+private val WEIGHT_OPTIONS = listOf("6kg", "12kg", "38kg")
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen() {
-    var selectedDistributor by remember { mutableStateOf(DISTRIBUTOR_OPTIONS.first()) }
-    var selectedWeight      by remember { mutableStateOf(WEIGHT_OPTIONS[1]) }
-
-    var pendingPoint  by remember { mutableStateOf<DistributionPoint?>(null) }
-
+    var selectedDistributor by remember { mutableStateOf("SCTM") }
+    var selectedDistance by remember { mutableStateOf("100 m") }
+    var selectedWeight by remember { mutableStateOf("12kg") }
     var selectedPoint by remember { mutableStateOf<DistributionPoint?>(null) }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    // Sécurité Preview pour les permissions
+    val isPreview = LocalInspectionMode.current
+    val permissionState = if (!isPreview) {
+        rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+    } else null
 
-    val locationPermission = rememberPermissionState(
-        android.Manifest.permission.ACCESS_FINE_LOCATION
-    ) { granted ->
-        if (granted) {
-            selectedPoint = pendingPoint
-        }
-        pendingPoint = null
-    }
+    Scaffold(
+        bottomBar = { BottomNavBar() }
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
 
-    val onMarkerClick: (DistributionPoint) -> Unit = { point ->
-        if (locationPermission.status.isGranted) {
-            selectedPoint = point
-        } else {
-            pendingPoint = point
-            locationPermission.launchPermissionRequest()
-        }
-    }
+            // 1. LA CARTE
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val screenWidth = maxWidth
+                val screenHeight = maxHeight
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        MapPlaceholder(
-            points        = FAKE_POINTS,
-            onMarkerClick = onMarkerClick
-        )
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .clip(RoundedCornerShape(12.dp)),
-            shadowElevation = 6.dp,
-            color           = MaterialTheme.colorScheme.surface
-        ) {
-            Row(
-                modifier              = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
-                verticalAlignment     = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                HomeGazDropdown(
-                    selected = selectedDistributor,
-                    options  = DISTRIBUTOR_OPTIONS,
-                    onSelect = { selectedDistributor = it },
-                    modifier = Modifier.weight(1f)
+                Image(
+                    painter = painterResource(R.drawable.map_vide),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
-                HomeGazDropdown(
-                    selected = selectedWeight,
-                    options  = WEIGHT_OPTIONS,
-                    onSelect = { selectedWeight = it },
-                    modifier = Modifier.weight(1f)
-                )
-                Button(
-                    onClick = {},
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary
-                    ),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        text  = "Actualiser",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onTertiary
+                markers.forEach { marker ->
+                    val xPos = screenWidth * (marker.x / 393f)
+                    val yPos = screenHeight * (marker.y / 852f)
+                    Image(
+                        painter = painterResource(R.drawable.marker),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .offset(x = xPos, y = yPos)
+                            .size(screenWidth * (marker.width / 393f), screenHeight * (marker.height / 852f))
+                            .clickable {
+//                                selectedPoint = DistributionPoint("Point de vente", 0.0, 0.0)
+                            }
                     )
                 }
+                Box(modifier = Modifier.align(Alignment.Center)) {
+                    UserMarker()
+                }
+            }
+
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        CustomDropdown(selectedDistributor, DISTRIBUTOR_OPTIONS, Modifier.weight(1f)) { selectedDistributor = it }
+                        Spacer(Modifier.width(8.dp))
+                        CustomDropdown(selectedDistance, DISTANCE_OPTIONS, Modifier.weight(1f)) { selectedDistance = it }
+                    }
+                    Spacer(Modifier.height(12.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        CustomDropdown(selectedWeight, WEIGHT_OPTIONS, Modifier.weight(1f)) { selectedWeight = it }
+                        Spacer(Modifier.width(12.dp))
+                        Button(
+                            onClick = { /* Actualiser */ },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(24.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003366))
+                        ) {
+                            Text("Actualiser", color = Color.White, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
             }
         }
-        val permStatus = locationPermission.status
-        if (permStatus is PermissionStatus.Denied && !permStatus.shouldShowRationale) {
-            PermissionDeniedBanner(
-                onRetry  = { locationPermission.launchPermissionRequest() },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
-        }
     }
-    selectedPoint?.let { point ->
-        ModalBottomSheet(
-            onDismissRequest = { selectedPoint = null },
-            sheetState       = sheetState,
-            shape            = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-        ) {
-            DistributionPointSheet(
-                point        = point,
-                onReserver   = {
-                    selectedPoint = null
-                },
-                onItineraire = {
-                    selectedPoint = null
-                }
-            )
+    if (selectedPoint != null) {
+        ModalBottomSheet(onDismissRequest = { selectedPoint = null }) {
+            DistributionPointSheet(selectedPoint!!)
         }
     }
 }
 
 @Composable
-fun DistributionPointSheet(
-    point        : DistributionPoint,
-    onReserver   : () -> Unit,
-    onItineraire : () -> Unit,
-    modifier     : Modifier = Modifier
-) {
-    Column(
-        modifier            = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .padding(bottom = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // AsyncImage(
-        //     model= point.imageUrl,
-        //     contentDescription = point.name,
-        //     contentScale = ContentScale.Crop,
-        //     modifier = Modifier.fillMaxWidth().height(180.dp).clip(RoundedCornerShape(16.dp))
-        // )
+fun CustomDropdown(selected: String, options: List<String>, modifier: Modifier, onSelect: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Surface(
+            modifier = Modifier.fillMaxWidth().height(48.dp).clickable { expanded = true },
+            shape = RoundedCornerShape(12.dp),
+            color = Color(0xFFF7F7F7),
+            border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.4f))
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = selected, fontSize = 14.sp)
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.Gray)
+            }
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            options.forEach { option ->
+                DropdownMenuItem(text = { Text(option) }, onClick = { onSelect(option); expanded = false })
+            }
+        }
+    }
+}
+
+@Composable
+fun UserMarker() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerLow),
-            contentAlignment = Alignment.Center
+                .size(60.dp)
+                .border(3.dp, Color(0xFF00BCD4), CircleShape) // Bordure cyan comme sur l'image
+                .padding(3.dp)
+                .clip(CircleShape)
+                .background(Color.White)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Icon(
-                    imageVector = Icons.Default.LocationOn,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text  = "Photo du point",
-                    color = MaterialTheme.colorScheme.outline,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text= point.name,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedButton(
-                onClick  = onItineraire,
-                modifier = Modifier.weight(1f).height(50.dp),
-                shape    = RoundedCornerShape(12.dp)
-            ) {
-                Text("Itinéraire", style = MaterialTheme.typography.labelLarge)
-            }
-
-            Button(
-                onClick  = onReserver,
-                modifier = Modifier.weight(1f).height(50.dp),
-                shape    = RoundedCornerShape(12.dp)
-            ) {
-                Text("Réserver", style = MaterialTheme.typography.labelLarge)
-            }
-        }
-    }
-}
-
-@Composable
-fun PermissionDeniedBanner(
-    onRetry  : () -> Unit,
-    modifier : Modifier = Modifier
-) {
-    Surface(
-        modifier        = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .navigationBarsPadding(),
-        shape = RoundedCornerShape(12.dp),
-        color= MaterialTheme.colorScheme.errorContainer,
-        shadowElevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment= Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text     = "Localisation requise\npour voir les détails",
-                style    = MaterialTheme.typography.bodySmall,
-                color    = MaterialTheme.colorScheme.onErrorContainer,
-                modifier = Modifier.weight(1f)
-            )
-            TextButton(onClick = onRetry) {
-                Text("Réessayer", color = MaterialTheme.colorScheme.error)
-            }
-        }
-    }
-}
-
-@Composable
-fun MapPlaceholder(
-    points        : List<DistributionPoint>,
-    onMarkerClick : (DistributionPoint) -> Unit,
-    modifier      : Modifier = Modifier
-) {
-    Box(
-        modifier= modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerLow),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
+            Image(
+                painter = painterResource(R.drawable.profil),
                 contentDescription = null,
-                tint= MaterialTheme.colorScheme.outline,
-                modifier = Modifier.size(56.dp)
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
-            Text(
-                text = "Google Maps",
-                color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text  = "Simuler un clic marker",
-                color = MaterialTheme.colorScheme.outline,
-                style = MaterialTheme.typography.labelSmall
-            )
-            points.forEach { point ->
-                OutlinedButton(onClick = { onMarkerClick(point) }) {
-                    Text(point.name, style = MaterialTheme.typography.labelSmall)
-                }
-            }
         }
+        Box(modifier = Modifier.width(4.dp).height(12.dp).background(Color(0xFF003366)))
     }
 }
 
 @Composable
-fun HomeGazDropdown(
-    selected : String,
-    options  : List<String>,
-    onSelect : (String) -> Unit,
-    modifier : Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded         = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier         = modifier
-    ) {
-        OutlinedTextField(
-            value = selected,
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier= Modifier.menuAnchor().fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true,
-            textStyle= MaterialTheme.typography.bodySmall,
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
-        )
-        ExposedDropdownMenu(
-            expanded         = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text    = { Text(option, style = MaterialTheme.typography.bodySmall) },
-                    onClick = { onSelect(option); expanded = false }
-                )
+fun DistributionPointSheet(point: DistributionPoint) {
+    Column(Modifier.fillMaxWidth().padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(point.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(16.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            OutlinedButton(onClick = {}, modifier = Modifier.weight(1f)) { Text("Itinéraire") }
+            Button(onClick = {}, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003366))) {
+                Text("Réserver", color = Color.White)
             }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeGazTheme {
-        HomeScreen()
-    }
+    HomeGazTheme { HomeScreen() }
 }
