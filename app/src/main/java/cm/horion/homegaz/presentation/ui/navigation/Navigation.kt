@@ -1,12 +1,12 @@
 package cm.horion.homegaz.presentation.ui.navigation
 
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cm.horion.homegaz.domain.Screen
 import cm.horion.homegaz.presentation.ui.home.HomeScreen
+import cm.horion.homegaz.presentation.ui.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.splash.SplashScreen
 
@@ -27,6 +27,7 @@ fun HomeGazApp() {
                 }
             )
         }
+
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
                 onFinish = {
@@ -36,8 +37,26 @@ fun HomeGazApp() {
                 }
             )
         }
+
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onMarkerClick = {
+                    navController.navigate(Screen.LocationPermission.route)
+                }
+            )
+        }
+
+        composable(Screen.LocationPermission.route) {
+            LocationPermissionScreen(
+                onPermissionGranted = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.LocationPermission.route) { inclusive = true }
+                    }
+                },
+                onPermissionDenied = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

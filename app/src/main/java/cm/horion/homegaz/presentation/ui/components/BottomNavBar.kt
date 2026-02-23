@@ -15,25 +15,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.utils.ThemeColor
 
 @Composable
 fun BottomNavBar() {
     // Accueil est sélectionné par défaut
     var selectedTab by remember { mutableStateOf("Accueil") }
-    val darkBlue = Color(0xFF003366)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(85.dp)
-            .background(darkBlue),
+            .background(ThemeColor.Primary),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         val navItems = listOf(
             Triple("Accueil", R.drawable.home, "Accueil"),
             Triple("Réservations", R.drawable.shopping_cart, "Réservations"),
-            Triple("Astuces", R.drawable.light_bulb, "Astuces"),
+            Triple("Conseils", R.drawable.light_bulb, "Astuces"),
             Triple("Compte", R.drawable.account, "Compte")
         )
 
