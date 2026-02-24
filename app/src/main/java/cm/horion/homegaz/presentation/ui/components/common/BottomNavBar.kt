@@ -1,4 +1,4 @@
-package cm.horion.homegaz.presentation.ui.components
+package cm.horion.homegaz.presentation.ui.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +19,6 @@ import cm.horion.homegaz.utils.ThemeColor
 
 @Composable
 fun BottomNavBar() {
-    // Accueil est sélectionné par défaut
     var selectedTab by remember { mutableStateOf("Accueil") }
 
     Row(
@@ -30,13 +29,11 @@ fun BottomNavBar() {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val navItems = listOf(
-            Triple("Accueil", R.drawable.home, "Accueil"),
+        val navItems = listOf(         Triple("Accueil", R.drawable.home, "Accueil"),
             Triple("Réservations", R.drawable.shopping_cart, "Réservations"),
             Triple("Conseils", R.drawable.light_bulb, "Astuces"),
             Triple("Compte", R.drawable.account, "Compte")
         )
-
         navItems.forEach { (label, icon, id) ->
             val isSelected = selectedTab == id
             val contentColor = if (isSelected) Color.White else Color.White.copy(alpha = 0.6f)

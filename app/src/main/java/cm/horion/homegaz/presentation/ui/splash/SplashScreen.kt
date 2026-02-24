@@ -4,7 +4,6 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,36 +24,35 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(
     onSplashFinished: () -> Unit = {},
+    durationMillis: Long = 2500
 ) {
-    var startAnimation by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
-        startAnimation = true
-        delay(3000)
+        delay(durationMillis)
         onSplashFinished()
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ThemeColor.Primary),
+            .background(ThemeColor.Primary)
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        // Logo centré
-        LogoSection(startAnimation = startAnimation)
+
+        LogoSection(startAnimation = true)
+
         Text(
-            text = "By Orion",
-            color = MaterialTheme.colorScheme.outline,
+            text = stringResource(R.string.splash_by_orion),
+            color = Color.White.copy(alpha = 0.7f),
             fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            lineHeight = 14.sp,
-            letterSpacing = 0.sp,
+            fontWeight = FontWeight.Medium,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp)
+                .padding(bottom = 32.dp)
         )
     }
 }
+
 
 @Composable
 fun LogoSection(startAnimation: Boolean) {
@@ -74,7 +73,7 @@ fun LogoSection(startAnimation: Boolean) {
 
     Image(
         painter = painterResource(id = R.drawable.logoblanc),
-        contentDescription = "logo",
+        contentDescription = stringResource(R.string.splash_logo_description),
         modifier = Modifier
             .width(203.dp)
             .height(220.dp)

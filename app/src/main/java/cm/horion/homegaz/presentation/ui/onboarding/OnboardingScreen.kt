@@ -1,26 +1,25 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package cm.horion.homegaz.presentation.ui.onboarding
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,224 +27,173 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.Onboarding
-import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
+import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
+import cm.horion.homegaz.presentation.ui.components.onboarding.PagerIndicator
+import cm.horion.homegaz.presentation.ui.splash.SplashScreen
 import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(
     onFinish: () -> Unit
 ) {
-    val pages = remember {
+    // Correctly resolving resources outside the 'remember' lambda
+    val t1 = stringResource(R.string.onboarding_title_1)
+    val d1 = stringResource(R.string.onboarding_desc_1)
+    val t2 = stringResource(R.string.onboarding_title_2)
+    val d2 = stringResource(R.string.onboarding_desc_2)
+    val t3 = stringResource(R.string.onboarding_title_3)
+    val d3 = stringResource(R.string.onboarding_desc_3)
+
+    val pages = remember(t1, d1, t2, d2, t3, d3) {
         listOf(
-            Onboarding(
-                title = "Trouvez votre gaz maintenant",
-                description = "Visualisez sur notre carte où trouver le point de gaz le plus proche et allez droit au bon endroit.",
-                image = R.drawable.map,
-            ),
-            Onboarding(
-                title = "Réservez en ligne",
-                description = "Réservez votre bouteille de gaz et choisissez entre la livraison à domicile ou le retrait au point de vente",
-                image = R.drawable.map,
-            ),
-            Onboarding(
-                title = "Payez simplement",
-                description = "Orange Money, MTN Mobile Money ou espèces à la livraison. C'est vous qui choisissez !",
-                image = R.drawable.map,
-            )
+            Onboarding(title = t1, description = d1, image = R.drawable.map),
+            Onboarding(title = t2, description = d2, image = R.drawable.map),
+            Onboarding(title = t3, description = d3, image = R.drawable.map)
         )
     }
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
+    val isLastPage = pagerState.currentPage == pages.size - 1
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
+        // This Column provides the ColumnScope needed for AnimatedVisibility
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .navigationBarsPadding()
+        ) {
+            // Top Bar with Skip Button
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
 
-            // Passer button
-            if (pagerState.currentPage < pages.size - 1) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
                     TextButton(onClick = onFinish) {
                         Text(
-                            "Passer",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                            text = stringResource(R.string.onboarding_skip),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary)
+
                 }
-            } else {
-                Spacer(modifier = Modifier.height(56.dp))
             }
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.weight(1f)
-            ) { page ->
-                OnboardingPageContent(pages[page])
-            }
-            // Dots
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(pages.size) { index ->
-                    val color by animateColorAsState(
-                        targetValue = if (pagerState.currentPage == index)
-                            MaterialTheme.colorScheme.primary
-                        else
-                            MaterialTheme.colorScheme.outlineVariant
-                    )
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .background(color, CircleShape)
-                    )
-                    if (index != pages.size - 1) Spacer(modifier = Modifier.width(8.dp))
-                }
+            ) { index ->
+                OnboardingPage(page = pages[index])
             }
 
-            // Navigation buttons
-            Row(
+            // Bottom Controls
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Retour
-                if (pagerState.currentPage > 0) {
-                    OutlinedButton(
-                        onClick = {
-                            scope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                            }
-                        },
-                        shape = RoundedCornerShape(100.dp),
-                        modifier = Modifier.height(48.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                        ),
+                PagerIndicator(
+                    size = pages.size,
+                    currentPage = pagerState.currentPage
+                )
 
-                            border =  BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                Spacer(modifier = Modifier.height(40.dp))
 
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Retour",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-                } else {
-                    Spacer(modifier = Modifier.width(1.dp))
-                }
-
-                // Suivant / C'est parti
-                Button(
-                    onClick = {
-                        if (pagerState.currentPage < pages.size - 1) {
-                            scope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
-                        } else {
-                            onFinish()
-                        }
-                    },
-                    shape = RoundedCornerShape(100.dp),
-                    modifier = Modifier.height(48.dp),
-                    contentPadding = PaddingValues(horizontal = 24.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = if (pagerState.currentPage < pages.size - 1) "Suivant" else "C'est Parti",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    if (pagerState.currentPage < pages.size - 1) {
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
+                    if (pagerState.currentPage > 0) {
+                        TextButton(
+                            onClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                }
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(R.string.onboarding_back),
+                                color = Color.Gray,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(1.dp))
                     }
+
+                    HomeGazButton(
+                        text = if (isLastPage) stringResource(R.string.onboarding_finish) else stringResource(R.string.onboarding_next),
+                        icon = if (!isLastPage) Icons.AutoMirrored.Filled.ArrowForward else null,
+                        onClick = {
+                            if (isLastPage) {
+                                onFinish()
+                            } else {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
     }
 }
 
+/**
+ * FIXED: Added the missing OnboardingPage function.
+ * Customize this to match your design.
+ */
 @Composable
-fun OnboardingPageContent(page: Onboarding) {
+fun OnboardingPage(page: Onboarding) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        // Logo
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = page.image),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth(0.6f)
-                .aspectRatio(215f / 55f),
+                .fillMaxWidth(0.8f)
+                .aspectRatio(1f),
             contentScale = ContentScale.Fit
         )
-        Spacer(modifier = Modifier.height(10.dp))
-        // Main image
-        Image(
-            painter = painterResource(page.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .shadow(
-                    elevation = 12.dp,
-                    shape = RoundedCornerShape(24.dp),
-                    ambientColor = Color.Black.copy(alpha = 0.1f),
-                    spotColor = Color.Black.copy(alpha = 0.1f)
-                )
-                .clip(RoundedCornerShape(24.dp))
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Title
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = page.title,
-            modifier = Modifier.fillMaxWidth(0.85f),
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 28.sp,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            lineHeight = 34.sp,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color(0xFF003366)
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Description
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = page.description,
-            modifier = Modifier.fillMaxWidth(0.8f),
             style = MaterialTheme.typography.bodyLarge,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            lineHeight = 18.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.Gray,
+            lineHeight = 24.sp
         )
     }
 }
 
-@Preview(showBackground = true)
+
+
+@Preview
 @Composable
-fun OnboardingPagePreview() {
-    HomeGazTheme {
-        OnboardingScreen(onFinish = {})
-    }
+fun OnboardingScreenPreview() {
+    OnboardingScreen(
+        onFinish ={}
+    )
 }

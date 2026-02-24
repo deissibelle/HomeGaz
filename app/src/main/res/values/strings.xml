@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">HomeGaz</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_by_orion">By Orion</string>
+    <string name="splash_logo_description">Logo HomeGaz</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Passer</string>
+    <string name="onboarding_back">Retour</string>
+    <string name="onboarding_next">Suivant</string>
+<string name="onboarding_finish">C\'est Parti</string>
+
+    <string name="onboarding_title_1">Trouvez votre gaz maintenant</string>
+    <string name="onboarding_desc_1">Visualisez sur notre carte où trouver le point de gaz le plus proche et allez droit au bon endroit.</string>
+
+    <string name="onboarding_title_2">Réservez en ligne</string>
+    <string name="onboarding_desc_2">Réservez votre bouteille de gaz et choisissez entre la livraison à domicile ou le retrait au point de vente.</string>
+
+    <string name="onboarding_title_3">Payez simplement</string>
+    <string name="onboarding_desc_3">Orange Money, MTN Mobile Money ou espèces à la livraison. C\'est vous qui choisissez !</string>
+
+    <!-- Permission Localisation -->
+    <string name="location_title">Activez\nla localisation et\ndécouvrez le point de gaz\nle plus proche de vous</string>
+    <string name="location_subtitle">Votre position est utilisée uniquement pour vous montrer les points de gaz les plus proches.</string>
+    <string name="location_btn_activate">J\'active</string>
+    <string name="location_icon_desc">Icône localisation désactivée</string>
+
+    <!-- Home Screen -->
+    <string name="home_btn_refresh">Actualiser</string>
+    <string name="home_marker_desc">Point de distribution de gaz</string>
+    <string name="home_user_pos_desc">Ma position actuelle</string>
+
+    <!-- Distribution Point Sheet (Détails) -->
+    <string name="home_sheet_distance">À %1$s de vous</string>
+    <string name="home_sheet_btn_route">Itinéraire</string>
+    <string name="home_sheet_btn_order">Commander</string>
 </resources>
