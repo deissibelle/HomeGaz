@@ -36,7 +36,7 @@ fun PagerIndicator(
 
             // Animation de la largeur (effet pilule pour le point actif)
             val width by animateDpAsState(
-                targetValue = if (isSelected) 24.dp else 8.dp,
+                targetValue = if (isSelected) 16.dp else 8.dp,
                 label = "dot_width"
             )
 

@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.domain.DistributionPoint
+import cm.horion.homegaz.domain.model.DistributionPoint
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 
 @Composable

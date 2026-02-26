@@ -2,7 +2,9 @@ package cm.horion.homegaz.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-
+// ─────────────────────────────────────────────
+// Light Palette
+// ─────────────────────────────────────────────
 internal val PrimaryLight = Color(0xFF003761)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
 internal val PrimaryContainerLight = Color(0xFFD5E3FF)
@@ -27,18 +29,10 @@ internal val SurfaceVariantLight = Color(0xFFDCE5D9)
 internal val OnSurfaceVariantLight = Color(0xFF404941)
 internal val OutlineLight = Color(0xFF717970)
 internal val OutlineVariantLight = Color(0xFFC0C9BE)
-internal val ScrimLight = Color(0xFF000000)
-internal val InverseSurfaceLight = Color(0xFF2F3131)
-internal val InverseOnSurfaceLight = Color(0xFFF0F1F1)
-internal val InversePrimaryLight = Color(0xFFB0C7F1)
-internal val SurfaceDimLight = Color(0xFFDADADA)
-internal val SurfaceBrightLight = Color(0xFFF9F9F9)
-internal val SurfaceContainerLowestLight = Color(0xFFFFFFFF)
-internal val SurfaceContainerLowLight = Color(0xFFF3F3F4)
-internal val SurfaceContainerLight = Color(0xFFEEEEEE)
-internal val SurfaceContainerHighLight = Color(0xFFE8E8E8)
-internal val SurfaceContainerHighestLight = Color(0xFFE2E2E2)
 
+// ─────────────────────────────────────────────
+// Dark Palette
+// ─────────────────────────────────────────────
 internal val PrimaryDark = Color(0xFF477EEB)
 internal val OnPrimaryDark = Color(0xFF183153)
 internal val PrimaryContainerDark = Color(0xFF30476A)
@@ -63,14 +57,18 @@ internal val SurfaceVariantDark = Color(0xFF404941)
 internal val OnSurfaceVariantDark = Color(0xFFC0C9BE)
 internal val OutlineDark = Color(0xFF8A9389)
 internal val OutlineVariantDark = Color(0xFF404941)
-internal val ScrimDark = Color(0xFF000000)
-internal val InverseSurfaceDark = Color(0xFFE2E2E2)
-internal val InverseOnSurfaceDark = Color(0xFF2F3131)
-internal val InversePrimaryDark = Color(0xFF485F84)
-internal val SurfaceDimDark = Color(0xFF121414)
-internal val SurfaceBrightDark = Color(0xFF37393A)
-internal val SurfaceContainerLowestDark = Color(0xFF0C0F0F)
-internal val SurfaceContainerLowDark = Color(0xFF1A1C1C)
-internal val SurfaceContainerDark = Color(0xFF1E2020)
-internal val SurfaceContainerHighDark = Color(0xFF282A2B)
-internal val SurfaceContainerHighestDark = Color(0xFF333535)
+
+
+val SuccessColor = Color(0xFF10B981)
+
+
+val AdvicesHeaderEconomiser = Color(0xFFD9FFE3)
+val AdvicesHeaderIncendies  = Color(0xFFFFE9D9)
+
+val AdvicesHeaderQuotidien  = Color(0xFFD9F4FF)
+
+val AdvicesBodyColor  = Color(0xFF2B5278)
+
+val AdvicesDivider    = Color(0xFFE0E8F0)
+
+val AdvicesBackground = Color(0xFFF2F5F8)

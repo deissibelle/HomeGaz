@@ -9,7 +9,7 @@
     <string name="onboarding_skip">Passer</string>
     <string name="onboarding_back">Retour</string>
     <string name="onboarding_next">Suivant</string>
-<string name="onboarding_finish">C\'est Parti</string>
+    <string name="onboarding_finish">C\'est Parti</string>
 
     <string name="onboarding_title_1">Trouvez votre gaz maintenant</string>
     <string name="onboarding_desc_1">Visualisez sur notre carte où trouver le point de gaz le plus proche et allez droit au bon endroit.</string>
@@ -17,7 +17,7 @@
     <string name="onboarding_title_2">Réservez en ligne</string>
     <string name="onboarding_desc_2">Réservez votre bouteille de gaz et choisissez entre la livraison à domicile ou le retrait au point de vente.</string>
 
-    <string name="onboarding_title_3">Payez simplement</string>
+    <string name="onboarding_title_3">Achetez et faites vous livrez</string>
     <string name="onboarding_desc_3">Orange Money, MTN Mobile Money ou espèces à la livraison. C\'est vous qui choisissez !</string>
 
     <!-- Permission Localisation -->
@@ -35,4 +35,84 @@
     <string name="home_sheet_distance">À %1$s de vous</string>
     <string name="home_sheet_btn_route">Itinéraire</string>
     <string name="home_sheet_btn_order">Commander</string>
+
+    <!-- Bottom Navigation Bar -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_reservations">Réservations</string>
+    <string name="nav_advices">Astuces</string>
+    <string name="nav_account">Compte</string>
+
+    <!-- Advices Screen — Titres de sections -->
+    <string name="advices_section_economiser">ASTUCES POUR ÉCONOMISER LE GAZ</string>
+    <string name="advices_section_incendies">ASTUCES POUR ÉVITER LES INCENDIES</string>
+    <string name="advices_section_quotidien">BONNES PRATIQUES QUOTIDIENNES</string>
+
+    <!-- Advices Screen — Section Économiser : titres des blocs -->
+    <string name="advices_eco_tip1_title">Bien préparer avant d\'allumer</string>
+    <string name="advices_eco_tip2_title">Adapter la flamme</string>
+    <string name="advices_eco_tip3_title">Utiliser les bons ustensiles</string>
+    <string name="advices_eco_tip4_title">Optimiser la cuisson</string>
+    <string name="advices_eco_tip5_title">Vérifier les fuites</string>
+
+    <!-- Advices Screen — Section Économiser : bullets -->
+    <string name="advices_eco_tip1_b1">Prépare tous les ingrédients avant d\'allumer le feu.</string>
+    <string name="advices_eco_tip1_b2">Ne laisse jamais le gaz allumé inutilement.</string>
+    <string name="advices_eco_tip1_b3">Utilise des aliments décongelés (pas congelés directement).</string>
+
+    <string name="advices_eco_tip2_b1">La flamme doit être bleue et stable.</string>
+    <string name="advices_eco_tip2_b2">Si elle est jaune/orange → mauvaise combustion = gaspillage.</string>
+    <string name="advices_eco_tip2_b3">La flamme ne doit pas dépasser la base de la marmite.</string>
+
+    <string name="advices_eco_tip3_b1">Utilise des marmites adaptées à la taille du brûleur.</string>
+    <string name="advices_eco_tip3_b2">Privilégie les marmites à fond plat.</string>
+    <string name="advices_eco_tip3_b3">Couvre toujours la marmite pendant la cuisson.</string>
+
+    <string name="advices_eco_tip4_b1">Coupe les aliments en petits morceaux.</string>
+    <string name="advices_eco_tip4_b2">Éteins le gaz quelques minutes avant la fin (la chaleur continue).</string>
+    <string name="advices_eco_tip4_b3">Utilise une cocotte-minute pour réduire le temps de cuisson.</string>
+
+    <string name="advices_eco_tip5_b1">Une petite fuite = grosse perte d\'argent. Astuce :</string>
+    <string name="advices_eco_tip5_b2">a) Mélange de l\'eau et du savon,</string>
+    <string name="advices_eco_tip5_b3">b) Applique sur le tuyau et les raccords :</string>
+    <string name="advices_eco_tip5_b4">→ Si des bulles apparaissent, c\'est le signe d\'une fuite de gaz.</string>
+
+    <!-- Advices Screen — Section Incendies : titres des blocs -->
+    <string name="advices_inc_tip1_title">Installation correcte</string>
+    <string name="advices_inc_tip2_title">Vérifier le matériel</string>
+    <string name="advices_inc_tip3_title">En cas d\'odeur de gaz</string>
+    <string name="advices_inc_tip4_title">Comportements à éviter</string>
+    <string name="advices_inc_tip5_title">Position sécurisée</string>
+
+    <!-- Advices Screen — Section Incendies : bullets -->
+    <string name="advices_inc_tip1_b1">Toujours placer la bouteille debout.</string>
+    <string name="advices_inc_tip1_b2">Ne jamais coucher la bouteille.</string>
+    <string name="advices_inc_tip1_b3">Installer dans un endroit bien ventilé.</string>
+    <string name="advices_inc_tip1_b4">Éviter les espaces fermés (placards, cuisine non aérée).</string>
+
+    <string name="advices_inc_tip2_b1">Remplacer le tuyau tous les 2 ans maximum.</string>
+    <string name="advices_inc_tip2_b2">Utiliser un tuyau homologué.</string>
+    <string name="advices_inc_tip2_b3">Ne jamais utiliser un tuyau fissuré.</string>
+    <string name="advices_inc_tip2_b4">Vérifier régulièrement le détendeur.</string>
+
+    <string name="advices_inc_tip3_b1">Si tu sens une odeur de gaz :</string>
+    <string name="advices_inc_tip3_b2">Ne pas allumer d\'allumette ou de briquet.</string>
+    <string name="advices_inc_tip3_b3">Ne pas toucher aux interrupteurs.</string>
+    <string name="advices_inc_tip3_b4">Ouvrir immédiatement les portes et les fenêtres.</string>
+    <string name="advices_inc_tip3_b5">Fermer le robinet de la bouteille à gaz.</string>
+    <string name="advices_inc_tip3_b6">Sortir de la pièce si nécessaire.</string>
+
+    <string name="advices_inc_tip4_b1">Ne jamais chauffer la bouteille au soleil.</string>
+    <string name="advices_inc_tip4_b2">Ne jamais l\'exposer à une source de chaleur.</string>
+    <string name="advices_inc_tip4_b3">Ne jamais réparer un tuyau avec du scotch.</string>
+    <string name="advices_inc_tip4_b4">Ne pas laisser les enfants manipuler le gaz.</string>
+
+    <string name="advices_inc_tip5_b1">La bouteille doit être loin : du four, des prises électriques, des flammes, des appareils électriques.</string>
+
+    <!-- Advices Screen — Bonnes pratiques quotidiennes -->
+    <string name="advices_daily_1">Fermer le robinet après chaque utilisation.</string>
+    <string name="advices_daily_2">Nettoyer régulièrement les brûleurs.</string>
+    <string name="advices_daily_3">Vérifier que la flamme est bien bleue.</string>
+    <string name="advices_daily_4">Installer un détecteur de gaz si possible.</string>
+    <string name="advices_daily_5">Avoir un petit extincteur dans la cuisine.</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package cm.horion.homegaz.domain
+package cm.horion.homegaz.domain.model
 
 data class UiMarker(
     val x: Float,

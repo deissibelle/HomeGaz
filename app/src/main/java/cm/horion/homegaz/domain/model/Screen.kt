@@ -1,4 +1,4 @@
-package cm.horion.homegaz.domain
+package cm.horion.homegaz.domain.model
 
 sealed class Screen(val route: String) {
     data object Splash     : Screen("splash")

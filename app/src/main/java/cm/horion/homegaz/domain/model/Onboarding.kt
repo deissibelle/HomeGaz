@@ -1,5 +1,4 @@
-package cm.horion.homegaz.domain
-
+package cm.horion.homegaz.domain.model
 
 data class Onboarding(
     val title       : String,

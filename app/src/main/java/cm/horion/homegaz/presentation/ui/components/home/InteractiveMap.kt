@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.UiMarker
+import cm.horion.homegaz.domain.model.UiMarker
 
 @Composable
 fun InteractiveMap(

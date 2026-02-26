@@ -1,12 +1,8 @@
 package cm.horion.homegaz.presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryLight,
@@ -32,18 +28,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceVariant = SurfaceVariantLight,
     onSurfaceVariant = OnSurfaceVariantLight,
     outline = OutlineLight,
-    outlineVariant = OutlineVariantLight,
-    scrim = ScrimLight,
-    inverseSurface = InverseSurfaceLight,
-    inverseOnSurface = InverseOnSurfaceLight,
-    inversePrimary = InversePrimaryLight,
-    surfaceDim = SurfaceDimLight,
-    surfaceBright = SurfaceBrightLight,
-    surfaceContainerLowest = SurfaceContainerLowestLight,
-    surfaceContainerLow = SurfaceContainerLowLight,
-    surfaceContainer = SurfaceContainerLight,
-    surfaceContainerHigh = SurfaceContainerHighLight,
-    surfaceContainerHighest = SurfaceContainerHighestLight,
+    outlineVariant = OutlineVariantLight
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -70,37 +55,24 @@ private val DarkColorScheme = darkColorScheme(
     surfaceVariant = SurfaceVariantDark,
     onSurfaceVariant = OnSurfaceVariantDark,
     outline = OutlineDark,
-    outlineVariant = OutlineVariantDark,
-    scrim = ScrimDark,
-    inverseSurface = InverseSurfaceDark,
-    inverseOnSurface = InverseOnSurfaceDark,
-    inversePrimary = InversePrimaryDark,
-    surfaceDim = SurfaceDimDark,
-    surfaceBright = SurfaceBrightDark,
-    surfaceContainerLowest = SurfaceContainerLowestDark,
-    surfaceContainerLow = SurfaceContainerLowDark,
-    surfaceContainer = SurfaceContainerDark,
-    surfaceContainerHigh = SurfaceContainerHighDark,
-    surfaceContainerHighest = SurfaceContainerHighestDark,
+    outlineVariant = OutlineVariantDark
 )
 
-internal val LocalThemeIsDark = compositionLocalOf { mutableStateOf(true) }
-
+val LocalThemeIsDark = compositionLocalOf { mutableStateOf(false) }
 
 @Composable
-internal fun HomeGazTheme(
+fun HomeGazTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val systemIsDark = isSystemInDarkTheme()
-    val isDarkState = remember(systemIsDark) { mutableStateOf(systemIsDark) }
-    CompositionLocalProvider(
-        LocalThemeIsDark provides isDarkState
-    ) {
-        val isDark by isDarkState
+    val isDarkState = remember { mutableStateOf(darkTheme) }
+    val colorScheme = if (isDarkState.value) DarkColorScheme else LightColorScheme
+
+    CompositionLocalProvider(LocalThemeIsDark provides isDarkState) {
         MaterialTheme(
-            colorScheme = if (isDark) DarkColorScheme else LightColorScheme,
+            colorScheme = colorScheme,
             typography = AppTypography,
-            content = { Surface(content = content) }
+            content = content
         )
     }
 }

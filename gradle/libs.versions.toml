@@ -13,6 +13,9 @@ navigationCompose = "2.9.7"
 foundation = "1.10.3"
 coilCompose = "2.5.0"
 accompanistPermissions = "0.36.0"
+datastore = "1.1.1"
+koin = "3.5.6"
+koin-compose = "3.5.6"
 
 
 
@@ -40,6 +43,14 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Koin
+koin-android         = { group = "io.insert-koin", name = "koin-android",          version.ref = "koin" }
+koin-compose         = { group = "io.insert-koin", name = "koin-androidx-compose",  version.ref = "koin-compose" }
+
+
+
 
 
 [plugins]

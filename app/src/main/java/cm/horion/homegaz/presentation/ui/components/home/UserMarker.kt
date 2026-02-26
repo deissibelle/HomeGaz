@@ -38,7 +38,6 @@ fun UserMarker(
                 contentScale = ContentScale.Crop
             )
         }
-
         Box(
             modifier = Modifier
                 .width(4.dp)

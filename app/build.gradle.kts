@@ -69,4 +69,11 @@ dependencies {
     implementation(libs.coil.compose)
     //accomplist permissions
     implementation(libs.accompanist.permissions)
+    //datastore
+    implementation(libs.datastore.preferences)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    //splash
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 }

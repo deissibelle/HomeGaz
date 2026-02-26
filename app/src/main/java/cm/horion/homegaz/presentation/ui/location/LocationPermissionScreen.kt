@@ -21,8 +21,6 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
 import cm.horion.homegaz.utils.ThemeColor
-import cm.horion.homegaz.utils.ThemeColor.IconBackgroundColor
-import cm.horion.homegaz.utils.ThemeColor.SubtitleColor
 import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -65,7 +63,7 @@ internal fun LocationPermissionContent(
                 modifier = Modifier
                     .size(96.dp)
                     .clip(CircleShape)
-                    .background(IconBackgroundColor),
+                    .background(ThemeColor.IconBackground),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -90,8 +88,8 @@ internal fun LocationPermissionContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Votre position est utilisée uniquement pour vous montrer les points de gaz les plus proches.",
-                color = SubtitleColor,
+                text= stringResource(R.string.location_subtitle),
+                color = ThemeColor.TextPrimary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center,
@@ -101,7 +99,7 @@ internal fun LocationPermissionContent(
             Spacer(modifier = Modifier.height(60.dp))
             
             HomeGazButton(
-                text = "J'active",
+                text = stringResource(R.string.location_btn_activate),
                 onClick = onActivateClick,
                 modifier = Modifier.fillMaxWidth()
             )
