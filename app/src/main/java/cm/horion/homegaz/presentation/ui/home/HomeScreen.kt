@@ -6,57 +6,48 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.tooling.preview.Preview
 import cm.horion.homegaz.domain.model.DistributionPoint
-import cm.horion.homegaz.domain.model.UiMarker
 import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
 import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
 import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
-import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 
-private val MARKERS_LIST = listOf(
-    UiMarker(299f, 185f, 31f, 38f),
-    UiMarker(19f, 249f, 31f, 38f),
-    UiMarker(168f, 223f, 42f, 51f),
-    UiMarker(210f, 304f, 54f, 65f),
-    UiMarker(14f, 445f, 42f, 51f),
-    UiMarker(25f, 585f, 31f, 37f),
-    UiMarker(181f, 604f, 31f, 37f),
-    UiMarker(123f, 688f, 31f, 37f),
-    UiMarker(255f, 695f, 31f, 37f),
+// Données de test locales
+private val DISTRIBUTION_POINTS = listOf(
+    DistributionPoint("1", "SCTM Bastos", "", 3.882, 11.514),
+    DistributionPoint("2", "Total Melen", "", 3.861, 11.521),
+    DistributionPoint("3", "Tradex Centre", "", 3.848, 11.502)
 )
 
 private val DISTRIBUTOR_OPTIONS = listOf("SCTM", "Tradex", "Total")
-private val DISTANCE_OPTIONS    = listOf("100 km", "500 km", "1 km")
-private val WEIGHT_OPTIONS      = listOf("6kg", "12kg", "38kg")
-
+private val DISTANCE_OPTIONS = listOf("1 km", "5 km", "10 km")
+private val WEIGHT_OPTIONS = listOf("6kg", "12kg", "38kg")
 
 @Composable
 fun HomeScreen(
     onMarkerClick: () -> Unit = {}
 ) {
     var selectedDistributor by remember { mutableStateOf(DISTRIBUTOR_OPTIONS[0]) }
-    var selectedDistance    by remember { mutableStateOf(DISTANCE_OPTIONS[0]) }
-    var selectedWeight      by remember { mutableStateOf(WEIGHT_OPTIONS[1]) }
-    var selectedPoint       by remember { mutableStateOf<DistributionPoint?>(null) }
+    var selectedDistance by remember { mutableStateOf(DISTANCE_OPTIONS[0]) }
+    var selectedWeight by remember { mutableStateOf(WEIGHT_OPTIONS[1]) }
+    var selectedPoint by remember { mutableStateOf<DistributionPoint?>(null) }
 
-    val isPreview = LocalInspectionMode.current
-    val permissionState = if (!isPreview) {
-        rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
-    } else null
+    val locationPermissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    LaunchedEffect(Unit) {
+        locationPermissionState.launchPermissionRequest()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Carte Interactive
+        // 1. Carte Google Maps
         InteractiveMap(
-            markers = MARKERS_LIST,
-            onMarkerClick = { onMarkerClick() },
-            modifier = Modifier.fillMaxSize()
+            points = DISTRIBUTION_POINTS,
+            onPointClick = { point ->
+                selectedPoint = point
+            }
         )
-
-        // Carte des Filtres
+        // 2. Overlay des Filtres
         HomeFilterCard(
             distributor = selectedDistributor,
             onDistributorChange = { selectedDistributor = it },
@@ -71,18 +62,12 @@ fun HomeScreen(
         )
     }
 
+    // 3. Détails du point
     if (selectedPoint != null) {
         ModalBottomSheet(
-            onDismissRequest = { selectedPoint = null },
-            dragHandle = { BottomSheetDefaults.DragHandle() }
+            onDismissRequest = { selectedPoint = null }
         ) {
             DistributionPointSheet(point = selectedPoint!!)
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeGazTheme { HomeScreen() }
 }

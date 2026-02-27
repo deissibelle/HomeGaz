@@ -41,11 +41,10 @@ fun OnboardingScreen(
             description = stringResource(R.string.onboarding_desc_1),
             image = R.drawable.map
         ),
-
         Onboarding(
             title = stringResource(R.string.onboarding_title_3),
             description = stringResource(R.string.onboarding_desc_3),
-            image = R.drawable.map
+            image = R.drawable.pay
         )
     )
 
@@ -54,10 +53,8 @@ fun OnboardingScreen(
     val isLastPage = pagerState.currentPage == pages.lastIndex
 
     Scaffold(
-
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -80,7 +77,6 @@ fun OnboardingScreen(
                     )
                 }
             }
-
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f),
@@ -88,7 +84,6 @@ fun OnboardingScreen(
             ) { index ->
                 OnboardingPage(page = pages[index])
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

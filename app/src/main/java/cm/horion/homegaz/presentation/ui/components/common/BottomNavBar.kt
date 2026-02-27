@@ -32,9 +32,9 @@ fun BottomNavBar(
 ) {
     val navItems = listOf(
         NavItem("Accueil",      R.drawable.home_outlined,          R.drawable.home_filled,          "Accueil"),
-        NavItem("Réservations", R.drawable.shopping_cart, R.drawable.shopping_cart, "Réservations"),
+        NavItem("Réservations", R.drawable.shopping_cart, R.drawable.shopping_cart_filled, "Réservations"),
         NavItem("Conseils",     R.drawable.light_bulb_outlined,    R.drawable.light_bulb_filled,    "Conseils"),
-        NavItem("Compte",       R.drawable.account,       R.drawable.account,       "Compte")
+        NavItem("Compte",       R.drawable.account,       R.drawable.account_filled,       "Compte")
     )
 
     Row(

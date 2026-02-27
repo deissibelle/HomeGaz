@@ -18,7 +18,7 @@
     <string name="onboarding_desc_2">Réservez votre bouteille de gaz et choisissez entre la livraison à domicile ou le retrait au point de vente.</string>
 
     <string name="onboarding_title_3">Achetez et faites vous livrez</string>
-    <string name="onboarding_desc_3">Orange Money, MTN Mobile Money ou espèces à la livraison. C\'est vous qui choisissez !</string>
+    <string name="onboarding_desc_3">Ne perdez plus de temps à fouiller le gaz en ville. Achetez sur HomeGaz et faites vous livrer (domicile, bureau, etc)</string>
 
     <!-- Permission Localisation -->
     <string name="location_title">Activez\nla localisation et\ndécouvrez le point de gaz\nle plus proche de vous</string>

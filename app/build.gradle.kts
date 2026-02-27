@@ -71,9 +71,14 @@ dependencies {
     implementation(libs.accompanist.permissions)
     //datastore
     implementation(libs.datastore.preferences)
+    //koin
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
-    //splash
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    //splashscreen
+    implementation(libs.androidx.core.splashscreen)
+    // Bibliothèque Compose pour Google Maps
+    implementation(libs.maps.compose)
+    // SDK Google Maps de base
+    implementation(libs.play.services.maps)
 
 }

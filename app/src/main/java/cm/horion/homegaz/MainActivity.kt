@@ -8,13 +8,14 @@ import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        val userPrefs = UserPreferencesRepository(applicationContext)
         val splashscreen = installSplashScreen()
         var keepSplashScreen = true
         super.onCreate(savedInstanceState)
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HomeGazTheme {
-                HomeGazApp()
+               HomeGazApp(userPrefs = userPrefs)
             }
         }
     }

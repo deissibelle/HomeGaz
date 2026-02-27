@@ -28,7 +28,7 @@ fun CustomDropdown(
         Surface(
             modifier = Modifier.fillMaxWidth().height(48.dp).clickable { expanded = true },
             shape = RoundedCornerShape(12.dp),
-            color = Color(0xFFF7F7F7),
+            color = Color.White,
             border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.4f))
         ) {
             Row(
