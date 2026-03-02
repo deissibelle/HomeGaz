@@ -11,9 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : ComponentActivity() {
+        private val userPrefs: UserPreferencesRepository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val userPrefs = UserPreferencesRepository(applicationContext)
         val splashscreen = installSplashScreen()
@@ -21,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashscreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
-            delay(5000)
+            delay(2000)
             keepSplashScreen = false
         }
         enableEdgeToEdge()

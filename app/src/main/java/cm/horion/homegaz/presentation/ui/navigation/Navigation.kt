@@ -9,33 +9,43 @@ import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.onboarding.OnboardingScreen
-import kotlinx.coroutines.launch
+import cm.horion.homegaz.presentation.viewmodel.OnboardingViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     val navController = rememberNavController()
-    val scope = rememberCoroutineScope()
+    
+    // On observe l'état du DataStore pour la destination initiale
     val isOnboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
 
+    // On attend que la valeur soit chargée pour éviter un écran blanc ou un saut d'écran
     if (isOnboardingCompleted == null) return
 
     NavHost(
         navController = navController,
         startDestination = if (isOnboardingCompleted == true) Screen.Home.route else Screen.Onboarding.route
     ) {
+        // --- ONBOARDING ---
         composable(Screen.Onboarding.route) {
+            val onboardingViewModel: OnboardingViewModel = koinViewModel()
+            
             OnboardingScreen(
+                viewModel = onboardingViewModel,
                 onFinish = {
-                    scope.launch {
-                        userPrefs.saveOnboardingCompleted(true)
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                    // On demande au ViewModel de sauvegarder, puis on navigue
+                    onboardingViewModel.finishOnboarding(
+                        onComplete = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Onboarding.route) { inclusive = true }
+                            }
                         }
-                    }
+                    )
                 }
             )
         }
 
+        // --- HOME ---
         composable(Screen.Home.route) {
             MainScreen(
                 onMarkerClick = {
@@ -44,6 +54,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        // --- PERMISSION ---
         composable(Screen.LocationPermission.route) {
             LocationPermissionScreen(
                 onPermissionGranted = {

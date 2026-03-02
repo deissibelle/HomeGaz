@@ -13,7 +13,6 @@ fun MainScreen(
     onMarkerClick: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf("Accueil") }
-
     Scaffold(
         bottomBar = {
             BottomNavBar(

@@ -16,14 +16,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.common.NavItem
 import cm.horion.homegaz.utils.ThemeColor
 
-data class NavItem(
-    val label: String,
-    val iconOutlined: Int,   // ex: R.drawable.home
-    val iconFilled: Int,     // ex: R.drawable.home_filled
-    val id: String
-)
+
 
 @Composable
 fun BottomNavBar(
@@ -31,12 +27,11 @@ fun BottomNavBar(
     onTabSelected: (String) -> Unit
 ) {
     val navItems = listOf(
-        NavItem("Accueil",      R.drawable.home_outlined,          R.drawable.home_filled,          "Accueil"),
+        NavItem("Accueil", R.drawable.home_outlined, R.drawable.home_filled, "Accueil"),
         NavItem("Réservations", R.drawable.shopping_cart, R.drawable.shopping_cart_filled, "Réservations"),
         NavItem("Conseils",     R.drawable.light_bulb_outlined,    R.drawable.light_bulb_filled,    "Conseils"),
         NavItem("Compte",       R.drawable.account,       R.drawable.account_filled,       "Compte")
     )
-
     Row(
         modifier = Modifier
             .fillMaxWidth()

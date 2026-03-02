@@ -11,8 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.domain.model.AdviceSection
-import cm.horion.homegaz.presentation.ui.advices.AdviceTipCard
-import cm.horion.homegaz.presentation.ui.advices.SectionHeader
+
 
 
 @Composable

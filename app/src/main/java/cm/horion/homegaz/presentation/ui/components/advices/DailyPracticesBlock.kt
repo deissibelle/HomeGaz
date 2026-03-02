@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.advices.SectionHeader
 import cm.horion.homegaz.presentation.ui.theme.AdvicesBodyColor
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderQuotidien
 

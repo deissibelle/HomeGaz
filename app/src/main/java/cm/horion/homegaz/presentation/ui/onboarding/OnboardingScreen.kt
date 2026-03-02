@@ -19,23 +19,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.Onboarding
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.onboarding.PagerIndicator
-import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import cm.horion.homegaz.presentation.viewmodel.OnboardingViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun OnboardingScreen(
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    val pages = listOf(
+    // Initialisation des pages dans le ViewModel
+    val onboardingPages = listOf(
         Onboarding(
             title = stringResource(R.string.onboarding_title_1),
             description = stringResource(R.string.onboarding_desc_1),
@@ -47,6 +50,15 @@ fun OnboardingScreen(
             image = R.drawable.pay
         )
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.setPages(onboardingPages)
+    }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val pages = uiState.pages
+
+    if (pages.isEmpty()) return
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
@@ -68,7 +80,7 @@ fun OnboardingScreen(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                TextButton(onClick = onFinish) {
+                TextButton(onClick = { viewModel.finishOnboarding(onFinish) }) {
                     Text(
                         text = stringResource(R.string.onboarding_skip),
                         style = MaterialTheme.typography.labelLarge,
@@ -77,6 +89,7 @@ fun OnboardingScreen(
                     )
                 }
             }
+            
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f),
@@ -84,13 +97,13 @@ fun OnboardingScreen(
             ) { index ->
                 OnboardingPage(page = pages[index])
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 PagerIndicator(
                     size = pages.size,
                     currentPage = pagerState.currentPage
@@ -103,7 +116,6 @@ fun OnboardingScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     if (pagerState.currentPage > 0) {
                         HomeGazButton(
                             iconBeforeText = true,
@@ -133,7 +145,7 @@ fun OnboardingScreen(
                         else null,
                         onClick = {
                             if (isLastPage) {
-                                onFinish()
+                                viewModel.finishOnboarding(onFinish)
                             } else {
                                 scope.launch {
                                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
@@ -147,6 +159,7 @@ fun OnboardingScreen(
         }
     }
 }
+
 @Composable
 fun OnboardingPage(page: Onboarding) {
     Column(
@@ -157,7 +170,6 @@ fun OnboardingPage(page: Onboarding) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "logo",
@@ -194,13 +206,5 @@ fun OnboardingPage(page: Onboarding) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 24.sp
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnboardingScreenPreview() {
-    HomeGazTheme {
-        OnboardingScreen(onFinish = {})
     }
 }
