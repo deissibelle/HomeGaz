@@ -80,5 +80,8 @@ dependencies {
     implementation(libs.maps.compose)
     // SDK Google Maps de base
     implementation(libs.play.services.maps)
+    dependencies {
+        implementation(libs.play.services.location)
+    }
 
 }

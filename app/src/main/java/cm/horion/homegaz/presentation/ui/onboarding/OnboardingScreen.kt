@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.Onboarding
+import cm.horion.homegaz.domain.model.onboarding.Onboarding
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.onboarding.PagerIndicator
 import kotlinx.coroutines.launch

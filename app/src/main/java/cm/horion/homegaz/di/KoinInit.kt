@@ -1,6 +1,6 @@
 package cm.horion.homegaz.di
 
-import dataModule
+
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 

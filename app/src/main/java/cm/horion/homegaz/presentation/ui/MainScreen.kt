@@ -4,20 +4,27 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import cm.horion.homegaz.presentation.ui.advices.AdvicesScreen
 import cm.horion.homegaz.presentation.ui.components.common.BottomNavBar
 import cm.horion.homegaz.presentation.ui.home.HomeScreen
-import cm.horion.homegaz.presentation.ui.advices.AdvicesScreen
 
 @Composable
 fun MainScreen(
-    onMarkerClick: () -> Unit = {}
+    onMarkerClick: (pointId: String) -> Unit = {},
+    onRefreshClick: () -> Unit = {},
+    pendingPointId: String? = null,
+    userLat: Double? = null,
+    userLng: Double? = null,
+    locationGranted: Boolean = false,
+    locationDenied: Boolean = false
 ) {
-    var selectedTab by remember { mutableStateOf("Accueil") }
+    var selectedTab by remember { mutableStateOf(Tab.HOME) }
+
     Scaffold(
         bottomBar = {
             BottomNavBar(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
+                selectedTab = selectedTab.label,
+                onTabSelected = { label -> selectedTab = Tab.fromLabel(label) }
             )
         }
     ) { innerPadding ->
@@ -27,11 +34,26 @@ fun MainScreen(
                 .padding(innerPadding)
         ) {
             when (selectedTab) {
-                "Accueil"      -> HomeScreen(onMarkerClick = onMarkerClick)
-                "Conseils"     -> AdvicesScreen()
-                // "Réservations" -> ReservationsScreen()
-                // "Compte"       -> AccountScreen()
+                Tab.HOME -> HomeScreen(
+                    onMarkerClick    = onMarkerClick,
+                    onRefreshClick   = onRefreshClick,
+                    pendingPointId   = pendingPointId,
+                    userLat          = userLat,
+                    userLng          = userLng,
+                    locationGranted  = locationGranted,
+                    locationDenied   = locationDenied
+                )
+                Tab.ADVICES -> AdvicesScreen()
             }
         }
+    }
+}
+
+private enum class Tab(val label: String) {
+    HOME("Accueil"),
+    ADVICES("Conseils");
+
+    companion object {
+        fun fromLabel(label: String) = entries.firstOrNull { it.label == label } ?: HOME
     }
 }

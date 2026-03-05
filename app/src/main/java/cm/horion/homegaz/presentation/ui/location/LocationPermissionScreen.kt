@@ -21,7 +21,9 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
 import cm.horion.homegaz.utils.ThemeColor
-import com.google.accompanist.permissions.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
+
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -29,7 +31,6 @@ fun LocationPermissionScreen(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit = {}
 ) {
-    // État de la permission via Accompanist
     val locationPermission = rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
     ) { granted ->
@@ -42,20 +43,19 @@ fun LocationPermissionScreen(
 }
 
 @Composable
-internal fun LocationPermissionContent(
-    onActivateClick: () -> Unit
-) {
+internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF9F9F9))
     ) {
         LocationBackground()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .navigationBarsPadding(), 
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -75,7 +75,6 @@ internal fun LocationPermissionContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 3. Textes
             Text(
                 text = stringResource(R.string.location_title),
                 color = ThemeColor.Primary,
@@ -88,7 +87,7 @@ internal fun LocationPermissionContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text= stringResource(R.string.location_subtitle),
+                text = stringResource(R.string.location_subtitle),
                 color = ThemeColor.TextPrimary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
@@ -97,7 +96,7 @@ internal fun LocationPermissionContent(
             )
 
             Spacer(modifier = Modifier.height(60.dp))
-            
+
             HomeGazButton(
                 text = stringResource(R.string.location_btn_activate),
                 onClick = onActivateClick,

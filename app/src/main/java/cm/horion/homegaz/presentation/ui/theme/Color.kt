@@ -72,3 +72,6 @@ val AdvicesBodyColor  = Color(0xFF2B5278)
 val AdvicesDivider    = Color(0xFFE0E8F0)
 
 val AdvicesBackground = Color(0xFFF2F5F8)
+
+val ButtonSecondary   = Color(0xFFE8E3E3)
+val DisabledContainer = Color(0xFFD0D0D0)

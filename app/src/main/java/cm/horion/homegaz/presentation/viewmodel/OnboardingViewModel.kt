@@ -2,7 +2,7 @@ package cm.horion.homegaz.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.horion.homegaz.domain.model.Onboarding
+import cm.horion.homegaz.domain.model.onboarding.Onboarding
 import cm.horion.homegaz.domain.usecase.SaveOnboardingExitUseCase
 import cm.horion.homegaz.presentation.state.OnboardingUiState
 import kotlinx.coroutines.flow.MutableStateFlow

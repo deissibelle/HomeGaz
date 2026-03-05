@@ -1,16 +1,15 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.presentation.ui.components.common.CustomDropdown
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
+
 
 @Composable
 fun HomeFilterCard(
@@ -23,25 +22,50 @@ fun HomeFilterCard(
     onRefresh: () -> Unit,
     distributorOptions: List<String>,
     distanceOptions: List<String>,
-    weightOptions: List<String>
+    weightOptions: List<String>,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(4.dp)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                CustomDropdown(distributor, distributorOptions, Modifier.weight(1f), onDistributorChange)
+                CustomDropdown(
+                    selected = distributor,
+                    options = distributorOptions,
+                    modifier = Modifier.weight(1f),
+                    onSelect = onDistributorChange
+                )
                 Spacer(Modifier.width(8.dp))
-                CustomDropdown(distance, distanceOptions, Modifier.weight(1f), onDistanceChange)
+                CustomDropdown(
+                    selected = distance,
+                    options = distanceOptions,
+                    modifier = Modifier.weight(1f),
+                    onSelect = onDistanceChange
+                )
             }
             Spacer(Modifier.height(12.dp))
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                CustomDropdown(weight, weightOptions, Modifier.weight(1f), onWeightChange)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomDropdown(
+                    selected = weight,
+                    options = weightOptions,
+                    modifier = Modifier.weight(1f),
+                    onSelect = onWeightChange
+                )
                 Spacer(Modifier.width(12.dp))
-                HomeGazButton(text = "Actualiser", onClick = onRefresh, modifier = Modifier.weight(1f))
+                HomeGazButton(
+                    text = "Actualiser",
+                    onClick = onRefresh,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }

@@ -1,12 +1,13 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
-import cm.horion.homegaz.domain.model.DistributionPoint
+import cm.horion.homegaz.domain.model.home.DistributionPoint
+
 
 @Composable
 fun InteractiveMap(
@@ -25,15 +26,17 @@ fun InteractiveMap(
         uiSettings = MapUiSettings(zoomControlsEnabled = false)
     ) {
         points.forEach { point ->
-            Marker(
-                state = MarkerState(position = LatLng(point.latitude, point.longitude)),
-                title = point.name,
-                snippet = point.distributor,
-                onClick = {
-                    onPointClick(point)
-                    true
-                }
-            )
+            key(point.id) {
+                Marker(
+                    state = rememberMarkerState(position = LatLng(point.latitude, point.longitude)),
+                    title = point.name,
+                    snippet = point.distributor,
+                    onClick = {
+                        onPointClick(point)
+                        true
+                    }
+                )
+            }
         }
     }
 }
