@@ -6,7 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,24 +21,30 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
 import cm.horion.homegaz.utils.ThemeColor
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
-
+import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionScreen(
     onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit = {}
+    onPermissionDenied: () -> Unit
 ) {
-    val locationPermission = rememberPermissionState(
+
+    var permissionRequested by remember { mutableStateOf(false) }
+
+    val locationPermissionState = rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION
-    ) { granted ->
-        if (granted) onPermissionGranted() else onPermissionDenied()
+    ) { isGranted ->
+        if (permissionRequested) {
+            if (isGranted) onPermissionGranted() else onPermissionDenied()
+        }
     }
 
     LocationPermissionContent(
-        onActivateClick = { locationPermission.launchPermissionRequest() }
+        onActivateClick = {
+            permissionRequested = true
+            locationPermissionState.launchPermissionRequest()
+        }
     )
 }
 
@@ -68,7 +74,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
             ) {
                 Image(
                     painter = painterResource(R.drawable.sad),
-                    contentDescription = stringResource(R.string.location_icon_desc),
+                    contentDescription = null,
                     modifier = Modifier.size(52.dp)
                 )
             }
@@ -80,7 +86,6 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
                 color = ThemeColor.Primary,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 28.sp,
                 textAlign = TextAlign.Center
             )
 
@@ -90,9 +95,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
                 text = stringResource(R.string.location_subtitle),
                 color = ThemeColor.TextPrimary,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(0.85f)
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(60.dp))

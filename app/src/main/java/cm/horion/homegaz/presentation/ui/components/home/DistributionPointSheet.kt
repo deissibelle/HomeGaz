@@ -1,104 +1,101 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributionPoint
-import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
-import java.text.NumberFormat
-import java.util.Locale
-
 
 @Composable
 fun DistributionPointSheet(
     point: DistributionPoint,
-    onNavigateClick: () -> Unit = {},
-    onOrderClick: () -> Unit = {}
+    onBuyClick: () -> Unit = {},
+    onRouteClick: () -> Unit = {}
 ) {
-    val formattedPrice = remember(point.priceXaf) {
-        NumberFormat.getNumberInstance(Locale.FRANCE).format(point.priceXaf) + " FCFA"
-    }
-    val formattedDistance = remember(point.distanceKm) {
-        if (point.distanceKm > 0) "À %.1f km de vous".format(point.distanceKm)
-        else "Distance inconnue"
-    }
+    val cardShape = RoundedCornerShape(topStart = 38.dp, topEnd = 38.dp, bottomStart = 38.dp, bottomEnd = 38.dp)
 
-    Column(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
-            .navigationBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .width(172.dp)
+            .shadow(elevation = 24.dp, shape = cardShape, spotColor = Color(0x33000000))
+            .clip(cardShape)
+            .background(Color.White.copy(alpha = 0.8f))
     ) {
-        // Pill handle
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(4.dp)
-                .padding(bottom = 8.dp)
-        )
-
-        Text(
-            text = point.name,
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(Modifier.height(4.dp))
-
-        Text(
-            text = formattedPrice,
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Style d'image
+            Image(
+                painter = painterResource(if (point.imageUrl.isNotEmpty()) R.drawable.algogaz else R.drawable.optimum),
                 contentDescription = null,
-                tint = Color.Gray,
-                modifier = Modifier.size(16.dp)
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth().height(46.dp)
             )
-            Spacer(Modifier.width(4.dp))
-            Text(text = formattedDistance, color = Color.Gray, fontSize = 14.sp)
-        }
 
-        Spacer(Modifier.height(24.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedButton(
-                onClick = onNavigateClick,
-                modifier = Modifier.weight(1f).height(52.dp),
-                shape = MaterialTheme.shapes.medium
+            // Label Nom du Point
+            Box(
+                modifier = Modifier
+                    .width(131.dp).height(19.dp)
+                    .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+                    .background(Color(0xFF003761)),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Itinéraire")
+                Text(text = point.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
             }
 
-            HomeGazButton(
-                text = "Commander",
-                onClick = onOrderClick,
-                modifier = Modifier.weight(1f),
-                icon = Icons.Default.ShoppingCart
-            )
-        }
+            Spacer(Modifier.height(10.dp))
 
-        Spacer(Modifier.height(8.dp))
+         // Statut stock
+            Image(
+                painter = painterResource(if (point.stockAvailable) R.drawable.ok else R.drawable.sad),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Text(
+                text = if (point.stockAvailable) "STOCK DISPONIBLE" else "STOCK INDISPONIBLE",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.width(112.dp).padding(vertical = 4.dp)
+            )
+
+            // Bouton Acheter
+            Button(
+                onClick = onBuyClick,
+                enabled = point.stockAvailable,
+                colors = ButtonDefaults.buttonColors(containerColor =  MaterialTheme.colorScheme.primary),
+                modifier = Modifier.width(91.dp).height(35.dp),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text("Acheter", fontSize = 12.sp, color = Color.White)
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // Bouton Itinéraire
+            Button(
+                onClick = onRouteClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE8E3E3)),
+                modifier = Modifier.width(76.dp).height(24.dp),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text("Itinéraire", fontSize = 10.sp, color =  MaterialTheme.colorScheme.primary)
+            }
+            Spacer(Modifier.height(12.dp))
+        }
     }
 }

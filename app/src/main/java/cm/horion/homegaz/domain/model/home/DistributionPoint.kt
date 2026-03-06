@@ -8,5 +8,6 @@ data class DistributionPoint(
     val longitude: Double,
     val distributor: String = "SCTM",
     val priceXaf: Int = 6500,
-    val distanceKm: Double = 0.0
+    val distanceKm: Double = 0.0,
+    val stockAvailable: Boolean = true
 )

@@ -9,8 +9,8 @@ data class UiMarker(
 )
 
 fun DistributionPoint.toUiMarker() = UiMarker(
-    id        = id,
-    title     = name,
+    id = id,
+    title = name,
     snippet   = distributor,
     latitude  = latitude,
     longitude = longitude

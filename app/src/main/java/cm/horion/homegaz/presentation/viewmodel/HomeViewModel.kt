@@ -26,19 +26,15 @@ class HomeViewModel(
 
     private fun loadPoints() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            runCatching {
-                getDistributionPointsUseCase().collect { points ->
-                    _uiState.update {
-                        it.copy(
-                            allPoints = points,
-                            filteredPoints = applyFilters(points, it),
-                            isLoading = false
-                        )
-                    }
+            _uiState.update { it.copy(isLoading = true) }
+            getDistributionPointsUseCase().collect { points ->
+                _uiState.update { state ->
+                    state.copy(
+                        allPoints = points,
+                        filteredPoints = applyFilters(points, state),
+                        isLoading = false
+                    )
                 }
-            }.onFailure { e ->
-                _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
         }
     }
@@ -46,81 +42,74 @@ class HomeViewModel(
     fun onLocationGranted(lat: Double?, lng: Double?, pointId: String? = null) {
         userLat = lat
         userLng = lng
-        _uiState.update { it.copy(locationGranted = true) }
-        applyFiltersWithLocation()
-        if (pointId != null) {
-            val point = _uiState.value.allPoints.firstOrNull { it.id == pointId }
-            _uiState.update { it.copy(selectedPoint = point) }
+        _uiState.update { state ->
+            val newState = state.copy(locationGranted = true)
+            val filtered = applyFilters(state.allPoints, newState)
+            val selected = if (pointId != null) filtered.find { it.id == pointId } else null
+            newState.copy(filteredPoints = filtered, selectedPoint = selected)
         }
     }
 
     fun onLocationDenied() {
-        _uiState.update { it.copy(locationGranted = false) }
+        userLat = null
+        userLng = null
+        _uiState.update { state ->
+            state.copy(
+                locationGranted = false,
+                selectedPoint = null,
+                filteredPoints = state.allPoints
+            )
+        }
     }
+
+    fun onPointSelected(point: DistributionPoint) {
+        if (_uiState.value.locationGranted) {
+            _uiState.update { it.copy(selectedPoint = point) }
+        }
+    }
+
     fun onPointDismissed() {
         _uiState.update { it.copy(selectedPoint = null) }
     }
 
     fun onDistributorChange(value: String) {
         _uiState.update { state ->
-            state.copy(
-                selectedDistributor = value,
-                filteredPoints = applyFilters(state.allPoints, state.copy(selectedDistributor = value))
-            )
+            val newState = state.copy(selectedDistributor = value)
+            newState.copy(filteredPoints = applyFilters(state.allPoints, newState))
         }
     }
 
     fun onDistanceChange(value: String) {
         _uiState.update { state ->
-            state.copy(
-                selectedDistance = value,
-                filteredPoints = applyFilters(state.allPoints, state.copy(selectedDistance = value))
-            )
+            val newState = state.copy(selectedDistance = value)
+            newState.copy(filteredPoints = applyFilters(state.allPoints, newState))
         }
     }
-
     fun onWeightChange(value: String) {
-        _uiState.update { it.copy(selectedWeight = value) }
-    }
-
-    fun dismissError() {
-        _uiState.update { it.copy(error = null) }
-    }
-
-    private fun applyFiltersWithLocation() {
         _uiState.update { state ->
-            state.copy(filteredPoints = applyFilters(state.allPoints, state))
+            state.copy(selectedWeight = value)
         }
     }
 
+    // Dans HomeViewModel.kt -> applyFilters
     private fun applyFilters(points: List<DistributionPoint>, state: HomeUiState): List<DistributionPoint> {
-        val maxKm = state.selectedDistance.replace(" km", "").toDoubleOrNull() ?: 5.0
-        val lat = userLat
-        val lng = userLng
+        if (userLat == null || userLng == null) return points
+
+        val maxKm = state.selectedDistance.filter { it.isDigit() }.toDoubleOrNull() ?: 50.0
 
         return points
-            .let { list ->
-                if (state.selectedDistributor == "SCTM") list
-                else list.filter { it.distributor == state.selectedDistributor }
-            }
-            .map { point ->
-                if (lat != null && lng != null)
-                    point.copy(distanceKm = haversineKm(lat, lng, point.latitude, point.longitude))
-                else point
-            }
-            .let { list ->
-                if (lat != null && lng != null) list.filter { it.distanceKm <= maxKm }
-                else list
-            }
+            .filter { it.distributor == state.selectedDistributor || state.selectedDistributor == "SCTM" }
+            .map { it.copy(distanceKm = haversineKm(userLat!!, userLng!!, it.latitude, it.longitude)) }
+            .filter { it.distanceKm <= maxKm }
             .sortedBy { it.distanceKm }
     }
 
+
     private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val R = 6371.0
+        val r = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLng = Math.toRadians(lng2 - lng1)
-        val a = sin(dLat / 2).pow(2) +
-                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
-        return R * 2 * atan2(sqrt(a), sqrt(1 - a))
+        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
+        return r * 2 * atan2(sqrt(a), sqrt(1 - a))
     }
 }

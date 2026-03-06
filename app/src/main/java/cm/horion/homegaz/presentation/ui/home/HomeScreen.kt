@@ -6,13 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
 import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
 import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
-
 
 @Composable
 fun HomeScreen(
@@ -27,25 +27,33 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(locationGranted) {
+    LaunchedEffect(locationGranted, userLat, userLng, pendingPointId) {
         if (locationGranted) {
-            viewModel.onLocationGranted(lat = userLat, lng = userLng, pointId = pendingPointId)
+            viewModel.onLocationGranted(
+                lat = userLat,
+                lng = userLng,
+                pointId = pendingPointId
+            )
         }
     }
+
     LaunchedEffect(locationDenied) {
         if (locationDenied) viewModel.onLocationDenied()
     }
-    Box(modifier = Modifier.fillMaxSize()) {
 
+    Box(modifier = Modifier.fillMaxSize()) {
         InteractiveMap(
             points = uiState.filteredPoints,
+            selectedPoint = uiState.selectedPoint,
+            locationGranted = uiState.locationGranted,
             onPointClick = { point ->
-                if (!uiState.locationGranted) {
-                    onMarkerClick(point.id)
+                if (uiState.locationGranted) {
+                    viewModel.onPointSelected(point)
                 } else {
-                    viewModel.onLocationGranted(userLat, userLng, point.id)
+                    onMarkerClick(point.id)
                 }
-            }
+            },
+            onDismissPopup = { viewModel.onPointDismissed() }
         )
 
         HomeFilterCard(
@@ -56,22 +64,30 @@ fun HomeScreen(
             weight = uiState.selectedWeight,
             onWeightChange = { viewModel.onWeightChange(it) },
             onRefresh = {
-                if (!uiState.locationGranted) onRefreshClick()
-                else viewModel.onLocationGranted(userLat, userLng)
+
+                onRefreshClick()
             },
-            distributorOptions = listOf( "SCTM", "Tradex", "Total"),
+            distributorOptions = listOf("SCTM", "Tradex", "Total"),
             distanceOptions = listOf("1 km", "5 km", "10 km"),
             weightOptions = listOf("6kg", "12kg", "38kg")
         )
 
+        if (uiState.locationGranted && uiState.selectedPoint != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 32.dp)
+            ) {
+                DistributionPointSheet(
+                    point = uiState.selectedPoint!!,
+                    onBuyClick = { /* Navigation vers achat */ },
+                    onRouteClick = { /* Intent Google Maps */ }
+                )
+            }
+        }
+
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    }
-
-    uiState.selectedPoint?.let { point ->
-        ModalBottomSheet(onDismissRequest = { viewModel.onPointDismissed() }) {
-            DistributionPointSheet(point = point)
         }
     }
 }

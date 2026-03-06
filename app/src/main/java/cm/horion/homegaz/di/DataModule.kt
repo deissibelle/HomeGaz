@@ -2,6 +2,7 @@ package cm.horion.homegaz.di
 
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.domain.usecase.GetDistributionPointsUseCase
+import cm.horion.homegaz.domain.usecase.RequestLocationPermissionUseCase
 import cm.horion.homegaz.domain.usecase.SaveOnboardingExitUseCase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -12,4 +13,6 @@ fun dataModule() = module {
     factory { SaveOnboardingExitUseCase(get()) }
 
     factory { GetDistributionPointsUseCase() }
+
+    factory { RequestLocationPermissionUseCase() }
 }
