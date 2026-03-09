@@ -25,7 +25,6 @@ fun InteractiveMap(
 
     val mapProperties = MapProperties(
         isMyLocationEnabled = locationGranted,
-        mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
     )
 
     val uiSettings = MapUiSettings(

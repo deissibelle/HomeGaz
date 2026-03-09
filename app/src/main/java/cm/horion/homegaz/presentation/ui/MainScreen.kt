@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import cm.horion.homegaz.presentation.ui.advices.AdvicesScreen
 import cm.horion.homegaz.presentation.ui.components.common.BottomNavBar
 import cm.horion.homegaz.presentation.ui.home.HomeScreen
@@ -13,6 +14,7 @@ fun MainScreen(
     onMarkerClick: (pointId: String) -> Unit = {},
     onRefreshClick: () -> Unit = {},
     pendingPointId: String? = null,
+    navController: NavController,
     userLat: Double? = null,
     userLng: Double? = null,
     locationGranted: Boolean = false,
@@ -41,7 +43,8 @@ fun MainScreen(
                     userLat          = userLat,
                     userLng          = userLng,
                     locationGranted  = locationGranted,
-                    locationDenied   = locationDenied
+                    locationDenied   = locationDenied ,
+                    navController= navController,
                 )
                 Tab.ADVICES -> AdvicesScreen()
             }

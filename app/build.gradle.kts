@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,9 +19,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val properties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            properties.load(localPropertiesFile.inputStream())
+        }
+        manifestPlaceholders["MAPS_API_KEY"] = properties.getProperty("MAPS_API_KEY") ?: ""
 
-        manifestPlaceholders["MAPS_API_KEY"] =
-            project.findProperty("MAPS_API_KEY").toString().trim()
     }
 
     buildTypes {
@@ -83,8 +89,8 @@ dependencies {
     implementation(libs.maps.compose)
     // SDK Google Maps de base
     implementation(libs.play.services.maps)
-    dependencies {
-        implementation(libs.play.services.location)
-    }
+
+    implementation(libs.play.services.location)
+
 
 }

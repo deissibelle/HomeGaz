@@ -6,4 +6,8 @@ sealed class Screen(val route: String) {
     object Onboarding: Screen("onboarding")
     object Home: Screen("home")
     object LocationPermission: Screen("location_permission")
+
+    object DistributorDetail : Screen("distributor_detail/{pointId}") {
+        fun createRoute(pointId: String) = "distributor_detail/$pointId"
+    }
 }

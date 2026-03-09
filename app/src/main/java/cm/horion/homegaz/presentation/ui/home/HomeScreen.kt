@@ -8,6 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import cm.horion.homegaz.domain.model.home.DistributionPoint
 import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
 import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
 import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
@@ -21,6 +24,7 @@ fun HomeScreen(
     onRefreshClick: () -> Unit = {},
     pendingPointId: String? = null,
     userLat: Double? = null,
+    navController: NavController,
     userLng: Double? = null,
     locationGranted: Boolean = false,
     locationDenied: Boolean = false
@@ -64,7 +68,6 @@ fun HomeScreen(
             weight = uiState.selectedWeight,
             onWeightChange = { viewModel.onWeightChange(it) },
             onRefresh = {
-
                 onRefreshClick()
             },
             distributorOptions = listOf("SCTM", "Tradex", "Total"),
@@ -80,7 +83,7 @@ fun HomeScreen(
             ) {
                 DistributionPointSheet(
                     point = uiState.selectedPoint!!,
-                    onBuyClick = { /* Navigation vers achat */ },
+                    onBuyClick = {      navController.navigate("distributor_detail/${uiState.selectedPoint!!.id}") },
                     onRouteClick = { /* Intent Google Maps */ }
                 )
             }

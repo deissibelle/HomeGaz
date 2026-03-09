@@ -59,19 +59,17 @@ internal val OutlineDark = Color(0xFF8A9389)
 internal val OutlineVariantDark = Color(0xFF404941)
 
 
-val SuccessColor = Color(0xFF10B981)
+internal val SuccessColor = Color(0xFF10B981)
 
 
-val AdvicesHeaderEconomiser = Color(0xFFD9FFE3)
-val AdvicesHeaderIncendies  = Color(0xFFFFE9D9)
+internal val AdvicesHeaderEconomiser = Color(0xFFD9FFE3)
+internal val AdvicesHeaderIncendies  = Color(0xFFFFE9D9)
 
-val AdvicesHeaderQuotidien  = Color(0xFFD9F4FF)
+internal val AdvicesHeaderQuotidien  = Color(0xFFD9F4FF)
 
-val AdvicesBodyColor  = Color(0xFF2B5278)
+internal val AdvicesBodyColor  = Color(0xFF2B5278)
 
-val AdvicesDivider    = Color(0xFFE0E8F0)
+internal val AdvicesDivider    = Color(0xFFE0E8F0)
 
-val AdvicesBackground = Color(0xFFF2F5F8)
+internal val AdvicesBackground = Color(0xFFF2F5F8)
 
-val ButtonSecondary   = Color(0xFFE8E3E3)
-val DisabledContainer = Color(0xFFD0D0D0)
