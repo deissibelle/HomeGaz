@@ -5,9 +5,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import cm.horion.homegaz.presentation.ui.advices.AdvicesScreen
+import cm.horion.homegaz.presentation.ui.pages.advices.AdvicesScreen
 import cm.horion.homegaz.presentation.ui.components.common.BottomNavBar
-import cm.horion.homegaz.presentation.ui.home.HomeScreen
+import cm.horion.homegaz.presentation.ui.pages.home.HomeScreen
 
 @Composable
 fun MainScreen(

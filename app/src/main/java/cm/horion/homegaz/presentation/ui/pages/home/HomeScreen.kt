@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
-package cm.horion.homegaz.presentation.ui.home
+
+package cm.horion.homegaz.presentation.ui.pages.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

@@ -1,4 +1,4 @@
-package cm.horion.homegaz.presentation.ui.advices
+package cm.horion.homegaz.presentation.ui.pages.advices
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -2,13 +2,11 @@ package cm.horion.homegaz.presentation.ui.components.distributor
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,18 +43,18 @@ fun DistributorHeader(
 
         Box(
             modifier = Modifier
-                .padding(top = 77.dp, start = 20.dp)
-                .size(width = 35.dp, height = 39.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White.copy(alpha = 0.2f))
+                .padding(top = 40.dp, start = 20.dp)
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.30f))
                 .clickable { onBackClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Retour",
                 tint = Color.White,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(100.dp)
             )
         }
 
@@ -64,24 +62,20 @@ fun DistributorHeader(
             modifier = Modifier
                 .padding(top = 153.dp, start = 20.dp)
                 .size(69.dp)
-                .clip(CircleShape)
-                .background(Color(0xFFE31E24))
-                .border(3.dp, Color.White, CircleShape),
+                .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(id = R.drawable.distributor_logo),
                 contentDescription = null,
-                modifier = Modifier.size(45.dp),
+                modifier = Modifier.size(69.dp),
                 contentScale = ContentScale.Fit
             )
         }
 
-
         Text(
             text = title,
-            modifier = Modifier
-                .padding(top = 189.dp, start = 97.dp),
+            modifier = Modifier.padding(top = 189.dp, start = 97.dp),
             style = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.SemiBold,

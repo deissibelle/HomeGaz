@@ -1,25 +1,28 @@
 package cm.horion.homegaz.presentation.ui.components.distributor
 
-
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+
+private val DividerColor = Color(0xFFB5B5B5)
+
 
 @Composable
 fun QuantitySelector(
@@ -35,13 +38,14 @@ fun QuantitySelector(
                 val strokeWidth = 1.dp.toPx()
                 drawLine(
                     color = Color(0xFFE8E8E8),
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
+                    start = Offset(0f, size.height - strokeWidth / 2),
+                    end = Offset(size.width, size.height - strokeWidth / 2),
                     strokeWidth = strokeWidth
                 )
             },
         verticalArrangement = Arrangement.Center
     ) {
+        // Label
         Text(
             text = "Quantité",
             style = TextStyle(
@@ -54,18 +58,16 @@ fun QuantitySelector(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
             Icon(
-                painter = painterResource(id = R.drawable.one),
+                imageVector = Icons.Outlined.Inventory2,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = Color.Black
+                tint = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.width(43.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Row(
                 modifier = Modifier
@@ -73,33 +75,38 @@ fun QuantitySelector(
                     .height(35.dp)
                     .border(
                         width = 1.dp,
-                        color = Color(0xFFB5B5B5),
+                        color = DividerColor,
                         shape = RoundedCornerShape(6.dp)
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Minus Button
-                QuantityControlBtn(
+                StepperCell(
                     label = "−",
-                    onClick = { if (quantity > 1) onQuantityChange(quantity - 1) }
+                    onClick = { if (quantity > 1) onQuantityChange(quantity - 1) },
+                    drawRightDivider = true
                 )
-
-                // Current Quantity
-                Text(
-                    text = quantity.toString(),
-                    modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontFamily = bodyFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = quantity.toString(),
+                        style = TextStyle(
+                            fontFamily = bodyFontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
                     )
-                )
+                }
 
-                // Plus Button
-                QuantityControlBtn(
+                StepperCell(
                     label = "+",
-                    onClick = { onQuantityChange(quantity + 1) }
+                    onClick = { onQuantityChange(quantity + 1) },
+                    drawLeftDivider = true
                 )
             }
         }
@@ -107,25 +114,47 @@ fun QuantitySelector(
 }
 
 @Composable
-private fun RowScope.QuantityControlBtn(
+private fun RowScope.StepperCell(
     label: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    drawLeftDivider: Boolean = false,
+    drawRightDivider: Boolean = false
 ) {
     Box(
         modifier = Modifier
             .fillMaxHeight()
             .weight(1f)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .drawWithContent {
+                drawContent()
+                val strokeWidth = 1.dp.toPx()
+                if (drawLeftDivider) {
+                    drawLine(
+                        color = DividerColor,
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, size.height),
+                        strokeWidth = strokeWidth
+                    )
+                }
+                if (drawRightDivider) {
+                    drawLine(
+                        color = DividerColor,
+                        start = Offset(size.width, 0f),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = strokeWidth
+                    )
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
             style = TextStyle(
                 fontFamily = bodyFontFamily,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Light,
                 fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                lineHeight = 23.4.sp
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center
             )
         )
     }

@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
-import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
+import cm.horion.homegaz.presentation.ui.pages.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -91,7 +91,6 @@ class HomeViewModel(
         }
     }
 
-    // Dans HomeViewModel.kt -> applyFilters
     private fun applyFilters(points: List<DistributionPoint>, state: HomeUiState): List<DistributionPoint> {
         if (userLat == null || userLng == null) return points
 

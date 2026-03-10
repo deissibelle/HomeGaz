@@ -1,4 +1,4 @@
-package cm.horion.homegaz.presentation.ui.location
+package cm.horion.homegaz.presentation.ui.pages.location
 
 import android.Manifest
 import androidx.compose.foundation.Image

@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package cm.horion.homegaz.presentation.ui.onboarding
+package cm.horion.homegaz.presentation.ui.pages.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image

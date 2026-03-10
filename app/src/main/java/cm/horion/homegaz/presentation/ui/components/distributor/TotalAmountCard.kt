@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +26,7 @@ fun TotalAmountCard(
             .padding(horizontal = 20.dp)
             .height(48.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer),
+            .background(color = Color(0xFFE9FDFE)),
         contentAlignment = Alignment.Center
     ) {
         Row(
@@ -37,7 +38,7 @@ fun TotalAmountCard(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = MaterialTheme.colorScheme.outline
                 )
             )
 
@@ -49,7 +50,7 @@ fun TotalAmountCard(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.outline
                 )
             )
         }
