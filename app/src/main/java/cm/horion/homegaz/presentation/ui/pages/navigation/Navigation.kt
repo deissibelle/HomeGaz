@@ -10,33 +10,44 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import cm.horion.homegaz.domain.model.DeliveryOption
+import cm.horion.homegaz.domain.model.DistributorProduct
+import cm.horion.homegaz.domain.model.OrderSummary
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
+import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import com.google.android.gms.location.LocationServices
 
+
+
 @Composable
 fun HomeGazApp(userPrefs: UserPreferencesRepository) {
-    val navController = rememberNavController()
-    val context = LocalContext.current
 
+    val navController       = rememberNavController()
+    val context             = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
 
     var locationGranted by remember { mutableStateOf(false) }
     var returnedPointId by remember { mutableStateOf<String?>(null) }
-    var returnedLat by remember { mutableStateOf<Double?>(null) }
-    var returnedLng by remember { mutableStateOf<Double?>(null) }
+    var returnedLat     by remember { mutableStateOf<Double?>(null) }
+    var returnedLng     by remember { mutableStateOf<Double?>(null) }
+
+    var currentProduct      by remember { mutableStateOf(DistributorProduct("", "", 0)) }
+    var currentQuantity     by remember { mutableIntStateOf(1) }
+    var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
+    var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
     fun fetchLocationAndGoHome(pId: String?) {
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
             .addOnSuccessListener { loc ->
-                returnedLat = loc?.latitude
-                returnedLng = loc?.longitude
+                returnedLat     = loc?.latitude
+                returnedLng     = loc?.longitude
                 returnedPointId = if (pId == "none") null else pId
                 locationGranted = true
                 navController.popBackStack(Screen.Home.route, false)
@@ -44,21 +55,23 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     }
 
     fun navigateToPermissionOrFetch(pointId: String) {
-        val alreadyGranted = ActivityCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
+        val granted = ActivityCompat.checkSelfPermission(
+            context, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-        if (alreadyGranted) fetchLocationAndGoHome(pointId)
+        if (granted) fetchLocationAndGoHome(pointId)
         else navController.navigate("${Screen.LocationPermission.route}/$pointId")
     }
 
     if (onboardingCompleted == null) return
 
+    // NavHost
     NavHost(
-        navController = navController,
-        startDestination = if (onboardingCompleted == true) Screen.Home.route else Screen.Onboarding.route
+        navController    = navController,
+        startDestination = if (onboardingCompleted == true) Screen.Home.route
+        else Screen.Onboarding.route
     ) {
 
+        // Onboarding
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
                 onFinish = {
@@ -69,57 +82,89 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        // Home
         composable(Screen.Home.route) {
             MainScreen(
-                navController = navController,
+                navController   = navController,
                 locationGranted = locationGranted,
-                pendingPointId = returnedPointId,
-                userLat = returnedLat,
-                userLng = returnedLng,
-                onMarkerClick = { id -> navigateToPermissionOrFetch(id) },
-                onRefreshClick = { navigateToPermissionOrFetch("none") }
+                pendingPointId  = returnedPointId,
+                userLat         = returnedLat,
+                userLng         = returnedLng,
+                onMarkerClick   = { navigateToPermissionOrFetch(it) },
+                onRefreshClick  = { navigateToPermissionOrFetch("none") },
+                onBuyClick      = { pointId ->
+                    navController.navigate(Screen.DistributorDetail.createRoute(pointId))
+                }
             )
         }
 
-        composable("${Screen.LocationPermission.route}/{pointId}") { backStackEntry ->
-            val pId = backStackEntry.arguments?.getString("pointId")
+        // Permission localisation
+        composable(
+            route     = "${Screen.LocationPermission.route}/{pointId}",
+            arguments = listOf(navArgument("pointId") { type = NavType.StringType })
+        ) { back ->
+            val pId = back.arguments?.getString("pointId")
             LocationPermissionScreen(
                 onPermissionGranted = {
-                    val confirmed = ActivityCompat.checkSelfPermission(
+                    val ok = ActivityCompat.checkSelfPermission(
                         context, Manifest.permission.ACCESS_FINE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
-                    if (confirmed) fetchLocationAndGoHome(pId)
-                    else navController.popBackStack()
+                    if (ok) fetchLocationAndGoHome(pId) else navController.popBackStack()
                 },
                 onPermissionDenied = { navController.popBackStack() }
             )
         }
 
+        // Détail distributeur
         composable(
-            route = "distributor_detail/{pointId}",
+            route     = Screen.DistributorDetail.route,
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val pointId = backStackEntry.arguments?.getString("pointId")
+        ) { back ->
+            val pointId = back.arguments?.getString("pointId")
+            val product = DistributorProduct(brand = "SCTM", weight = "12,5kg", unitPrice = 7500)
+
             DistributorPointDetailScreen(
+                product     = product,
                 onBackClick = { navController.popBackStack() },
                 onNextClick = { quantity, option ->
-
-                    val unitPrice = 7500
-                    val total = unitPrice * quantity
-                    navController.navigate("${Screen.Payment.route}/$total")
+                    currentProduct  = product
+                    currentQuantity = quantity
+                    currentDelivery = option
+                    navController.navigate(Screen.Payment.route)
                 }
             )
         }
 
-        composable(
-            route = "${Screen.Payment.route}/{total}",
-            arguments = listOf(navArgument("total") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val total = backStackEntry.arguments?.getInt("total") ?: 0
+        // Paiement
+        composable(Screen.Payment.route) {
             PaymentScreen(
-                total = total,
-                onBackClick = { navController.popBackStack() },
-                onNextClick = { method, phone ->
+                brand          = currentProduct.brand,
+                weight         = currentProduct.weight,
+                quantity       = currentQuantity,
+                deliveryOption = currentDelivery,
+                unitPrice      = currentProduct.unitPrice,
+                onBackClick    = { navController.popBackStack() },
+                onNextClick    = { summary ->
+                    currentOrderSummary = summary
+                    navController.navigate(Screen.Confirmation.route)
+                }
+            )
+        }
+
+        // Confirmation
+        composable(Screen.Confirmation.route) {
+            val summary = currentOrderSummary ?: return@composable
+            ConfirmationScreen(
+                summary        = summary,
+                onBackClick    = { navController.popBackStack() },
+                onModifyClick  = { navController.popBackStack(
+                    route     = Screen.DistributorDetail.route,
+                    inclusive = false
+                ) },
+                onConfirmClick = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
                 }
             )
         }

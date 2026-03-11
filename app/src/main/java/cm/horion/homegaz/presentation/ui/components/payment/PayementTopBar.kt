@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.components.payment
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,29 +19,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-
+/**
+ * TopBar réutilisable — Payment ET Confirmation.
+ * Hauteur dynamique (wrapContentHeight) pour absorber les titres longs qui wrappent.
+ * Bouton retour : 35×39dp, icône 24dp, specs Figma.
+ */
 @Composable
 fun PaymentTopBar(
-    title: String = "Paiement",
+    title      : String = "Paiement",
     onBackClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp)
-            .height(39.dp),
+            .heightIn(min = 39.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Titre centré
         Text(
-            text = title,
-            style = TextStyle(
+            text      = title,
+            modifier  = Modifier
+                .fillMaxWidth()
+                .padding(start = 60.dp, end = 20.dp),
+            style     = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
+                fontSize   = 20.sp,
                 lineHeight = (20 * 1.17).sp,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
+                color      = MaterialTheme.colorScheme.primary,
+                textAlign  = TextAlign.Center
             )
         )
 
@@ -50,17 +55,16 @@ fun PaymentTopBar(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 20.dp)
-                .size(width = 100.dp, height= 39.dp)
+                .size(width = 35.dp, height = 39.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .clickable { onBackClick() }
-                .padding(vertical = 6.dp, horizontal = 10.dp),
+                .clickable { onBackClick() },
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                imageVector        = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Retour",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.fillMaxSize()
+                tint               = MaterialTheme.colorScheme.primary,
+                modifier           = Modifier.size(24.dp)
             )
         }
     }

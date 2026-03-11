@@ -43,7 +43,7 @@ fun PhoneNumberField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Ex: 699999999",
+                    text = "Ex: 673219684",
                     style = TextStyle(
                         fontFamily = bodyFontFamily,
                         fontWeight = FontWeight.Normal,

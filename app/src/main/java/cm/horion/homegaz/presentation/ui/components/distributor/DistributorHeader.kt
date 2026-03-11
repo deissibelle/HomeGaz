@@ -46,7 +46,6 @@ fun DistributorHeader(
                 .padding(top = 40.dp, start = 20.dp)
                 .size(36.dp)
                 .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.30f))
                 .clickable { onBackClick() },
             contentAlignment = Alignment.Center
         ) {
