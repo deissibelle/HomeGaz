@@ -31,7 +31,7 @@ fun DistributionPointSheet(
     Box(
         modifier = Modifier
             .width(172.dp)
-            .shadow(elevation = 24.dp, shape = cardShape, spotColor = Color(0x33000000))
+            .shadow(elevation = 24.dp, shape = cardShape, spotColor = Color.Black.copy(alpha = 0.2f))
             .clip(cardShape)
             .background(Color.White.copy(alpha = 0.8f))
     ) {
@@ -49,7 +49,7 @@ fun DistributionPointSheet(
                 modifier = Modifier
                     .width(131.dp).height(19.dp)
                     .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
-                    .background(Color(0xFF003761)),
+                    .background(MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = point.name, color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
@@ -89,7 +89,8 @@ fun DistributionPointSheet(
             // Bouton Itinéraire
             Button(
                 onClick = onRouteClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE8E3E3)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                ),
                 modifier = Modifier.width(76.dp).height(24.dp),
                 contentPadding = PaddingValues(0.dp)
             ) {

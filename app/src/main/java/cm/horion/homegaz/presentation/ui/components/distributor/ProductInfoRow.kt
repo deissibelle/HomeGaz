@@ -22,6 +22,7 @@ fun ProductInfoRow(
     value: String,
     icon: ImageVector
 ) {
+    var borderStroke = MaterialTheme.colorScheme.outlineVariant
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,7 +31,7 @@ fun ProductInfoRow(
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
                 drawLine(
-                    color = Color(0xFFE8E8E8),
+                    color = borderStroke,
                     start = Offset(0f, size.height - strokeWidth / 2),
                     end = Offset(size.width, size.height - strokeWidth / 2),
                     strokeWidth = strokeWidth
@@ -44,7 +45,7 @@ fun ProductInfoRow(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
-                color = Color(0xFF717970)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
 
@@ -55,7 +56,7 @@ fun ProductInfoRow(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(

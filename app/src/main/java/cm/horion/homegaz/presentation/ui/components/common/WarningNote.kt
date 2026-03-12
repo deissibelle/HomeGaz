@@ -14,9 +14,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cm.horion.homegaz.presentation.ui.theme.WarningOrange
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-private val WarningAmber = Color(0xFFF59E0B)
 
 
 @Composable
@@ -37,7 +37,7 @@ fun WarningNote(
             modifier = Modifier
                 .size(14.dp)
                 .padding(top = 1.dp),
-            tint = WarningAmber
+            tint = WarningOrange
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
@@ -47,7 +47,7 @@ fun WarningNote(
                 fontWeight = FontWeight.Normal,
                 fontSize = 11.sp,
                 lineHeight = 14.sp,
-                color = WarningAmber
+                color = WarningOrange
             )
         )
     }

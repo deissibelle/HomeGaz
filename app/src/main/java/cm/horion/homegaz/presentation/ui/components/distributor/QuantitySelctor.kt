@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-private val DividerColor = Color(0xFFB5B5B5)
 
 
 @Composable
@@ -29,6 +28,8 @@ fun QuantitySelector(
     quantity: Int,
     onQuantityChange: (Int) -> Unit
 ) {
+    val stepperBorderColor = MaterialTheme.colorScheme.outline
+    val borderStroke = MaterialTheme.colorScheme.outlineVariant
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +38,7 @@ fun QuantitySelector(
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
                 drawLine(
-                    color = Color(0xFFE8E8E8),
+                    color = borderStroke,
                     start = Offset(0f, size.height - strokeWidth / 2),
                     end = Offset(size.width, size.height - strokeWidth / 2),
                     strokeWidth = strokeWidth
@@ -52,7 +53,7 @@ fun QuantitySelector(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
-                color = Color(0xFF717970)
+                color = MaterialTheme.colorScheme.outlineVariant
             )
         )
 
@@ -64,7 +65,7 @@ fun QuantitySelector(
                 imageVector = Icons.Outlined.Inventory2,
                 contentDescription = null,
                 modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onBackground
+                tint = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -75,7 +76,7 @@ fun QuantitySelector(
                     .height(35.dp)
                     .border(
                         width = 1.dp,
-                        color = DividerColor,
+                        color = stepperBorderColor,
                         shape = RoundedCornerShape(6.dp)
                     ),
                 verticalAlignment = Alignment.CenterVertically
@@ -83,7 +84,9 @@ fun QuantitySelector(
                 StepperCell(
                     label = "−",
                     onClick = { if (quantity > 1) onQuantityChange(quantity - 1) },
-                    drawRightDivider = true
+                    drawRightDivider = true,
+                    dividerColor = stepperBorderColor
+
                 )
                 Box(
                     modifier = Modifier
@@ -106,7 +109,9 @@ fun QuantitySelector(
                 StepperCell(
                     label = "+",
                     onClick = { onQuantityChange(quantity + 1) },
-                    drawLeftDivider = true
+                    drawLeftDivider = true,
+                    dividerColor = stepperBorderColor,
+
                 )
             }
         }
@@ -118,7 +123,8 @@ private fun RowScope.StepperCell(
     label: String,
     onClick: () -> Unit,
     drawLeftDivider: Boolean = false,
-    drawRightDivider: Boolean = false
+    drawRightDivider: Boolean = false,
+    dividerColor: Color
 ) {
     Box(
         modifier = Modifier
@@ -130,7 +136,7 @@ private fun RowScope.StepperCell(
                 val strokeWidth = 1.dp.toPx()
                 if (drawLeftDivider) {
                     drawLine(
-                        color = DividerColor,
+                        color = dividerColor,
                         start = Offset(0f, 0f),
                         end = Offset(0f, size.height),
                         strokeWidth = strokeWidth
@@ -138,7 +144,7 @@ private fun RowScope.StepperCell(
                 }
                 if (drawRightDivider) {
                     drawLine(
-                        color = DividerColor,
+                        color = dividerColor,
                         start = Offset(size.width, 0f),
                         end = Offset(size.width, size.height),
                         strokeWidth = strokeWidth

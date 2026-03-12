@@ -27,14 +27,12 @@ fun PagerIndicator(
         repeat(size) { index ->
             val isSelected = currentPage == index
 
-            // Animation de la couleur
             val color by animateColorAsState(
                 targetValue = if (isSelected) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.outlineVariant,
                 label = "dot_color"
             )
 
-            // Animation de la largeur (effet pilule pour le point actif)
             val width by animateDpAsState(
                 targetValue = if (isSelected) 16.dp else 8.dp,
                 label = "dot_width"

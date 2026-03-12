@@ -1,6 +1,7 @@
 package cm.horion.homegaz.presentation.ui.components.distributor
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -18,6 +19,7 @@ fun DeliveryOptionRow(
 ) {
     val options = listOf("Livraison", "Retrait")
     val selectedIndex = if (selectedOption == DeliveryOption.LIVRAISON) 0 else 1
+    val borderStroke = MaterialTheme.colorScheme.outlineVariant
 
     OptionSelectorRow(
         label = "Option",
@@ -33,7 +35,7 @@ fun DeliveryOptionRow(
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
                 drawLine(
-                    color = Color(0xFFE8E8E8),
+                    color = borderStroke,
                     start = Offset(0f, size.height - strokeWidth / 2),
                     end = Offset(size.width, size.height - strokeWidth / 2),
                     strokeWidth = strokeWidth

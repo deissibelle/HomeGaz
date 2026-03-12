@@ -34,7 +34,7 @@ fun PhoneNumberField(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
-                color = Color(0xFF717970)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
 
@@ -48,7 +48,7 @@ fun PhoneNumberField(
                         fontFamily = bodyFontFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 14.sp,
-                        color = Color(0xFFB5B5B5)
+                        color = MaterialTheme.colorScheme.outline
                     )
                 )
             },
@@ -60,9 +60,11 @@ fun PhoneNumberField(
             singleLine = true,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Color(0xFFE8E8E8),
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             ),
             textStyle = TextStyle(
                 fontFamily = bodyFontFamily,

@@ -13,16 +13,18 @@ import androidx.navigation.navArgument
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.domain.model.distributor.DistributorProduct
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
-import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
+import cm.horion.homegaz.presentation.ui.Tab
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
+import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
 import com.google.android.gms.location.LocationServices
 
 @Composable
@@ -38,12 +40,13 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     var returnedLat     by remember { mutableStateOf<Double?>(null) }
     var returnedLng     by remember { mutableStateOf<Double?>(null) }
 
+    //Order state
     var currentProduct      by remember { mutableStateOf(DistributorProduct("", "", 0)) }
     var currentQuantity     by remember { mutableIntStateOf(1) }
     var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
-    //Helpers
+    // Helpers
     fun fetchLocationAndGoHome(pId: String?) {
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
@@ -99,7 +102,26 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Permission localisation
+        composable(
+            route     = "${Screen.Home.route}/{initialTab}",
+            arguments = listOf(navArgument("initialTab") { type = NavType.StringType })
+        ) { back ->
+            val initialTab = back.arguments?.getString("initialTab") ?: Tab.HOME.label
+            MainScreen(
+                navController   = navController,
+                locationGranted = locationGranted,
+                pendingPointId  = returnedPointId,
+                userLat         = returnedLat,
+                userLng         = returnedLng,
+                initialTab      = initialTab,
+                onMarkerClick   = { navigateToPermissionOrFetch(it) },
+                onRefreshClick  = { navigateToPermissionOrFetch("none") },
+                onBuyClick      = { pointId ->
+                    navController.navigate(Screen.DistributorDetail.createRoute(pointId))
+                }
+            )
+        }
+
         composable(
             route     = "${Screen.LocationPermission.route}/{pointId}",
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
@@ -116,14 +138,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // distributor detail
         composable(
             route     = Screen.DistributorDetail.route,
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
         ) { back ->
             val pointId = back.arguments?.getString("pointId")
             val product = DistributorProduct(brand = "SCTM", weight = "12,5kg", unitPrice = 7500)
-
             DistributorPointDetailScreen(
                 product     = product,
                 onBackClick = { navController.popBackStack() },
@@ -136,7 +156,6 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Payment
         composable(Screen.Payment.route) {
             PaymentScreen(
                 brand          = currentProduct.brand,
@@ -172,13 +191,26 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Paymentinitiated
         composable(Screen.PaymentInitiated.route) {
-            val summary = currentOrderSummary
             PaymentInitiatedScreen(
-                paymentMethod = summary?.paymentMethod ?: PaymentMethod.ORANGE_MONEY,
+                paymentMethod = currentOrderSummary?.paymentMethod ?: PaymentMethod.ORANGE_MONEY,
                 onDone        = {
+                    navController.navigate(Screen.PaymentSuccess.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.PaymentSuccess.route) {
+            PaymentSuccessScreen(
+                onCloseClick        = {
                     navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                },
+                onReservationsClick = {
+                    navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}") {
                         popUpTo(Screen.Home.route) { inclusive = false }
                     }
                 }

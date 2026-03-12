@@ -31,11 +31,11 @@ import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.distributor.ProductInfoRow
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-private val DashedBorderColor = Color(0xFFB5B5B5)
 
 
 @Composable
 fun OrderRecapCard(summary: OrderSummary) {
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,7 +56,7 @@ fun OrderRecapCard(summary: OrderSummary) {
                 }
                 drawPath(
                     path  = path,
-                    color = DashedBorderColor,
+                    color = borderColor,
                     style = Stroke(
                         width      = stroke,
                         pathEffect = PathEffect.dashPathEffect(floatArrayOf(6f, 6f), 0f)

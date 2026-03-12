@@ -68,7 +68,7 @@ fun ConfirmationScreen(
                 text         = "Modifier",
                 onClick      = onModifyClick,
                 isOutlined   = true,
-                contentColor = Color(0xFF7E7E7E),
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier     = Modifier.weight(1f)
             )
 

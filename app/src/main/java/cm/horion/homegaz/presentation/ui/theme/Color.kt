@@ -3,7 +3,7 @@ package cm.horion.homegaz.presentation.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ─────────────────────────────────────────────
-// Light Palette
+// Light Palette (Matériel 3)
 // ─────────────────────────────────────────────
 internal val PrimaryLight = Color(0xFF003761)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
@@ -31,7 +31,7 @@ internal val OutlineLight = Color(0xFF717970)
 internal val OutlineVariantLight = Color(0xFFC0C9BE)
 
 // ─────────────────────────────────────────────
-// Dark Palette
+// Dark Palette (Matériel 3)
 // ─────────────────────────────────────────────
 internal val PrimaryDark = Color(0xFF477EEB)
 internal val OnPrimaryDark = Color(0xFF183153)
@@ -58,18 +58,14 @@ internal val OnSurfaceVariantDark = Color(0xFFC0C9BE)
 internal val OutlineDark = Color(0xFF8A9389)
 internal val OutlineVariantDark = Color(0xFF404941)
 
-
 internal val SuccessColor = Color(0xFF10B981)
-
-
+internal val WarningOrange = Color(0xFFF59E0B)
+internal val NeutralGray = Color(0xFF717970)
+internal val DividerGray = Color(0xFFE8E8E8)
+internal val DarkGray = Color(0xFFB5B5B5)
 internal val AdvicesHeaderEconomiser = Color(0xFFD9FFE3)
 internal val AdvicesHeaderIncendies  = Color(0xFFFFE9D9)
-
 internal val AdvicesHeaderQuotidien  = Color(0xFFD9F4FF)
-
 internal val AdvicesBodyColor  = Color(0xFF2B5278)
-
 internal val AdvicesDivider    = Color(0xFFE0E8F0)
-
 internal val AdvicesBackground = Color(0xFFF2F5F8)
-

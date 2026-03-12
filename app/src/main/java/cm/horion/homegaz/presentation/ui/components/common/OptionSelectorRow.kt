@@ -46,7 +46,7 @@ fun OptionSelectorRow(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
-                color = Color(0xFF717970)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
 
@@ -64,7 +64,7 @@ fun OptionSelectorRow(
                         .weight(1f)
                         .height(cardHeight)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(if (isSelected) Color.White else Color(0xFFAFB0B1))
+                        .background(if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.outlineVariant)
                         .then(
                             if (isSelected) Modifier.border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
                             else Modifier

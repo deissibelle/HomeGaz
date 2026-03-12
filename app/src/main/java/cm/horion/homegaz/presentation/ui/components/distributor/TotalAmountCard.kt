@@ -26,7 +26,7 @@ fun TotalAmountCard(
             .padding(horizontal = 20.dp)
             .height(48.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(color = Color(0xFFE9FDFE)),
+            .background(MaterialTheme.colorScheme.secondaryContainer),
         contentAlignment = Alignment.Center
     ) {
         Row(

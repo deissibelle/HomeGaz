@@ -53,7 +53,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF9F9F9))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         LocationBackground()
 
@@ -69,7 +69,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
                 modifier = Modifier
                     .size(96.dp)
                     .clip(CircleShape)
-                    .background(ThemeColor.IconBackground),
+                    .background(MaterialTheme.colorScheme.secondaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -83,7 +83,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
 
             Text(
                 text = stringResource(R.string.location_title),
-                color = ThemeColor.Primary,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -93,7 +93,7 @@ internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
 
             Text(
                 text = stringResource(R.string.location_subtitle),
-                color = ThemeColor.TextPrimary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )
