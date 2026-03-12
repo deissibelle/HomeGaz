@@ -1,4 +1,4 @@
-package cm.horion.homegaz.domain.model
+package cm.horion.homegaz.domain.model.distributor
 
 data class DistributorProduct(
     val brand: String,

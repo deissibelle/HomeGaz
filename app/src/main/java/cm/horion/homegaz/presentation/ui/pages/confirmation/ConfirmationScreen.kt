@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.OrderSummary
+import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
 import cm.horion.homegaz.presentation.ui.components.confirmation.OrderRecapCard

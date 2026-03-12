@@ -1,4 +1,4 @@
-package cm.horion.homegaz.domain.model
+package cm.horion.homegaz.domain.model.advices
 
 import androidx.compose.ui.graphics.Color
 

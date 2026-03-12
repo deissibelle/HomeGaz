@@ -1,5 +1,4 @@
-package cm.horion.homegaz.domain.model
-
+package cm.horion.homegaz.domain.model.distributor
 
 enum class DeliveryOption {
     LIVRAISON,

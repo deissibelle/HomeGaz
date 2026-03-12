@@ -10,20 +10,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import cm.horion.homegaz.domain.model.DeliveryOption
-import cm.horion.homegaz.domain.model.DistributorProduct
-import cm.horion.homegaz.domain.model.OrderSummary
 import cm.horion.homegaz.domain.model.common.Screen
+import cm.horion.homegaz.domain.model.distributor.DistributorProduct
+import cm.horion.homegaz.domain.model.distributor.OrderSummary
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
+import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import com.google.android.gms.location.LocationServices
-
-
 
 @Composable
 fun HomeGazApp(userPrefs: UserPreferencesRepository) {
@@ -32,6 +32,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     val context             = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
 
+    //Location
     var locationGranted by remember { mutableStateOf(false) }
     var returnedPointId by remember { mutableStateOf<String?>(null) }
     var returnedLat     by remember { mutableStateOf<Double?>(null) }
@@ -42,6 +43,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
+    //Helpers
     fun fetchLocationAndGoHome(pId: String?) {
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
@@ -64,7 +66,6 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
     if (onboardingCompleted == null) return
 
-    // NavHost
     NavHost(
         navController    = navController,
         startDestination = if (onboardingCompleted == true) Screen.Home.route
@@ -115,7 +116,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Détail distributeur
+        // distributor detail
         composable(
             route     = Screen.DistributorDetail.route,
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
@@ -135,7 +136,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Paiement
+        // Payment
         composable(Screen.Payment.route) {
             PaymentScreen(
                 brand          = currentProduct.brand,
@@ -157,11 +158,26 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             ConfirmationScreen(
                 summary        = summary,
                 onBackClick    = { navController.popBackStack() },
-                onModifyClick  = { navController.popBackStack(
-                    route     = Screen.DistributorDetail.route,
-                    inclusive = false
-                ) },
+                onModifyClick  = {
+                    navController.popBackStack(
+                        route     = Screen.DistributorDetail.route,
+                        inclusive = false
+                    )
+                },
                 onConfirmClick = {
+                    navController.navigate(Screen.PaymentInitiated.route) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+
+        // Paymentinitiated
+        composable(Screen.PaymentInitiated.route) {
+            val summary = currentOrderSummary
+            PaymentInitiatedScreen(
+                paymentMethod = summary?.paymentMethod ?: PaymentMethod.ORANGE_MONEY,
+                onDone        = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = false }
                     }

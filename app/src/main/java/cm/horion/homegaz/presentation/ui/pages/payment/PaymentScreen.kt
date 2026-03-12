@@ -8,9 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.DeliveryOption
-import cm.horion.homegaz.domain.model.OrderSummary
-import cm.horion.homegaz.domain.model.PaymentMethod
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.OrderSummary
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
 import cm.horion.homegaz.presentation.ui.components.distributor.TotalAmountCard

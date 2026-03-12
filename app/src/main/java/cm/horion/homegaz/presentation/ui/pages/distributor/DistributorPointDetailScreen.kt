@@ -11,8 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.DeliveryOption
-import cm.horion.homegaz.domain.model.DistributorProduct
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.DistributorProduct
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
 import cm.horion.homegaz.presentation.ui.components.distributor.DeliveryOptionRow

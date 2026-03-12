@@ -13,7 +13,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.PaymentMethod
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.common.OptionSelectorRow
 
 

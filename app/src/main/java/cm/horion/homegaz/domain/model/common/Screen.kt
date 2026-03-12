@@ -12,4 +12,6 @@ sealed class Screen(val route: String) {
     }
     object Payment: Screen("payment")
     object Confirmation: Screen("confirmation")
+    object PaymentInitiated   : Screen("payment_initiated")
+
 }

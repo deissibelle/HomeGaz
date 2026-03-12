@@ -19,11 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-/**
- * TopBar réutilisable — Payment ET Confirmation.
- * Hauteur dynamique (wrapContentHeight) pour absorber les titres longs qui wrappent.
- * Bouton retour : 35×39dp, icône 24dp, specs Figma.
- */
+
 @Composable
 fun PaymentTopBar(
     title      : String = "Paiement",
@@ -64,7 +60,7 @@ fun PaymentTopBar(
                 imageVector        = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Retour",
                 tint               = MaterialTheme.colorScheme.primary,
-                modifier           = Modifier.size(24.dp)
+                modifier           = Modifier.size(100.dp)
             )
         }
     }

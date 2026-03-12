@@ -25,9 +25,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.domain.model.DeliveryOption
-import cm.horion.homegaz.domain.model.OrderSummary
-import cm.horion.homegaz.domain.model.PaymentMethod
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.OrderSummary
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.distributor.ProductInfoRow
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 

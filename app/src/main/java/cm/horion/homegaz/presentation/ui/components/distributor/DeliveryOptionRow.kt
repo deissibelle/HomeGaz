@@ -7,7 +7,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.presentation.ui.components.common.OptionSelectorRow
 
 

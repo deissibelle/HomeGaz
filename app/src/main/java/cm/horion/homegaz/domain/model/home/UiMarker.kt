@@ -1,5 +1,6 @@
 package cm.horion.homegaz.domain.model.home
 
+
 data class UiMarker(
     val id: String,
     val title: String,

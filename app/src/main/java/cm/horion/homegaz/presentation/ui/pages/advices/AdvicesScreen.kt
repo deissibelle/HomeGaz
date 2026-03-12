@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.AdviceSection
-import cm.horion.homegaz.domain.model.AdviceTip
+import cm.horion.homegaz.domain.model.advices.AdviceSection
+import cm.horion.homegaz.domain.model.advices.AdviceTip
 import cm.horion.homegaz.presentation.ui.theme.AdvicesBackground
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderEconomiser
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderIncendies
