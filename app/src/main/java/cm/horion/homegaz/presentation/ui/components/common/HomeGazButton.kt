@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.utils.ThemeColor
 
 @Composable
 fun HomeGazButton(
@@ -20,7 +19,7 @@ fun HomeGazButton(
     modifier       : Modifier = Modifier,
     icon           : ImageVector? = null,
     iconBeforeText : Boolean = false,
-    containerColor : Color = ThemeColor.Primary,
+    containerColor : Color =  MaterialTheme.colorScheme.primary,
     contentColor   : Color = Color.White,
     enabled        : Boolean = true,
     isOutlined     : Boolean = false
@@ -30,11 +29,11 @@ fun HomeGazButton(
         else       -> containerColor
     }
     val resolvedContent = when {
-        isOutlined -> if (contentColor == Color.White) ThemeColor.Primary else contentColor
+        isOutlined -> if (contentColor == Color.White) MaterialTheme.colorScheme.primary else contentColor
         else       -> contentColor
     }
     val borderColor = when {
-        isOutlined -> if (contentColor == Color.White) ThemeColor.Primary
+        isOutlined -> if (contentColor == Color.White)  MaterialTheme.colorScheme.primary
         else contentColor
         else       -> Color.Transparent
     }

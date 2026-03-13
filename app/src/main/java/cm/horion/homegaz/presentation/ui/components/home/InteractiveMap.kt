@@ -1,9 +1,11 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributionPoint
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -14,26 +16,33 @@ import com.google.maps.android.compose.*
 
 @Composable
 fun InteractiveMap(
-    points: List<DistributionPoint>,
-    selectedPoint: DistributionPoint?,
-    onPointClick: (DistributionPoint) -> Unit,
-    onDismissPopup: () -> Unit,
-    locationGranted: Boolean = false,
-    modifier: Modifier = Modifier
+    points          : List<DistributionPoint>,
+    selectedPoint   : DistributionPoint?,
+    onPointClick    : (DistributionPoint) -> Unit,
+    onDismissPopup  : () -> Unit,
+    locationGranted : Boolean = false,
+    userLat         : Double? = null,
+    userLng         : Double? = null,
+    userPhotoUrl    : String? = null,
+    onRecenterClick : () -> Unit = {},
+    modifier        : Modifier = Modifier
 ) {
     val context = LocalContext.current
 
-    val mapProperties = MapProperties(
-        isMyLocationEnabled = locationGranted,
-    )
-
-    val uiSettings = MapUiSettings(
-        zoomControlsEnabled = false,
-        myLocationButtonEnabled = locationGranted
-    )
+    val mapStyle = remember {
+        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+    }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 12f)
+        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 14f)
+    }
+
+    LaunchedEffect(userLat, userLng) {
+        if (userLat != null && userLng != null) {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(LatLng(userLat, userLng), 14f)
+            )
+        }
     }
 
     LaunchedEffect(selectedPoint) {
@@ -44,23 +53,52 @@ fun InteractiveMap(
         }
     }
 
-    GoogleMap(
-        modifier = modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-        properties = mapProperties,
-        uiSettings = uiSettings,
-        onMapClick = { onDismissPopup() }
-    ) {
-        points.forEach { point ->
-            Marker(
-                state = rememberMarkerState(
-                    position = LatLng(point.latitude, point.longitude)
-                ),
-                onClick = {
-                    onPointClick(point)
-                    true
+    Box(modifier = modifier.fillMaxSize()) {
+
+        GoogleMap(
+            modifier            = Modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            properties          = MapProperties(
+                isMyLocationEnabled = false,
+                mapStyleOptions     = mapStyle
+            ),
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled     = false,
+                myLocationButtonEnabled = false
+            ),
+            onMapClick = { onDismissPopup() }
+        ) {
+            points.forEach { point ->
+                MarkerComposable(
+                    state   = rememberMarkerState(
+                        position = LatLng(point.latitude, point.longitude)
+                    ),
+                    onClick = { onPointClick(point); true }
+                ) {
+                    DistributorMarker(
+                        name       = point.name,
+                        isSelected = point.id == selectedPoint?.id
+                    )
                 }
-            )
+            }
+
+            if (locationGranted && userLat != null && userLng != null) {
+                MarkerComposable(
+                    state  = rememberMarkerState(
+                        position = LatLng(userLat, userLng)
+                    ),
+                    anchor = androidx.compose.ui.geometry.Offset(0.5f, 1f)
+                ) {
+                    UserLocationMarker(photoUrl = userPhotoUrl)
+                }
+            }
         }
+
+        RecenterButton(
+            onClick  = onRecenterClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp)
+        )
     }
 }

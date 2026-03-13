@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
-import cm.horion.homegaz.utils.ThemeColor
 import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)

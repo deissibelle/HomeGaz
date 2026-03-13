@@ -14,33 +14,29 @@ import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
 import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
 import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
+import cm.horion.homegaz.utils.launchGoogleMapsNavigation
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel(),
-    navController : NavController,
-    onMarkerClick: (pointId: String) -> Unit = {},
-    onRefreshClick: () -> Unit = {},
-    onBuyClick: (pointId: String) -> Unit = {},
-    pendingPointId: String? = null,
-    userLat: Double? = null,
-    userLng: Double? = null,
-    locationGranted: Boolean = false,
-    locationDenied: Boolean = false
+    viewModel       : HomeViewModel = koinViewModel(),
+    navController   : NavController,
+    onMarkerClick   : (pointId: String) -> Unit = {},
+    onRefreshClick  : () -> Unit = {},
+    onBuyClick      : (pointId: String) -> Unit = {},
+    pendingPointId  : String? = null,
+    userLat         : Double? = null,
+    userLng         : Double? = null,
+    locationGranted : Boolean = false,
+    locationDenied  : Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(locationGranted, userLat, userLng, pendingPointId) {
-        if (locationGranted) {
-            viewModel.onLocationGranted(
-                lat     = userLat,
-                lng     = userLng,
-                pointId = pendingPointId
-            )
-        }
+        if (locationGranted) viewModel.onLocationGranted(userLat, userLng, pendingPointId)
     }
-
     LaunchedEffect(locationDenied) {
         if (locationDenied) viewModel.onLocationDenied()
     }
@@ -51,23 +47,28 @@ fun HomeScreen(
             points          = uiState.filteredPoints,
             selectedPoint   = uiState.selectedPoint,
             locationGranted = uiState.locationGranted,
+            userLat         = uiState.userLat,
+            userLng         = uiState.userLng,
+            userPhotoUrl    = uiState.userPhotoUrl,
             onPointClick    = { point ->
                 if (uiState.locationGranted) viewModel.onPointSelected(point)
                 else onMarkerClick(point.id)
             },
-            onDismissPopup  = { viewModel.onPointDismissed() }
+            onDismissPopup  = viewModel::onPointDismissed,
+            onRecenterClick = viewModel::onRecenter
         )
 
         HomeFilterCard(
+            modifier            = Modifier.align(Alignment.TopCenter),
             distributor         = uiState.selectedDistributor,
-            onDistributorChange = { viewModel.onDistributorChange(it) },
+            onDistributorChange = viewModel::onDistributorChange,
             distance            = uiState.selectedDistance,
-            onDistanceChange    = { viewModel.onDistanceChange(it) },
+            onDistanceChange    = viewModel::onDistanceChange,
             weight              = uiState.selectedWeight,
-            onWeightChange      = { viewModel.onWeightChange(it) },
+            onWeightChange      = viewModel::onWeightChange,
             onRefresh           = onRefreshClick,
             distributorOptions  = listOf("SCTM", "Tradex", "Total"),
-            distanceOptions     = listOf("1 km", "5 km", "10 km"),
+            distanceOptions     = listOf("100 m", "500 m", "1 km", "5 km", "10 km"),
             weightOptions       = listOf("6kg", "12kg", "38kg")
         )
 
@@ -80,13 +81,20 @@ fun HomeScreen(
                 DistributionPointSheet(
                     point        = uiState.selectedPoint!!,
                     onBuyClick   = { onBuyClick(uiState.selectedPoint!!.id) },
-                    onRouteClick = { /* Intent Google Maps */ }
+                    onRouteClick = { launchGoogleMapsNavigation(
+                        latitude = uiState.selectedPoint!!.latitude,
+                        longitude = uiState.selectedPoint!!.longitude,
+                        context = context
+                    ) }
                 )
             }
         }
 
         if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color    = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }

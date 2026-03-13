@@ -19,10 +19,8 @@ class HomeViewModel(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private var userLat: Double? = null
-    private var userLng: Double? = null
-
     init { loadPoints() }
+
 
     private fun loadPoints() {
         viewModelScope.launch {
@@ -30,85 +28,107 @@ class HomeViewModel(
             getDistributionPointsUseCase().collect { points ->
                 _uiState.update { state ->
                     state.copy(
-                        allPoints = points,
+                        allPoints      = points,
                         filteredPoints = applyFilters(points, state),
-                        isLoading = false
+                        isLoading      = false
                     )
                 }
             }
         }
     }
 
+
     fun onLocationGranted(lat: Double?, lng: Double?, pointId: String? = null) {
-        userLat = lat
-        userLng = lng
         _uiState.update { state ->
-            val newState = state.copy(locationGranted = true)
-            val filtered = applyFilters(state.allPoints, newState)
-            val selected = if (pointId != null) filtered.find { it.id == pointId } else null
-            newState.copy(filteredPoints = filtered, selectedPoint = selected)
+            val updated  = state.copy(locationGranted = true, userLat = lat, userLng = lng)
+            val filtered = applyFilters(state.allPoints, updated)
+            val selected = pointId?.let { id -> filtered.find { it.id == id } }
+            updated.copy(filteredPoints = filtered, selectedPoint = selected)
         }
     }
 
     fun onLocationDenied() {
-        userLat = null
-        userLng = null
         _uiState.update { state ->
             state.copy(
                 locationGranted = false,
-                selectedPoint = null,
-                filteredPoints = state.allPoints
+                userLat         = null,
+                userLng         = null,
+                selectedPoint   = null,
+                filteredPoints  = state.allPoints
             )
         }
     }
 
+    fun onRecenter() {
+        val lat = _uiState.value.userLat ?: return
+        val lng = _uiState.value.userLng ?: return
+        _uiState.update { it.copy(userLat = null, userLng = null) }
+        _uiState.update { it.copy(userLat = lat,  userLng = lng)  }
+    }
+
+
     fun onPointSelected(point: DistributionPoint) {
-        if (_uiState.value.locationGranted) {
-            _uiState.update { it.copy(selectedPoint = point) }
-        }
+        _uiState.update { it.copy(selectedPoint = point) }
     }
 
     fun onPointDismissed() {
         _uiState.update { it.copy(selectedPoint = null) }
     }
 
-    fun onDistributorChange(value: String) {
+
+    fun onDistributorChange(value: String) = updateFilter { copy(selectedDistributor = value) }
+    fun onDistanceChange(value: String)    = updateFilter { copy(selectedDistance    = value) }
+    fun onWeightChange(value: String)      = updateFilter { copy(selectedWeight      = value) }
+
+    private fun updateFilter(update: HomeUiState.() -> HomeUiState) {
         _uiState.update { state ->
-            val newState = state.copy(selectedDistributor = value)
+            val newState = state.update()
             newState.copy(filteredPoints = applyFilters(state.allPoints, newState))
         }
     }
 
-    fun onDistanceChange(value: String) {
-        _uiState.update { state ->
-            val newState = state.copy(selectedDistance = value)
-            newState.copy(filteredPoints = applyFilters(state.allPoints, newState))
-        }
-    }
-    fun onWeightChange(value: String) {
-        _uiState.update { state ->
-            state.copy(selectedWeight = value)
-        }
+    fun setUserPhoto(url: String?) {
+        _uiState.update { it.copy(userPhotoUrl = url) }
     }
 
-    private fun applyFilters(points: List<DistributionPoint>, state: HomeUiState): List<DistributionPoint> {
-        if (userLat == null || userLng == null) return points
 
-        val maxKm = state.selectedDistance.filter { it.isDigit() }.toDoubleOrNull() ?: 50.0
+    private fun applyFilters(
+        points: List<DistributionPoint>,
+        state : HomeUiState
+    ): List<DistributionPoint> {
+        val lat   = state.userLat
+        val lng   = state.userLng
+        val maxKm = state.selectedDistance
+            .filter { it.isDigit() || it == '.' }
+            .toDoubleOrNull() ?: 50.0
 
         return points
-            .filter { it.distributor == state.selectedDistributor || state.selectedDistributor == "SCTM" }
-            .map { it.copy(distanceKm = haversineKm(userLat!!, userLng!!, it.latitude, it.longitude)) }
-            .filter { it.distanceKm <= maxKm }
-            .sortedBy { it.distanceKm }
+            .filter { p ->
+                state.selectedDistributor == "Tous" ||
+                        p.distributor.equals(state.selectedDistributor, ignoreCase = true)
+            }
+            .filter { p ->
+                state.selectedWeight == "Tous" ||
+                        p.weight.equals(state.selectedWeight, ignoreCase = true)
+            }
+            .let { filtered ->
+                if (lat == null || lng == null) filtered
+                else filtered
+                    .map    { it.copy(distanceKm = haversineKm(lat, lng, it.latitude, it.longitude)) }
+                    .filter { it.distanceKm <= maxKm }
+                    .sortedBy { it.distanceKm }
+            }
     }
 
-
-    private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val r = 6371.0
+    private fun haversineKm(
+        lat1: Double, lng1: Double,
+        lat2: Double, lng2: Double
+    ): Double {
+        val r    = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLng = Math.toRadians(lng2 - lng1)
-        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
+        val a    = sin(dLat / 2).pow(2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
         return r * 2 * atan2(sqrt(a), sqrt(1 - a))
     }
 }
