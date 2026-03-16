@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.coil.compose)
     //accomplist permissions
     implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.navigation.animation)
     //datastore
     implementation(libs.datastore.preferences)
     //koin

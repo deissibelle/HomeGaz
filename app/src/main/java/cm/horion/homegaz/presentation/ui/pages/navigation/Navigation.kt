@@ -2,6 +2,12 @@ package cm.horion.homegaz.presentation.ui.pages.navigation
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
@@ -87,7 +93,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         }
 
         // Home
-        composable(Screen.Home.route) {
+        composable(
+            Screen.Home.route,
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(1500, easing = EaseIn))
+            }
+        ) {
             MainScreen(
                 navController   = navController,
                 locationGranted = locationGranted,
@@ -104,7 +115,10 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
         composable(
             route     = "${Screen.Home.route}/{initialTab}",
-            arguments = listOf(navArgument("initialTab") { type = NavType.StringType })
+            arguments = listOf(navArgument("initialTab") { type = NavType.StringType }),
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(1500, easing = EaseIn))
+            }
         ) { back ->
             val initialTab = back.arguments?.getString("initialTab") ?: Tab.HOME.label
             MainScreen(
@@ -125,6 +139,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         composable(
             route     = "${Screen.LocationPermission.route}/{pointId}",
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
+
+
         ) { back ->
             val pId = back.arguments?.getString("pointId")
             LocationPermissionScreen(
@@ -140,7 +156,15 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
         composable(
             route     = Screen.DistributorDetail.route,
-            arguments = listOf(navArgument("pointId") { type = NavType.StringType })
+            arguments = listOf(navArgument("pointId") { type = NavType.StringType }),
+            enterTransition = {
+                fadeIn(animationSpec = tween(1500, easing = EaseIn)) +
+                        scaleIn(initialScale = 0.92f, animationSpec = tween(600, easing = EaseIn))
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(1500, easing = EaseIn)) +
+                        scaleOut(targetScale = 0.92f, animationSpec = tween(600, easing = EaseIn))
+            }
         ) { back ->
             val pointId = back.arguments?.getString("pointId")
             val product = DistributorProduct(brand = "SCTM", weight = "12,5kg", unitPrice = 7500)
