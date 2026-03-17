@@ -1,11 +1,11 @@
 package cm.horion.homegaz.presentation.state
 
-import cm.horion.homegaz.domain.model.home.DistributionPoint
+import cm.horion.homegaz.domain.model.home.DistributorPoint
 
 data class HomeUiState(
-    val allPoints          : List<DistributionPoint> = emptyList(),
-    val filteredPoints     : List<DistributionPoint> = emptyList(),
-    val selectedPoint      : DistributionPoint?      = null,
+    val allPoints          : List<DistributorPoint> = emptyList(),
+    val filteredPoints     : List<DistributorPoint> = emptyList(),
+    val selectedPoint      : DistributorPoint?      = null,
 
     val selectedDistributor: String  = "Tous",
     val selectedDistance   : String  = "5 km",

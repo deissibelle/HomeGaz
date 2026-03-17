@@ -8,7 +8,7 @@
     <!-- Onboarding -->
     <string name="onboarding_skip">Passer</string>
     <string name="onboarding_back">Retour</string>
-    <string name="onboarding_next">Suivant</string>
+    <string name="next">Suivant</string>
     <string name="onboarding_finish">C\'est Parti</string>
 
     <string name="onboarding_title_1">Trouvez votre gaz maintenant</string>

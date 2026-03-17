@@ -2,8 +2,8 @@ package cm.horion.homegaz.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.horion.homegaz.domain.model.home.DistributionPoint
-import cm.horion.homegaz.domain.usecase.GetDistributionPointsUseCase
+import cm.horion.homegaz.domain.model.home.DistributorPoint
+import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.presentation.state.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 class HomeViewModel(
-    private val getDistributionPointsUseCase: GetDistributionPointsUseCase
+    private val getDistributorPointsUseCase: GetDistributorPointsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -25,7 +25,7 @@ class HomeViewModel(
     private fun loadPoints() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-            getDistributionPointsUseCase().collect { points ->
+            getDistributorPointsUseCase().collect { points ->
                 _uiState.update { state ->
                     state.copy(
                         allPoints      = points,
@@ -67,7 +67,7 @@ class HomeViewModel(
     }
 
 
-    fun onPointSelected(point: DistributionPoint) {
+    fun onPointSelected(point: DistributorPoint) {
         _uiState.update { it.copy(selectedPoint = point) }
     }
 
@@ -93,9 +93,9 @@ class HomeViewModel(
 
 
     private fun applyFilters(
-        points: List<DistributionPoint>,
+        points: List<DistributorPoint>,
         state : HomeUiState
-    ): List<DistributionPoint> {
+    ): List<DistributorPoint> {
         val lat   = state.userLat
         val lng   = state.userLng
         val maxKm = state.selectedDistance

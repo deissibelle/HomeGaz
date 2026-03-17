@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.home.DistributionPoint
+import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -16,9 +16,9 @@ import com.google.maps.android.compose.*
 
 @Composable
 fun InteractiveMap(
-    points          : List<DistributionPoint>,
-    selectedPoint   : DistributionPoint?,
-    onPointClick    : (DistributionPoint) -> Unit,
+    points          : List<DistributorPoint>,
+    selectedPoint   : DistributorPoint?,
+    onPointClick    : (DistributorPoint) -> Unit,
     onDismissPopup  : () -> Unit,
     locationGranted : Boolean = false,
     userLat         : Double? = null,

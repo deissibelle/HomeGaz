@@ -9,7 +9,7 @@ data class UiMarker(
     val longitude: Double
 )
 
-fun DistributionPoint.toUiMarker() = UiMarker(
+fun DistributorPoint.toUiMarker() = UiMarker(
     id = id,
     title = name,
     snippet   = distributor,

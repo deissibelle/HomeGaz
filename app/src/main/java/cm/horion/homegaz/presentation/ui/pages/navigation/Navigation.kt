@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cm.horion.homegaz.domain.model.common.Screen
-import cm.horion.homegaz.domain.model.distributor.DistributorProduct
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
@@ -31,28 +30,33 @@ import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
+import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import com.google.android.gms.location.LocationServices
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
-    val navController       = rememberNavController()
-    val context             = LocalContext.current
+    val navController = rememberNavController()
+    val context = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
 
-    //Location
+    // Location
     var locationGranted by remember { mutableStateOf(false) }
     var returnedPointId by remember { mutableStateOf<String?>(null) }
     var returnedLat     by remember { mutableStateOf<Double?>(null) }
     var returnedLng     by remember { mutableStateOf<Double?>(null) }
 
-    //Order state
-    var currentProduct      by remember { mutableStateOf(DistributorProduct("", "", 0)) }
+    //  Order state
+
+    var currentBrand        by remember { mutableStateOf("") }
+    var currentWeight       by remember { mutableStateOf("") }
+    var currentUnitPrice    by remember { mutableIntStateOf(0) }
     var currentQuantity     by remember { mutableIntStateOf(1) }
     var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
-    // Helpers
+    //Helpers
     fun fetchLocationAndGoHome(pId: String?) {
         LocationServices.getFusedLocationProviderClient(context)
             .lastLocation
@@ -81,7 +85,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         else Screen.Onboarding.route
     ) {
 
-        // Onboarding
+        //  Onboarding
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
                 onFinish = {
@@ -92,7 +96,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Home
+        //  Home
         composable(
             Screen.Home.route,
             popEnterTransition = {
@@ -136,11 +140,10 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        // Location Permission
         composable(
             route     = "${Screen.LocationPermission.route}/{pointId}",
             arguments = listOf(navArgument("pointId") { type = NavType.StringType })
-
-
         ) { back ->
             val pId = back.arguments?.getString("pointId")
             LocationPermissionScreen(
@@ -154,6 +157,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        //  Distributor Detail
         composable(
             route     = Screen.DistributorDetail.route,
             arguments = listOf(navArgument("pointId") { type = NavType.StringType }),
@@ -166,27 +170,36 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                         scaleOut(targetScale = 0.92f, animationSpec = tween(600, easing = EaseIn))
             }
         ) { back ->
-            val pointId = back.arguments?.getString("pointId")
-            val product = DistributorProduct(brand = "SCTM", weight = "12,5kg", unitPrice = 7500)
+            val pointId = back.arguments?.getString("pointId") ?: return@composable
+
+
+            val homeViewModel: HomeViewModel = koinViewModel()
+            val homeState by homeViewModel.uiState.collectAsState()
+            val point = homeState.allPoints.find { it.id == pointId } ?: return@composable
+
             DistributorPointDetailScreen(
-                product     = product,
+                point       = point,
                 onBackClick = { navController.popBackStack() },
                 onNextClick = { quantity, option ->
-                    currentProduct  = product
-                    currentQuantity = quantity
-                    currentDelivery = option
+                    // On mémorise uniquement ce dont PaymentScreen a besoin
+                    currentBrand     = point.distributor
+                    currentWeight    = point.weight
+                    currentUnitPrice = point.priceXaf
+                    currentQuantity  = quantity
+                    currentDelivery  = option
                     navController.navigate(Screen.Payment.route)
                 }
             )
         }
 
+        //  Payment
         composable(Screen.Payment.route) {
             PaymentScreen(
-                brand          = currentProduct.brand,
-                weight         = currentProduct.weight,
+                brand          = currentBrand,
+                weight         = currentWeight,
                 quantity       = currentQuantity,
                 deliveryOption = currentDelivery,
-                unitPrice      = currentProduct.unitPrice,
+                unitPrice      = currentUnitPrice,
                 onBackClick    = { navController.popBackStack() },
                 onNextClick    = { summary ->
                     currentOrderSummary = summary
@@ -195,7 +208,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
-        // Confirmation
+        //  Confirmation
         composable(Screen.Confirmation.route) {
             val summary = currentOrderSummary ?: return@composable
             ConfirmationScreen(
@@ -215,6 +228,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        // Payment Initiated
         composable(Screen.PaymentInitiated.route) {
             PaymentInitiatedScreen(
                 paymentMethod = currentOrderSummary?.paymentMethod ?: PaymentMethod.ORANGE_MONEY,
@@ -226,6 +240,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             )
         }
 
+        //Payment Success
         composable(Screen.PaymentSuccess.route) {
             PaymentSuccessScreen(
                 onCloseClick        = {

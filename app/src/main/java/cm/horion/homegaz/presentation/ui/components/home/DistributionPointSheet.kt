@@ -18,11 +18,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.home.DistributionPoint
+import cm.horion.homegaz.domain.model.home.DistributorPoint
 
 @Composable
 fun DistributionPointSheet(
-    point: DistributionPoint,
+    point: DistributorPoint,
     onBuyClick: () -> Unit = {},
     onRouteClick: () -> Unit = {}
 ) {

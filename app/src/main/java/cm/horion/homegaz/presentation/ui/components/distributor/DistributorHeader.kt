@@ -24,7 +24,8 @@ import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
 @Composable
 fun DistributorHeader(
-    title: String = "Algo Gaz",
+    title: String,
+    logoRes    : Int?  = null,
     onBackClick: () -> Unit
 ) {
     Box(
@@ -65,21 +66,21 @@ fun DistributorHeader(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.distributor_logo),
-                contentDescription = null,
+                painter = painterResource(id = logoRes ?: R.drawable.distributor_logo),
+                contentDescription = title,
                 modifier = Modifier.size(69.dp),
                 contentScale = ContentScale.Fit
             )
         }
 
         Text(
-            text = title,
+            text     = title,
             modifier = Modifier.padding(top = 189.dp, start = 97.dp),
-            style = TextStyle(
+            style    = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.primary,
+                fontSize   = 20.sp,
+                color      = MaterialTheme.colorScheme.primary,
                 lineHeight = 23.4.sp
             )
         )

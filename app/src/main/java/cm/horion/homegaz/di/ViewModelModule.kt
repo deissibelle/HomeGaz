@@ -1,5 +1,6 @@
 package cm.horion.homegaz.di
 
+import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.presentation.viewmodel.LocationViewModel
 import cm.horion.homegaz.presentation.viewmodel.OnboardingViewModel
@@ -10,4 +11,5 @@ fun viewModelModule() = module {
     viewModel { OnboardingViewModel(get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { LocationViewModel(get()) }
+    viewModel { DistributorDetailViewModel(get()) }
 }

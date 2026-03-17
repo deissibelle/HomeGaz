@@ -139,7 +139,7 @@ fun OnboardingScreen(
                         text = if (isLastPage)
                             stringResource(R.string.onboarding_finish)
                         else
-                            stringResource(R.string.onboarding_next),
+                            stringResource(R.string.next),
                         icon = if (!isLastPage)
                             Icons.AutoMirrored.Filled.ArrowForward
                         else null,
