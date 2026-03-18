@@ -1,6 +1,7 @@
 package cm.horion.homegaz.di
 
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
+import cm.horion.homegaz.domain.usecase.BuildOrderSummaryUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorDetailUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.domain.usecase.RequestLocationPermissionUseCase
@@ -16,4 +17,5 @@ fun dataModule() = module {
     factory { GetDistributorPointsUseCase() }
     factory { GetDistributorDetailUseCase() }
     factory { RequestLocationPermissionUseCase() }
+    factory { BuildOrderSummaryUseCase() }
 }
