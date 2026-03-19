@@ -1,6 +1,7 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,8 +11,10 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.compose.*
 
 @Composable
@@ -24,6 +27,7 @@ fun InteractiveMap(
     userLat         : Double? = null,
     userLng         : Double? = null,
     userPhotoUrl    : String? = null,
+    routePoints     : List<LatLng> = emptyList(),
     onRecenterClick : () -> Unit = {},
     modifier        : Modifier = Modifier
 ) {
@@ -56,29 +60,28 @@ fun InteractiveMap(
     Box(modifier = modifier.fillMaxSize()) {
 
         GoogleMap(
-            modifier            = Modifier.fillMaxSize(),
+            modifier            = modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties          = MapProperties(
-                isMyLocationEnabled = false,
-                mapStyleOptions     = mapStyle
-            ),
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled     = false,
-                myLocationButtonEnabled = false
-            ),
-            onMapClick = { onDismissPopup() }
+            properties          = MapProperties(isMyLocationEnabled = false, mapStyleOptions = mapStyle),
+            uiSettings          = MapUiSettings(zoomControlsEnabled = false, myLocationButtonEnabled = false),
+            onMapClick          = { onDismissPopup() }
         ) {
+            if (routePoints.isNotEmpty()) {
+                Polyline(
+                    points = routePoints,
+                    color = MaterialTheme.colorScheme.primary,
+                    width = 12f,
+                    jointType = JointType.ROUND,
+                    startCap = RoundCap(),
+                    endCap = RoundCap()
+                )
+            }
             points.forEach { point ->
                 MarkerComposable(
-                    state   = rememberMarkerState(
-                        position = LatLng(point.latitude, point.longitude)
-                    ),
+                    state = rememberMarkerState(position = LatLng(point.latitude, point.longitude)),
                     onClick = { onPointClick(point); true }
                 ) {
-                    DistributorMarker(
-                        name       = point.name,
-                        isSelected = point.id == selectedPoint?.id
-                    )
+                    DistributorMarker(name = point.name, isSelected = point.id == selectedPoint?.id)
                 }
             }
 

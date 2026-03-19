@@ -14,9 +14,9 @@ import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
 import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
 import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
-import cm.horion.homegaz.utils.launchGoogleMapsNavigation
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.platform.LocalContext
+import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeScreen(
@@ -47,6 +47,7 @@ fun HomeScreen(
             points          = uiState.filteredPoints,
             selectedPoint   = uiState.selectedPoint,
             locationGranted = uiState.locationGranted,
+            routePoints     = uiState.routePolyline,
             userLat         = uiState.userLat,
             userLng         = uiState.userLng,
             userPhotoUrl    = uiState.userPhotoUrl,
@@ -81,10 +82,8 @@ fun HomeScreen(
                 DistributionPointSheet(
                     point        = uiState.selectedPoint!!,
                     onBuyClick   = { onBuyClick(uiState.selectedPoint!!.id) },
-                    onRouteClick = { launchGoogleMapsNavigation(
-                        latitude = uiState.selectedPoint!!.latitude,
-                        longitude = uiState.selectedPoint!!.longitude,
-                        context = context
+                    onRouteClick = { viewModel.calculateRoute(
+                        LatLng(uiState.selectedPoint!!.latitude, uiState.selectedPoint!!.longitude)
                     ) }
                 )
             }
