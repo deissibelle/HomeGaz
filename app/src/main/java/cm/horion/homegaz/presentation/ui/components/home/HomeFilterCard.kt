@@ -6,9 +6,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.presentation.ui.components.common.CustomDropdown
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
+import cm.horion.homegaz.R
 
 @Composable
 fun HomeFilterCard(
@@ -66,7 +68,7 @@ fun HomeFilterCard(
                 )
                 Spacer(Modifier.width(12.dp))
                 HomeGazButton(
-                    text     = "Actualiser",
+                    text     = stringResource(R.string.home_btn_refresh),
                     onClick  = onRefresh,
                     modifier = Modifier.weight(1f)
                 )

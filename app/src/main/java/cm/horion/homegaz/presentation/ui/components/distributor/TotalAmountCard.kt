@@ -10,10 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.R
+
 
 @Composable
 fun TotalAmountCard(
@@ -33,12 +36,12 @@ fun TotalAmountCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Montant total:",
+                text = stringResource(R.string.total_amount),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.primary
                 )
             )
 
@@ -50,7 +53,7 @@ fun TotalAmountCard(
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.primary
                 )
             )
         }

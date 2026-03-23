@@ -12,17 +12,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.R
 
 
 @Composable
 fun PaymentTopBar(
-    title      : String = "Paiement",
+    title      : String = stringResource(R.string.payment_title),
     onBackClick: () -> Unit
 ) {
     Box(
@@ -58,7 +60,7 @@ fun PaymentTopBar(
         ) {
             Icon(
                 imageVector        = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Retour",
+                contentDescription = stringResource(R.string.back),
                 tint               = MaterialTheme.colorScheme.primary,
                 modifier           = Modifier.size(100.dp)
             )

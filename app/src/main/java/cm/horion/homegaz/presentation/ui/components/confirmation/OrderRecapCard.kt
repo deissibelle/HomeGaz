@@ -1,13 +1,8 @@
 package cm.horion.homegaz.presentation.ui.components.confirmation
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Inventory2
-import androidx.compose.material.icons.outlined.LocalShipping
-import androidx.compose.material.icons.outlined.Payment
-import androidx.compose.material.icons.outlined.Scale
-import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,21 +16,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.distributor.ProductInfoRow
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 
-
-
 @Composable
 fun OrderRecapCard(summary: OrderSummary) {
     val borderColor = MaterialTheme.colorScheme.outlineVariant
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,13 +61,31 @@ fun OrderRecapCard(summary: OrderSummary) {
             }
             .padding(vertical = 4.dp)
     ) {
-        ProductInfoRow(label = "Marque",   value = summary.brand,               icon = Icons.Outlined.Settings)
-        ProductInfoRow(label = "Poids",    value = summary.weight,              icon = Icons.Outlined.Scale)
-        ProductInfoRow(label = "Quantité", value = summary.quantity.toString(), icon = Icons.Outlined.Inventory2)
         ProductInfoRow(
-            label = "Option",
-            value = if (summary.deliveryOption == DeliveryOption.LIVRAISON) "Livraison" else "Retrait",
-            icon  = Icons.Outlined.LocalShipping
+            label = stringResource(R.string.label_brand),
+            value = summary.brand,
+            icon = Icons.Outlined.Settings
+        )
+        ProductInfoRow(
+            label = stringResource(R.string.label_weight),
+            value = summary.weight,
+            icon = Icons.Outlined.Scale
+        )
+        ProductInfoRow(
+            label = stringResource(R.string.label_quantity),
+            value = summary.quantity.toString(),
+            icon = Icons.Outlined.Inventory2
+        )
+
+        val optionLabel = if (summary.deliveryOption == DeliveryOption.LIVRAISON)
+            stringResource(R.string.delivery_option_delivery)
+        else
+            stringResource(R.string.delivery_option_pickup)
+
+        ProductInfoRow(
+            label = stringResource(R.string.label_option),
+            value = optionLabel,
+            icon = Icons.Outlined.LocalShipping
         )
 
         PaymentMethodRow(method = summary.paymentMethod, phone = summary.phoneNumber)
@@ -81,19 +95,19 @@ fun OrderRecapCard(summary: OrderSummary) {
 @Composable
 private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
     val methodLabel = when (method) {
-        PaymentMethod.ORANGE_MONEY -> "Orange Money"
-        PaymentMethod.MOMO         -> "MoMo MTN"
+        PaymentMethod.ORANGE_MONEY -> stringResource(R.string.payment_method_om)
+        PaymentMethod.MOMO         -> stringResource(R.string.payment_method_momo)
     }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(54.dp)
+            .padding(vertical = 12.dp)
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text  = "Mode de paiement",
+            text  = stringResource(R.string.label_payment_method),
             style = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.Light,
@@ -102,7 +116,7 @@ private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
             )
         )
 
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(

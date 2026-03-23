@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +25,8 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.R
+
 
 private val CyanColor    = Color(0xFF00D5E1);
 
@@ -42,9 +45,9 @@ fun PaymentInitiatedScreen(
     val ussd    = ussdCode(paymentMethod)
 
     val steps = listOf(
-        "Attendez l'apparition de la fenêtre USSD",
-        "Si la fenêtre ne s'affiche pas, composez le $ussd en cliquant sur le bouton ci-dessous",
-        "Validez le paiement en tapant votre code secret"
+        stringResource(R.string.payment_step_1),
+        stringResource(R.string.payment_step_2),
+        stringResource(R.string.payment_step_3, ussd)
     )
 
     Column(
@@ -59,7 +62,7 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text  = "Paiement initié",
+            text  =stringResource(R.string.payment_initiated_title),
             style = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -95,7 +98,7 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         HomeGazButton(
-            text     = "Composer $ussd",
+            text     = stringResource(R.string.compose_ussd, ussd),
             onClick  = {
                 val encoded = ussd.replace("#", Uri.encode("#"))
                 val intent  = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$encoded"))

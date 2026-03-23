@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -81,7 +82,7 @@ fun DistributionPointSheet(
                 modifier = Modifier.width(91.dp).height(35.dp),
                 contentPadding = PaddingValues(0.dp)
             ) {
-                Text("Acheter", fontSize = 12.sp, color = Color.White)
+                Text(stringResource(R.string.home_sheet_btn_order), fontSize = 12.sp, color = Color.White)
             }
 
             Spacer(Modifier.height(8.dp))
@@ -94,7 +95,7 @@ fun DistributionPointSheet(
                 modifier = Modifier.width(76.dp).height(24.dp),
                 contentPadding = PaddingValues(0.dp)
             ) {
-                Text("Itinéraire", fontSize = 10.sp, color =  MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.home_sheet_btn_route), fontSize = 10.sp, color =  MaterialTheme.colorScheme.primary)
             }
             Spacer(Modifier.height(12.dp))
         }

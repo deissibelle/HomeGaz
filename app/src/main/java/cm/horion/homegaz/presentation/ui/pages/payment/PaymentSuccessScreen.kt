@@ -13,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.theme.SuccessColor
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.R
+
 
 
 @Composable
@@ -46,7 +48,7 @@ fun PaymentSuccessScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text     = "Paiement réussi",
+                text     = stringResource(R.string.payment_success_title),
                 modifier = Modifier.padding(horizontal = 56.dp),
                 style    = TextStyle(
                     fontFamily = bodyFontFamily,
@@ -67,7 +69,7 @@ fun PaymentSuccessScreen(
             ) {
                 Icon(
                     imageVector        = Icons.Filled.Close,
-                    contentDescription = "Fermer",
+                    contentDescription = stringResource(R.string.close_description),
                     tint               = MaterialTheme.colorScheme.primary,
                     modifier           = Modifier.size(20.dp)
                 )
@@ -101,7 +103,7 @@ fun PaymentSuccessScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text     = "Votre paiement à bien été prit en compte.\nVoir la liste de vos achats dans la section \"Réservations\"",
+                text = stringResource(R.string.payment_success_message),
                 modifier = Modifier.width(294.dp),
                 style    = TextStyle(
                     fontFamily = bodyFontFamily,
@@ -115,7 +117,7 @@ fun PaymentSuccessScreen(
         }
 
         HomeGazButton(
-            text     = "Mes réservations",
+            text     = stringResource(R.string.btn_my_reservations),
             onClick  = onReservationsClick,
             modifier = Modifier
                 .width(269.dp)

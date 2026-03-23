@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 
@@ -29,7 +30,7 @@ fun RecenterButton(
     ) {
         Image(
             painter = painterResource(R.drawable.foundation_target_two),
-            contentDescription = "Recentrer",
+            contentDescription = stringResource(R.string.recenter_btn),
             modifier = Modifier.fillMaxSize()
         )
 

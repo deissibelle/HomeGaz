@@ -82,7 +82,7 @@ fun OnboardingScreen(
             ) {
                 TextButton(onClick = { viewModel.finishOnboarding(onFinish) }) {
                     Text(
-                        text = stringResource(R.string.onboarding_skip),
+                        text = stringResource(R.string.skip),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -120,7 +120,7 @@ fun OnboardingScreen(
                         HomeGazButton(
                             iconBeforeText = true,
                             icon = Icons.AutoMirrored.Filled.ArrowBack,
-                            text = stringResource(R.string.onboarding_back),
+                            text = stringResource(R.string.back),
                             onClick = {
                                 scope.launch {
                                     pagerState.animateScrollToPage(pagerState.currentPage - 1)

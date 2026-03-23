@@ -108,7 +108,7 @@ private fun DistributorDetailContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         WarningNote(
-            message = "Le paiement se fera à la livraison ou au retrait de votre bouteille"
+            message = stringResource(R.string.delivery_warning_note)
         )
 
         Spacer(modifier = Modifier.height(32.dp))

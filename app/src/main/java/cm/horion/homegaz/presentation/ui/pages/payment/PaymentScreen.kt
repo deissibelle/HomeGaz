@@ -107,9 +107,7 @@ private fun PaymentContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         WarningNote(
-            message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
-                    "Ut enim ad minim veniam,"
+            message = stringResource(R.string.payment_warning_note)
         )
 
         Spacer(modifier = Modifier.weight(1f))

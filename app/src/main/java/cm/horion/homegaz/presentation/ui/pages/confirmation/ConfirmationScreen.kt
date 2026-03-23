@@ -9,7 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import cm.horion.homegaz.R
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
@@ -34,7 +35,7 @@ fun ConfirmationScreen(
             .verticalScroll(rememberScrollState())
     ) {
         PaymentTopBar(
-            title       = "Confirmation de paiement",
+            title       = stringResource(R.string.confirmation_title),
             onBackClick = onBackClick
         )
 
@@ -49,9 +50,7 @@ fun ConfirmationScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         WarningNote(
-            message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
-                    "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. " +
-                    "Ut enim ad minim veniam,"
+            message = stringResource(R.string.confirmation_warning_note)
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -65,7 +64,7 @@ fun ConfirmationScreen(
             verticalAlignment     = Alignment.CenterVertically
         ) {
             HomeGazButton(
-                text         = "Modifier",
+                text         = stringResource(R.string.btn_modify),
                 onClick      = onModifyClick,
                 isOutlined   = true,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -73,7 +72,7 @@ fun ConfirmationScreen(
             )
 
             HomeGazButton(
-                text     = "Confirmer",
+                text     = stringResource(R.string.btn_confirm),
                 onClick  = onConfirmClick,
                 modifier = Modifier.weight(1f)
             )

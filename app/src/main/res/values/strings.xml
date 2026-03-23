@@ -6,8 +6,8 @@
     <string name="splash_logo_description">Logo HomeGaz</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_skip">Passer</string>
-    <string name="onboarding_back">Retour</string>
+    <string name="skip">Passer</string>
+    <string name="back">Retour</string>
     <string name="next">Suivant</string>
     <string name="onboarding_finish">C\'est Parti</string>
 
@@ -114,5 +114,40 @@
     <string name="advices_daily_3">Vérifier que la flamme est bien bleue.</string>
     <string name="advices_daily_4">Installer un détecteur de gaz si possible.</string>
     <string name="advices_daily_5">Avoir un petit extincteur dans la cuisine.</string>
+
+    //payment Screen
+    <string name="payment_title">Paiement</string>
+    <string name="phone_number_label">Numéro de téléphone</string>
+    <string name="payment_method_select">Choisir le mode de paiement</string>
+
+    <string name="payment_warning_note">Une demande de confirmation sera envoyée sur votre téléphone. Veuillez valider la transaction en saisissant votre code secret dès que le message système s\'affiche.</string>
+    <string name="compose_ussd">Composer le %1$s</string>
+    <string name="payment_initiated_title">Paiement initié</string>
+    <string name="payment_step_1">Une demande de paiement va apparaître sur votre téléphone.</string>
+    <string name="payment_step_2">Saisissez votre code secret pour confirmer l\'achat.</string>
+    <string name="payment_step_3">Si la fenêtre ne s\'affiche pas, cliquez sur le bouton ci-dessous pour composer le %1$s.</string>
+    <string name="payment_success_title">Paiement réussi</string>
+    <string name="payment_success_message">Votre paiement a bien été pris en compte.\nVoir la liste de vos achats dans la section \"Réservations\"</string>
+    <string name="btn_my_reservations">Mes réservations</string>
+    <string name="close_description">Fermer</string>
+    <string name="label_brand">Marque</string>
+    <string name="label_weight">Poids</string>
+    <string name="delivery_warning_note">Le paiement se fera à la livraison ou au retrait de votre bouteille.</string>
+    <string name="confirmation_title">Confirmation de paiement</string>
+    <string name="confirmation_warning_note">En cliquant sur confirmer, vous initiez la demande de paiement. Assurez-vous d\'avoir votre téléphone à portée de main pour valider la transaction.</string>
+    <string name="btn_modify">Modifier</string>
+    <string name="btn_confirm">Confirmer</string>
+    <string name="label_quantity">Quantité</string>
+    <string name="label_option">Option</string>
+    <string name="label_payment_method">Mode de paiement</string>
+    <string name="delivery_option_delivery">Livraison</string>
+    <string name="delivery_option_pickup">Retrait</string>
+    <string name="payment_method_om">Orange Money</string>
+    <string name="payment_method_momo">MTN MoMo</string>
+    <string name="recenter_btn">Recentrer</string>
+    <string name="total_amount">Montant Total</string>
+
+
+
 
 </resources>
