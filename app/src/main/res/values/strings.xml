@@ -119,7 +119,6 @@
     <string name="payment_title">Paiement</string>
     <string name="phone_number_label">Numéro de téléphone</string>
     <string name="payment_method_select">Choisir le mode de paiement</string>
-
     <string name="payment_warning_note">Une demande de confirmation sera envoyée sur votre téléphone. Veuillez valider la transaction en saisissant votre code secret dès que le message système s\'affiche.</string>
     <string name="compose_ussd">Composer le %1$s</string>
     <string name="payment_initiated_title">Paiement initié</string>
@@ -143,11 +142,7 @@
     <string name="delivery_option_delivery">Livraison</string>
     <string name="delivery_option_pickup">Retrait</string>
     <string name="payment_method_om">Orange Money</string>
-    <string name="payment_method_momo">MTN MoMo</string>
+    <string name="payment_method_momo" translatable="false">MTN MoMo</string>
     <string name="recenter_btn">Recentrer</string>
     <string name="total_amount">Montant Total</string>
-
-
-
-
 </resources>

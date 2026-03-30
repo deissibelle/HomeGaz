@@ -37,7 +37,6 @@ fun OnboardingScreen(
     onFinish: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
-    // Initialisation des pages dans le ViewModel
     val onboardingPages = listOf(
         Onboarding(
             title = stringResource(R.string.onboarding_title_1),

@@ -1,11 +1,11 @@
 <resources>
-    <style name="Theme.HomeGaz" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@android:color/white</item>
+    <style name="Theme.HomeGaz" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">#001F2B</item>
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowAnimationStyle">@null</item>
     </style>
 
-    <style name="Theme.App.Starting" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.App.Starting" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>

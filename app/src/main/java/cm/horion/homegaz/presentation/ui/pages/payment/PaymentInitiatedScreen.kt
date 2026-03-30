@@ -33,7 +33,7 @@ private val CyanColor    = Color(0xFF00D5E1);
 
 private fun ussdCode(method: PaymentMethod) = when (method) {
     PaymentMethod.ORANGE_MONEY -> "#150*50#"
-    PaymentMethod.MOMO         -> "#126#"
+    PaymentMethod.MOMO         -> "*126#"
 }
 
 @Composable
@@ -100,9 +100,15 @@ fun PaymentInitiatedScreen(
         HomeGazButton(
             text     = stringResource(R.string.compose_ussd, ussd),
             onClick  = {
-                val encoded = ussd.replace("#", Uri.encode("#"))
-                val intent  = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$encoded"))
-                context.startActivity(intent)
+                val encodedUssd = Uri.encode(ussd)
+                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$encodedUssd"))
+
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$encodedUssd"))
+                    context.startActivity(dialIntent)
+                }
             },
             modifier = Modifier
                 .width(320.dp)
