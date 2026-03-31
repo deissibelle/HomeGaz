@@ -84,8 +84,6 @@ dependencies {
     //koin
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
-    //splashscreen
-    implementation(libs.androidx.core.splashscreen)
     // Bibliothèque Compose pour Google Maps
     implementation(libs.maps.compose)
     // SDK Google Maps de base
