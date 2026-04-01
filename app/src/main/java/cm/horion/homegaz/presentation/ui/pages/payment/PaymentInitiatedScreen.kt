@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.pages.payment
 
-
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -27,12 +26,10 @@ import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
 
-
-private val CyanColor    = Color(0xFF00D5E1);
-
+private val CyanColor = Color(0xFF00D5E1)
 
 private fun ussdCode(method: PaymentMethod) = when (method) {
-    PaymentMethod.ORANGE_MONEY -> "#150*50#"
+    PaymentMethod.ORANGE_MONEY -> "*150*50#"   // sans le # initial qui cause des soucis d'encodage
     PaymentMethod.MOMO         -> "*126#"
 }
 
@@ -62,7 +59,7 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text  =stringResource(R.string.payment_initiated_title),
+            text  = stringResource(R.string.payment_initiated_title),
             style = TextStyle(
                 fontFamily = bodyFontFamily,
                 fontWeight = FontWeight.SemiBold,
@@ -98,15 +95,16 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         HomeGazButton(
-            text     = stringResource(R.string.compose_ussd, ussd),
-            onClick  = {
-                val encodedUssd = Uri.encode(ussd)
-                val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$encodedUssd"))
+            text    = stringResource(R.string.compose_ussd, ussd),
+            onClick = {
 
+                val encodedUssd = ussd.replace("#", "%23")
+                val uri = Uri.parse("tel:$encodedUssd")
+                val intent = Intent(Intent.ACTION_CALL, uri)
                 try {
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$encodedUssd"))
+                    val dialIntent = Intent(Intent.ACTION_DIAL, uri)
                     context.startActivity(dialIntent)
                 }
             },
@@ -117,14 +115,13 @@ fun PaymentInitiatedScreen(
     }
 }
 
-
 @Composable
 private fun StepRow(number: Int, text: String) {
     Row(
-        modifier            = Modifier
+        modifier              = Modifier
             .fillMaxWidth()
             .padding(10.dp),
-        verticalAlignment   = Alignment.CenterVertically,
+        verticalAlignment     = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
@@ -139,7 +136,7 @@ private fun StepRow(number: Int, text: String) {
                     fontFamily = bodyFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 20.sp,
-                    color      =  MaterialTheme.colorScheme.primary,
+                    color      = MaterialTheme.colorScheme.primary,
                     textAlign  = TextAlign.Center
                 )
             )

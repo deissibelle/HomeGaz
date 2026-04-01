@@ -62,4 +62,46 @@ class PaymentViewModel(
             unitPrice      = state.unitPrice
         )
     }
+
+
+
+    private val ORANGE_PREFIXES = listOf("69", "65", "655", "656", "657", "658", "659")
+    private val MTN_PREFIXES    = listOf("67", "68", "650", "651", "652", "653", "654")
+
+
+    fun normalizePhone(phone: String): String {
+        val digits = phone.filter { it.isDigit() }
+        return when {
+            digits.startsWith("237") && digits.length == 12 -> digits.drop(3)
+            else -> digits
+        }
+    }
+
+    fun isPhoneValidForMethod(phone: String, method: PaymentMethod): Boolean {
+        val normalized = normalizePhone(phone)
+        if (normalized.length != 9) return false
+
+        val prefix2 = normalized.take(2)   // ex: "69"
+        val prefix3 = normalized.take(3)   // ex: "655"
+
+        return when (method) {
+            PaymentMethod.ORANGE_MONEY ->
+                ORANGE_PREFIXES.any { normalized.startsWith(it) }
+            PaymentMethod.MOMO ->
+                MTN_PREFIXES.any { normalized.startsWith(it) }
+        }
+    }
+
+
+    fun phoneErrorMessage(phone: String, method: PaymentMethod): String? {
+        if (phone.isBlank()) return null  // pas d'erreur si champ vide (géré par isFormValid)
+        val normalized = normalizePhone(phone)
+        if (normalized.length != 9) return "Numéro invalide (9 chiffres requis)"
+        return if (!isPhoneValidForMethod(phone, method)) {
+            when (method) {
+                PaymentMethod.ORANGE_MONEY -> "Ce numéro n'est pas un numéro Orange"
+                PaymentMethod.MOMO         -> "Ce numéro n'est pas un numéro MTN"
+            }
+        } else null
+    }
 }

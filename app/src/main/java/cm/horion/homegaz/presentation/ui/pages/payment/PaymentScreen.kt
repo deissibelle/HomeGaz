@@ -24,7 +24,6 @@ import cm.horion.homegaz.presentation.viewmodel.PaymentViewModel
 import org.koin.androidx.compose.koinViewModel
 import cm.horion.homegaz.R
 
-
 @Composable
 fun PaymentScreen(
     brand          : String,
@@ -48,22 +47,25 @@ fun PaymentScreen(
 
     val uiState by viewModel.uiState.collectAsState()
 
+    val phoneError = viewModel.phoneErrorMessage(uiState.phoneNumber, uiState.selectedMethod)
+
     PaymentContent(
-        uiState                = uiState,
-        onBackClick            = onBackClick,
-        onNextClick            = {
+        uiState               = uiState,
+        phoneError            = phoneError,
+        onBackClick           = onBackClick,
+        onNextClick           = {
             val summary = viewModel.buildSummary() ?: return@PaymentContent
             onNextClick(summary)
         },
-        onPaymentMethodChange  = viewModel::onPaymentMethodChange,
-        onPhoneNumberChange    = viewModel::onPhoneNumberChange
+        onPaymentMethodChange = viewModel::onPaymentMethodChange,
+        onPhoneNumberChange   = viewModel::onPhoneNumberChange
     )
 }
-
 
 @Composable
 private fun PaymentContent(
     uiState               : PaymentUiState,
+    phoneError            : String?,
     onBackClick           : () -> Unit,
     onNextClick           : () -> Unit,
     onPaymentMethodChange : (cm.horion.homegaz.domain.model.distributor.PaymentMethod) -> Unit,
@@ -96,8 +98,9 @@ private fun PaymentContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         PhoneNumberField(
-            value         = uiState.phoneNumber,
-            onValueChange = onPhoneNumberChange
+            value = uiState.phoneNumber,
+            onValueChange = onPhoneNumberChange,
+            errorMessage = phoneError
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -115,7 +118,7 @@ private fun PaymentContent(
         HomeGazButton(
             text     = stringResource(R.string.next),
             onClick  = onNextClick,
-            enabled  = uiState.isFormValid,
+            enabled  = uiState.isFormValid && phoneError == null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)

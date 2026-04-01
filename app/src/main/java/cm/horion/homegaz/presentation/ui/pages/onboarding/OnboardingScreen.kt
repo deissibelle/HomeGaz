@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -27,8 +29,6 @@ import cm.horion.homegaz.domain.model.onboarding.Onboarding
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.onboarding.PagerIndicator
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import cm.horion.homegaz.presentation.viewmodel.OnboardingViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -75,7 +75,7 @@ fun OnboardingScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(48.dp)
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.CenterEnd
             ) {
@@ -88,11 +88,11 @@ fun OnboardingScreen(
                     )
                 }
             }
-            
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) { index ->
                 OnboardingPage(page = pages[index])
             }
@@ -100,7 +100,7 @@ fun OnboardingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                    .padding(horizontal = 24.dp, vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 PagerIndicator(
@@ -108,7 +108,7 @@ fun OnboardingScreen(
                     currentPage = pagerState.currentPage
                 )
 
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -164,17 +164,19 @@ fun OnboardingPage(page: Onboarding) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "logo",
             modifier = Modifier
-                .padding(vertical = 20.dp)
-                .sizeIn(maxWidth = 200.dp, maxHeight = 50.dp),
+                .padding(bottom = 24.dp)
+                .fillMaxWidth(0.7f)
+                .heightIn(min = 60.dp, max = 90.dp),
             contentScale = ContentScale.Fit
         )
 
@@ -182,11 +184,12 @@ fun OnboardingPage(page: Onboarding) {
             painter = painterResource(id = page.image),
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth(0.7f)
+                .fillMaxWidth(0.90f)
                 .aspectRatio(1f),
             contentScale = ContentScale.Fit
         )
-        Spacer(modifier = Modifier.height(32.dp))
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = page.title,
@@ -196,7 +199,7 @@ fun OnboardingPage(page: Onboarding) {
             color = MaterialTheme.colorScheme.primary,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = page.description,
@@ -205,5 +208,7 @@ fun OnboardingPage(page: Onboarding) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 24.sp
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
