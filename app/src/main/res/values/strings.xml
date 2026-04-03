@@ -145,4 +145,41 @@
     <string name="payment_method_momo" translatable="false">MTN MoMo</string>
     <string name="recenter_btn">Recentrer</string>
     <string name="total_amount">Montant Total</string>
+
+
+    <!-- Profil Gaz -->
+    <string name="gaz_profile_title">Mon Profil Gaz</string>
+    <string name="gaz_profile_subtitle">Ajoutez les informations de votre bouteille de gaz que vous utilisez.</string>
+
+    <string name="gaz_profile_capacity">Capacité (kg)</string>
+    <string name="gaz_profile_capacity_6">6 kg</string>
+    <string name="gaz_profile_capacity_12">12 kg</string>
+    <string name="gaz_profile_capacity_38">38 kg</string>
+
+    <string name="gaz_profile_brand">Marque</string>
+    <string name="gaz_profile_brand_hint">Ex : Total, Tradex, SCTM…</string>
+
+    <string name="gaz_profile_location">Lieu d\'utilisation</string>
+    <string name="gaz_profile_location_hint">Ex : Yaoundé, Bastos</string>
+    <string name="gaz_profile_location_detect">Détecter ma position</string>
+
+    <string name="gaz_profile_consumption">Consommation moyenne</string>
+    <string name="gaz_profile_consumption_half">Environ ½ bouteille / mois</string>
+    <string name="gaz_profile_consumption_1">Environ 1 bouteille / mois</string>
+    <string name="gaz_profile_consumption_2">Environ 2 bouteilles / mois</string>
+    <string name="gaz_profile_consumption_3">3 bouteilles et plus / mois</string>
+
+    <string name="gaz_profile_photo">Photo</string>
+    <string name="gaz_profile_photo_optional">(optionnel)</string>
+    <string name="gaz_profile_photo_add">+ Ajouter une photo</string>
+    <string name="gaz_profile_photo_desc">Photo de la bouteille</string>
+
+    <string name="gaz_profile_notes">Notes</string>
+    <string name="gaz_profile_notes_hint">Ex : Gaz principalement pour la cuisine…</string>
+
+    <string name="gaz_profile_save">Enregistrer mon profil gaz</string>
+    <string name="gaz_profile_saving">Enregistrement…</string>
+    <string name="gaz_profile_saved">Profil enregistré !</string>
+    <string name="gaz_profile_error_required">Ce champ est obligatoire</string>
+
 </resources>
