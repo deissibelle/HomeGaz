@@ -25,6 +25,7 @@ import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.Tab
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
+import cm.horion.homegaz.presentation.ui.pages.gazprofile.GazProfileScreen
 import cm.horion.homegaz.presentation.ui.pages.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
@@ -255,5 +256,22 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 }
             )
         }
+        composable(
+            route = Screen.GazProfile.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(400, easing = EaseIn)) +
+                        scaleIn(initialScale = 0.96f, animationSpec = tween(400, easing = EaseIn))
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(300, easing = EaseIn)) +
+                        scaleOut(targetScale = 0.96f, animationSpec = tween(300, easing = EaseIn))
+            }
+        ) {
+            GazProfileScreen(
+                onBackClick = { navController.popBackStack() },
+                onSaved     = { navController.popBackStack() }
+            )
+        }
+
     }
 }

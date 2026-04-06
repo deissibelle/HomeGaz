@@ -1,16 +1,21 @@
 package cm.horion.homegaz.di
 
+import cm.horion.homegaz.domain.repository.GazProfileRepository
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.domain.usecase.BuildOrderSummaryUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorDetailUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
+import cm.horion.homegaz.domain.usecase.LoadGazProfileUseCase
 import cm.horion.homegaz.domain.usecase.RequestLocationPermissionUseCase
+import cm.horion.homegaz.domain.usecase.SaveGazProfileUseCase
 import cm.horion.homegaz.domain.usecase.SaveOnboardingExitUseCase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 fun dataModule() = module {
     // Repository
     single { UserPreferencesRepository(androidContext()) }
+    single { GazProfileRepository(androidContext()) }
+
     // Use Cases
     factory { SaveOnboardingExitUseCase(get()) }
 
@@ -18,4 +23,6 @@ fun dataModule() = module {
     factory { GetDistributorDetailUseCase() }
     factory { RequestLocationPermissionUseCase() }
     factory { BuildOrderSummaryUseCase() }
+    factory { SaveGazProfileUseCase(get()) }
+    factory { LoadGazProfileUseCase(get()) }
 }

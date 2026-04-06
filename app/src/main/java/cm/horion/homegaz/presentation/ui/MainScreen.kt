@@ -64,7 +64,7 @@ fun MainScreen(
                 )
                 Tab.RESERVATIONS -> ReservationsScreen()
                 Tab.ADVICES      -> AdvicesScreen()
-                Tab.ACCOUNT      -> AccountScreen()
+                Tab.ACCOUNT      -> AccountScreen(navController = navController)
             }
         }
     }
