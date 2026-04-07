@@ -1,7 +1,10 @@
 package cm.horion.homegaz.presentation.ui.pages.navigation
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,12 +44,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
-    //helper navigate account
-    fun goToAccountTab() {
-        navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-            popUpTo(Screen.Home.route) { inclusive = false }
-        }
-    }
+
+
     // Location
     var locationGranted by remember { mutableStateOf(false) }
     var returnedPointId by remember { mutableStateOf<String?>(null) }
@@ -62,6 +61,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
+    //helper navigate account
+    fun goToAccountTab() {
+        navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+            popUpTo(Screen.Home.route) { inclusive = false }
+        }
+    }
     //Helpers
     fun fetchLocationAndGoHome(pId: String?) {
         LocationServices.getFusedLocationProviderClient(context)
@@ -74,6 +79,23 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 navController.popBackStack(Screen.Home.route, false)
             }
     }
+    // REMOVED @Composable - This is a standard logic function
+    fun openGoogleMapsRoute(context: Context, lat: Double, lng: Double) {
+        val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lng")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+
+        if (mapIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(mapIntent)
+        } else {
+            // Fallback to Google Maps URL
+            val browserIntent = Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://google.com"))
+            context.startActivity(browserIntent)
+        }
+    }
+
+
 
     fun navigateToPermissionOrFetch(pointId: String) {
         val granted = ActivityCompat.checkSelfPermission(
@@ -135,6 +157,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 navController   = navController,
                 locationGranted = locationGranted,
                 pendingPointId  = returnedPointId,
+                onRouteClick    = { lat, lng -> openGoogleMapsRoute(context, lat, lng) },
                 userLat         = returnedLat,
                 userLng         = returnedLng,
                 initialTab      = initialTab,

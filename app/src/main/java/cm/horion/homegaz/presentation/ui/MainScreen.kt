@@ -28,6 +28,7 @@ fun MainScreen(
     onMarkerClick   : (pointId: String) -> Unit = {},
     onRefreshClick  : () -> Unit = {},
     onBuyClick      : (pointId: String) -> Unit = {},
+    onRouteClick    : (lat: Double, lng: Double) -> Unit = { _, _ -> },
     pendingPointId  : String? = null,
     userLat         : Double? = null,
     userLng         : Double? = null,
@@ -52,15 +53,16 @@ fun MainScreen(
         ) {
             when (selectedTab) {
                 Tab.HOME         -> HomeScreen(
-                    onMarkerClick   = onMarkerClick,
-                    onRefreshClick  = onRefreshClick,
-                    onBuyClick      = onBuyClick,
-                    pendingPointId  = pendingPointId,
-                    userLat         = userLat,
-                    userLng         = userLng,
+                    onMarkerClick = onMarkerClick,
+                    onRefreshClick = onRefreshClick,
+                    onBuyClick = onBuyClick,
+                    pendingPointId = pendingPointId,
+                    userLat = userLat,
+                    onRouteClick = onRouteClick ,
+                    userLng = userLng,
                     locationGranted = locationGranted,
-                    locationDenied  = locationDenied,
-                    navController   = navController
+                    locationDenied = locationDenied,
+                    navController = navController
                 )
                 Tab.RESERVATIONS -> ReservationsScreen()
                 Tab.ADVICES      -> AdvicesScreen()

@@ -37,12 +37,7 @@ class HomeViewModel(
         }
     }
 
-    fun calculateRoute(destination: LatLng) {
-        val userLat = _uiState.value.userLat ?: return
-        val userLng = _uiState.value.userLng ?: return
-        val route = listOf(LatLng(userLat, userLng), destination)
-        _uiState.update { it.copy(routePolyline = route) }
-    }
+
 
     fun onLocationGranted(lat: Double?, lng: Double?, pointId: String? = null) {
         _uiState.update { state ->

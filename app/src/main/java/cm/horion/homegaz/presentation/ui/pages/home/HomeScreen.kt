@@ -16,20 +16,20 @@ import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.platform.LocalContext
-import com.google.android.gms.maps.model.LatLng
 
 @Composable
 fun HomeScreen(
-    viewModel       : HomeViewModel = koinViewModel(),
-    navController   : NavController,
-    onMarkerClick   : (pointId: String) -> Unit = {},
-    onRefreshClick  : () -> Unit = {},
-    onBuyClick      : (pointId: String) -> Unit = {},
-    pendingPointId  : String? = null,
-    userLat         : Double? = null,
-    userLng         : Double? = null,
-    locationGranted : Boolean = false,
-    locationDenied  : Boolean = false
+    viewModel: HomeViewModel = koinViewModel(),
+    navController: NavController,
+    onMarkerClick: (String) -> Unit = {},
+    onRefreshClick: () -> Unit = {},
+    onRouteClick: (Double, Double) -> Unit,
+    onBuyClick: (String) -> Unit = {},
+    pendingPointId: String? = null,
+    userLat: Double? = null,
+    userLng: Double? = null,
+    locationGranted: Boolean = false,
+    locationDenied: Boolean = false
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -82,10 +82,12 @@ fun HomeScreen(
                 DistributionPointSheet(
                     point        = uiState.selectedPoint!!,
                     onBuyClick   = { onBuyClick(uiState.selectedPoint!!.id) },
-                    onRouteClick = { viewModel.calculateRoute(
-                        LatLng(uiState.selectedPoint!!.latitude, uiState.selectedPoint!!.longitude)
-                    ) }
-                )
+                    onRouteClick = {
+                        onRouteClick(
+                            uiState.selectedPoint!!.latitude,
+                            uiState.selectedPoint!!.longitude
+                        )
+                    })
             }
         }
 
