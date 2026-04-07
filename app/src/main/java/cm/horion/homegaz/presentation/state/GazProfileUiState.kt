@@ -5,10 +5,6 @@ data class GazProfileUiState(
     val capacityKg  : String  = "",
     val brand  : String  = "",
     val usageLocation: String  = "",
-    val consumption: String  = "",
-    val photoUri: String? = null,
-    val notes: String  = "",
-
     val isSaving        : Boolean = false,
     val isSaved         : Boolean = false,
     val errorMessage    : String? = null
@@ -17,5 +13,4 @@ data class GazProfileUiState(
         get() = capacityKg.isNotBlank()
                 && brand.isNotBlank()
                 && usageLocation.isNotBlank()
-                && consumption.isNotBlank()
 }

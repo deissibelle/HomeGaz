@@ -41,7 +41,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     val navController = rememberNavController()
     val context = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
-
+    //helper navigate account
+    fun goToAccountTab() {
+        navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+            popUpTo(Screen.Home.route) { inclusive = false }
+        }
+    }
     // Location
     var locationGranted by remember { mutableStateOf(false) }
     var returnedPointId by remember { mutableStateOf<String?>(null) }
@@ -268,8 +273,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             }
         ) {
             GazProfileScreen(
-                onBackClick = { navController.popBackStack() },
-                onSaved     = { navController.popBackStack() }
+                onBackClick = { goToAccountTab() },
+                onSaved     = { goToAccountTab() }
             )
         }
 

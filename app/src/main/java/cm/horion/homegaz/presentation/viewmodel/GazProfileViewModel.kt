@@ -34,9 +34,7 @@ class GazProfileViewModel(
                     capacityKg    = profile.capacityKg,
                     brand         = profile.brand,
                     usageLocation = profile.usageLocation,
-                    consumption   = profile.consumption,
-                    photoUri      = profile.photoUri,
-                    notes         = profile.notes ?: ""
+
                 )
             }
         }
@@ -45,9 +43,7 @@ class GazProfileViewModel(
     fun onCapacityChange(value: String)  = _uiState.update { it.copy(capacityKg    = value) }
     fun onBrandChange(value: String)     = _uiState.update { it.copy(brand         = value) }
     fun onLocationChange(value: String)  = _uiState.update { it.copy(usageLocation = value) }
-    fun onConsumptionChange(value: String) = _uiState.update { it.copy(consumption = value) }
-    fun onPhotoUriChange(uri: String?)   = _uiState.update { it.copy(photoUri      = uri)   }
-    fun onNotesChange(value: String)     = _uiState.update { it.copy(notes         = value) }
+
 
     fun saveProfile(onSuccess: () -> Unit = {}) {
         val state = _uiState.value
@@ -61,9 +57,7 @@ class GazProfileViewModel(
                         capacityKg = state.capacityKg,
                         brand = state.brand,
                         usageLocation = state.usageLocation,
-                        consumption = state.consumption,
-                        photoUri = state.photoUri,
-                        notes = state.notes.ifBlank { null }
+
                     )
                 )
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }

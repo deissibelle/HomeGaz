@@ -35,7 +35,7 @@ fun BottomNavBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(100.dp)
             .navigationBarsPadding()
             .background(MaterialTheme.colorScheme.primary),
         horizontalArrangement = Arrangement.SpaceAround,
@@ -61,10 +61,10 @@ fun BottomNavBar(
                 Icon(
                     painter = painterResource(iconRes),
                     contentDescription = item.label,
-                    modifier = Modifier.size(width = 34.dp, height = 34.dp),
+                    modifier = Modifier.size(width = 30.dp, height = 30.dp),
                     tint = contentColor
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(text = item.label, fontSize = 14.sp, color = contentColor)
             }
         }
