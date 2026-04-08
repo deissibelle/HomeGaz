@@ -79,21 +79,28 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 navController.popBackStack(Screen.Home.route, false)
             }
     }
-    // REMOVED @Composable - This is a standard logic function
     fun openGoogleMapsRoute(context: Context, lat: Double, lng: Double) {
         val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lng")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        mapIntent.setPackage("com.google.android.apps.maps")
 
-        if (mapIntent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(mapIntent)
-        } else {
-            // Fallback to Google Maps URL
+        mapIntent.setPackage("com.google.android.apps.maps")
+        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        try {
+            if (mapIntent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(mapIntent)
+            } else {
+                throw Exception("Maps app not found")
+            }
+        } catch (e: Exception) {
             val browserIntent = Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://google.com"))
+            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(browserIntent)
         }
     }
+
+
 
 
 
@@ -138,6 +145,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 userLat         = returnedLat,
                 userLng         = returnedLng,
                 onMarkerClick   = { navigateToPermissionOrFetch(it) },
+                onRouteClick    = { lat, lng -> openGoogleMapsRoute(context, lat, lng) },
                 onRefreshClick  = { navigateToPermissionOrFetch("none") },
                 onBuyClick      = { pointId ->
                     navController.navigate(Screen.DistributorDetail.createRoute(pointId))

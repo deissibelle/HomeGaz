@@ -182,4 +182,16 @@
     <string name="gaz_profile_saved">Profil enregistré !</string>
     <string name="gaz_profile_error_required">Ce champ est obligatoire</string>
 
+    //auth
+    <string name="auth_login_btn">Connexion</string>
+    <string name="auth_register_btn">Créer un compte</string>
+    <string name="auth_forgot_password">Mot de passe oublié ?</string>
+    <string name="auth_legal_footer">En vous connectant ou en créant un compte, vous acceptez les Conditions d\'Utilisation et la Politique de Confidentialité</string>
+    <string name="auth_or_separator">Ou</string>
+
+    <!-- Contextes spécifiques -->
+    <string name="auth_title_reservations">Authentification requise</string>
+    <string name="auth_desc_reservations">Veuillez vous connecter pour accéder à vos réservations.</string>
+
+
 </resources>
