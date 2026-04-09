@@ -188,6 +188,9 @@
     <string name="auth_forgot_password">Mot de passe oublié ?</string>
     <string name="auth_legal_footer">En vous connectant ou en créant un compte, vous acceptez les Conditions d\'Utilisation et la Politique de Confidentialité</string>
     <string name="auth_or_separator">Ou</string>
+    <string name="auth_title_account">Mon Compte</string>
+    <string name="auth_desc_account">Connectez-vous pour accéder à vos informations personnelles et gérer votre profil.</string>
+
 
     <!-- Contextes spécifiques -->
     <string name="auth_title_reservations">Authentification requise</string>

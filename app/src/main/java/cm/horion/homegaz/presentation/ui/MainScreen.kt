@@ -64,7 +64,7 @@ fun MainScreen(
                     locationDenied  = locationDenied,
                     navController   = navController
                 )
-                Tab.RESERVATIONS -> ReservationsScreen()
+                Tab.RESERVATIONS -> ReservationsScreen(navController = navController)
                 Tab.ADVICES      -> AdvicesScreen()
                 Tab.ACCOUNT      -> AccountScreen(navController = navController)
             }
