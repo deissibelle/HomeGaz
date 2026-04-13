@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
@@ -65,7 +66,7 @@ fun BottomNavBar(
                     tint = contentColor
                 )
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = item.label, fontSize = 12.sp, color = contentColor)
+                Text(text = item.label, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = contentColor)
             }
         }
     }

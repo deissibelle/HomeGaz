@@ -1,313 +1,181 @@
 package cm.horion.homegaz.presentation.ui.pages.navigation
 
-import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cm.horion.homegaz.domain.model.common.Screen
+import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
-import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.Tab
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.gazprofile.GazProfileScreen
-import cm.horion.homegaz.presentation.ui.pages.location.LocationPermissionScreen
 import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
-import com.google.android.gms.location.LocationServices
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeGazApp(userPrefs: UserPreferencesRepository) {
-
     val navController = rememberNavController()
     val context = LocalContext.current
     val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
 
+    // On récupère le ViewModel ici pour avoir accès à la liste des points chargés
+    val homeViewModel: HomeViewModel = koinViewModel()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
-    // Location
-    var locationGranted by remember { mutableStateOf(false) }
-    var returnedPointId by remember { mutableStateOf<String?>(null) }
-    var returnedLat     by remember { mutableStateOf<Double?>(null) }
-    var returnedLng     by remember { mutableStateOf<Double?>(null) }
-
-    //  Order state
-
-    var currentBrand        by remember { mutableStateOf("") }
-    var currentWeight       by remember { mutableStateOf("") }
-    var currentUnitPrice    by remember { mutableIntStateOf(0) }
-    var currentQuantity     by remember { mutableIntStateOf(1) }
-    var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
+    // États temporaires pour le processus d'achat (Tunnel de commande)
+    var currentBrand by remember { mutableStateOf("") }
+    var currentWeight by remember { mutableStateOf("") }
+    var currentUnitPrice by remember { mutableIntStateOf(0) }
+    var currentQuantity by remember { mutableIntStateOf(1) }
+    var currentDelivery by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
-    //helper navigate account
-    fun goToAccountTab() {
-        navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-            popUpTo(Screen.Home.route) { inclusive = false }
+    // Helper pour lancer l'itinéraire externe
+    val openMapsRoute = { lat: Double, lng: Double ->
+        val uri = Uri.parse("google.navigation:q=$lat,$lng")
+        val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+            setPackage("com.google.android.apps.maps")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-    }
-    //Helpers
-    fun fetchLocationAndGoHome(pId: String?) {
-        LocationServices.getFusedLocationProviderClient(context)
-            .lastLocation
-            .addOnSuccessListener { loc ->
-                returnedLat     = loc?.latitude
-                returnedLng     = loc?.longitude
-                returnedPointId = if (pId == "none") null else pId
-                locationGranted = true
-                navController.popBackStack(Screen.Home.route, false)
-            }
-    }
-    fun openGoogleMapsRoute(context: Context, lat: Double, lng: Double) {
-        val gmmIntentUri = Uri.parse("google.navigation:q=$lat,$lng")
-        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-
-        mapIntent.setPackage("com.google.android.apps.maps")
-        mapIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
         try {
-            if (mapIntent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(mapIntent)
-            } else {
-                throw Exception("Maps app not found")
-            }
+            context.startActivity(mapIntent)
         } catch (e: Exception) {
-            val browserIntent = Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://google.com"))
-            browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(browserIntent)
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng"))
+            context.startActivity(webIntent)
         }
-    }
-
-
-
-
-
-    fun navigateToPermissionOrFetch(pointId: String) {
-        val granted = ActivityCompat.checkSelfPermission(
-            context, Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-        if (granted) fetchLocationAndGoHome(pointId)
-        else navController.navigate("${Screen.LocationPermission.route}/$pointId")
     }
 
     if (onboardingCompleted == null) return
 
     NavHost(
-        navController    = navController,
-        startDestination = if (onboardingCompleted == true) Screen.Home.route
-        else Screen.Onboarding.route
+        navController = navController,
+        startDestination = if (onboardingCompleted == true) Screen.Home.route else Screen.Onboarding.route
     ) {
-
-        //  Onboarding
         composable(Screen.Onboarding.route) {
-            OnboardingScreen(
-                onFinish = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
-                    }
+            OnboardingScreen(onFinish = {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Onboarding.route) { inclusive = true }
                 }
-            )
+            })
         }
 
-        //  Home
-        composable(
-            Screen.Home.route,
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(1500, easing = EaseIn))
-            }
-        ) {
+        composable(Screen.Home.route) {
             MainScreen(
-                navController   = navController,
-                locationGranted = locationGranted,
-                pendingPointId  = returnedPointId,
-                userLat         = returnedLat,
-                userLng         = returnedLng,
-                onMarkerClick   = { navigateToPermissionOrFetch(it) },
-                onRouteClick    = { lat, lng -> openGoogleMapsRoute(context, lat, lng) },
-                onRefreshClick  = { navigateToPermissionOrFetch("none") },
-                onBuyClick      = { pointId ->
-                    navController.navigate(Screen.DistributorDetail.createRoute(pointId))
-                }
+                navController = navController,
+                onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
             )
         }
 
         composable(
-            route     = "${Screen.Home.route}/{initialTab}",
-            arguments = listOf(navArgument("initialTab") { type = NavType.StringType }),
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(1500, easing = EaseIn))
-            }
-        ) { back ->
-            val initialTab = back.arguments?.getString("initialTab") ?: Tab.HOME.label
+            route = "${Screen.Home.route}/{initialTab}",
+            arguments = listOf(navArgument("initialTab") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val initialTab = backStackEntry.arguments?.getString("initialTab") ?: Tab.HOME.label
             MainScreen(
-                navController   = navController,
-                locationGranted = locationGranted,
-                pendingPointId  = returnedPointId,
-                onRouteClick    = { lat, lng -> openGoogleMapsRoute(context, lat, lng) },
-                userLat         = returnedLat,
-                userLng         = returnedLng,
-                initialTab      = initialTab,
-                onMarkerClick   = { navigateToPermissionOrFetch(it) },
-                onRefreshClick  = { navigateToPermissionOrFetch("none") },
-                onBuyClick      = { pointId ->
-                    navController.navigate(Screen.DistributorDetail.createRoute(pointId))
-                }
+                navController = navController,
+                initialTab = initialTab,
+                onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
             )
         }
 
-        // Location Permission
         composable(
-            route     = "${Screen.LocationPermission.route}/{pointId}",
-            arguments = listOf(navArgument("pointId") { type = NavType.StringType })
-        ) { back ->
-            val pId = back.arguments?.getString("pointId")
-            LocationPermissionScreen(
-                onPermissionGranted = {
-                    val ok = ActivityCompat.checkSelfPermission(
-                        context, Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                    if (ok) fetchLocationAndGoHome(pId) else navController.popBackStack()
-                },
-                onPermissionDenied = { navController.popBackStack() }
-            )
-        }
-
-        //  Distributor Detail
-        composable(
-            route     = Screen.DistributorDetail.route,
+            route = Screen.DistributorDetail.route,
             arguments = listOf(navArgument("pointId") { type = NavType.StringType }),
-            enterTransition = {
-                fadeIn(animationSpec = tween(1500, easing = EaseIn)) +
-                        scaleIn(initialScale = 0.92f, animationSpec = tween(600, easing = EaseIn))
-            },
-            popExitTransition = {
-                fadeOut(animationSpec = tween(1500, easing = EaseIn)) +
-                        scaleOut(targetScale = 0.92f, animationSpec = tween(600, easing = EaseIn))
+            enterTransition = { fadeIn(tween(400)) + scaleIn(initialScale = 0.92f) }
+        ) { backStackEntry ->
+            val pointId = backStackEntry.arguments?.getString("pointId") ?: ""
+            val point = uiState.allPoints.find { it.id == pointId }
+
+            if (point != null) {
+                DistributorPointDetailScreen(
+                    point = point,
+                    onBackClick = { navController.popBackStack() },
+                    onNextClick = { quantity, deliveryOption ->
+                        currentBrand = point.distributor
+                        currentWeight = point.weight
+                        currentUnitPrice = point.priceXaf
+                        currentQuantity = quantity
+                        currentDelivery = deliveryOption
+                        navController.navigate(Screen.Payment.route)
+                    }
+                )
             }
-        ) { back ->
-            val pointId = back.arguments?.getString("pointId") ?: return@composable
-
-
-            val homeViewModel: HomeViewModel = koinViewModel()
-            val homeState by homeViewModel.uiState.collectAsState()
-            val point = homeState.allPoints.find { it.id == pointId } ?: return@composable
-
-            DistributorPointDetailScreen(
-                point       = point,
-                onBackClick = { navController.popBackStack() },
-                onNextClick = { quantity, option ->
-                    // On mémorise uniquement ce dont PaymentScreen a besoin
-                    currentBrand     = point.distributor
-                    currentWeight    = point.weight
-                    currentUnitPrice = point.priceXaf
-                    currentQuantity  = quantity
-                    currentDelivery  = option
-                    navController.navigate(Screen.Payment.route)
-                }
-            )
         }
 
-        //  Payment
         composable(Screen.Payment.route) {
             PaymentScreen(
-                brand          = currentBrand,
-                weight         = currentWeight,
-                quantity       = currentQuantity,
+                brand = currentBrand,
+                weight = currentWeight,
+                quantity = currentQuantity,
                 deliveryOption = currentDelivery,
-                unitPrice      = currentUnitPrice,
-                onBackClick    = { navController.popBackStack() },
-                onNextClick    = { summary ->
+                unitPrice = currentUnitPrice,
+                onBackClick = { navController.popBackStack() },
+                onNextClick = { summary ->
                     currentOrderSummary = summary
                     navController.navigate(Screen.Confirmation.route)
                 }
             )
         }
 
-        //  Confirmation
         composable(Screen.Confirmation.route) {
-            val summary = currentOrderSummary ?: return@composable
-            ConfirmationScreen(
-                summary        = summary,
-                onBackClick    = { navController.popBackStack() },
-                onModifyClick  = {
-                    navController.popBackStack(
-                        route     = Screen.DistributorDetail.route,
-                        inclusive = false
-                    )
-                },
-                onConfirmClick = {
-                    navController.navigate(Screen.PaymentInitiated.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
+            currentOrderSummary?.let { summary ->
+                ConfirmationScreen(
+                    summary = summary,
+                    onBackClick = { navController.popBackStack() },
+                    onModifyClick = {
+                        // Retourne au détail en gardant l'ID en mémoire ou via la pile
+                        navController.popBackStack(Screen.DistributorDetail.route, false)
+                    },
+                    onConfirmClick = {
+                        navController.navigate(Screen.PaymentInitiated.route)
                     }
-                }
-            )
+                )
+            }
         }
 
-        // Payment Initiated
         composable(Screen.PaymentInitiated.route) {
             PaymentInitiatedScreen(
                 paymentMethod = currentOrderSummary?.paymentMethod ?: PaymentMethod.ORANGE_MONEY,
-                onDone        = {
-                    navController.navigate(Screen.PaymentSuccess.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                    }
-                }
+                onDone = { navController.navigate(Screen.PaymentSuccess.route) }
             )
         }
 
-        //Payment Success
         composable(Screen.PaymentSuccess.route) {
             PaymentSuccessScreen(
-                onCloseClick        = {
+                onCloseClick = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 },
                 onReservationsClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = false }
-                    }
+                    navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}")
                 }
             )
         }
-        composable(
-            route = Screen.GazProfile.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(400, easing = EaseIn)) +
-                        scaleIn(initialScale = 0.96f, animationSpec = tween(400, easing = EaseIn))
-            },
-            popExitTransition = {
-                fadeOut(animationSpec = tween(300, easing = EaseIn)) +
-                        scaleOut(targetScale = 0.96f, animationSpec = tween(300, easing = EaseIn))
-            }
-        ) {
+
+        composable(Screen.GazProfile.route) {
             GazProfileScreen(
-                onBackClick = { goToAccountTab() },
-                onSaved     = { goToAccountTab() }
+                onBackClick = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() }
             )
         }
-
     }
 }

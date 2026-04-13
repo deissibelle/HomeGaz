@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package cm.horion.homegaz.presentation.ui.pages.home
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -10,92 +11,87 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import cm.horion.homegaz.presentation.ui.components.home.DistributionPointSheet
-import cm.horion.homegaz.presentation.ui.components.home.HomeFilterCard
-import cm.horion.homegaz.presentation.ui.components.home.InteractiveMap
+import cm.horion.homegaz.domain.model.common.Screen
+import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     navController: NavController,
-    onMarkerClick: (String) -> Unit = {},
-    onRefreshClick: () -> Unit = {},
-    onRouteClick: (Double, Double) -> Unit,
-    onBuyClick: (String) -> Unit = {},
-    pendingPointId: String? = null,
-    userLat: Double? = null,
-    userLng: Double? = null,
-    locationGranted: Boolean = false,
-    locationDenied: Boolean = false
+    onRouteClick: (Double, Double) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
-    LaunchedEffect(locationGranted, userLat, userLng, pendingPointId) {
-        if (locationGranted) viewModel.onLocationGranted(userLat, userLng, pendingPointId)
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        viewModel.onLocationPermissionResult(permissions.values.all { it })
     }
-    LaunchedEffect(locationDenied) {
-        if (locationDenied) viewModel.onLocationDenied()
+
+    val runWithLocation = { action: () -> Unit ->
+        if (uiState.locationGranted) {
+            action()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
         InteractiveMap(
-            points          = uiState.filteredPoints,
-            selectedPoint   = uiState.selectedPoint,
+            points = uiState.filteredPoints,
+            selectedPoint = uiState.selectedPoint,
             locationGranted = uiState.locationGranted,
-            routePoints     = uiState.routePolyline,
-            userLat         = uiState.userLat,
-            userLng         = uiState.userLng,
-            userPhotoUrl    = uiState.userPhotoUrl,
-            onPointClick    = { point ->
-                if (uiState.locationGranted) viewModel.onPointSelected(point)
-                else onMarkerClick(point.id)
+            userLat = uiState.userLat,
+            userLng = uiState.userLng,
+            onPointClick = { point ->
+                runWithLocation { viewModel.onPointClick(point) }
             },
-            onDismissPopup  = viewModel::onPointDismissed,
-            onRecenterClick = viewModel::onRecenter
+            onDismissPopup = viewModel::onDismissPopup
         )
-
         HomeFilterCard(
-            modifier            = Modifier.align(Alignment.TopCenter),
-            distributor         = uiState.selectedDistributor,
+            modifier = Modifier.align(Alignment.TopCenter),
+            distributor = uiState.selectedDistributor,
             onDistributorChange = viewModel::onDistributorChange,
-            distance            = uiState.selectedDistance,
-            onDistanceChange    = viewModel::onDistanceChange,
-            weight              = uiState.selectedWeight,
-            onWeightChange      = viewModel::onWeightChange,
-            onRefresh           = onRefreshClick,
-            distributorOptions  = listOf("SCTM", "Tradex", "Total"),
-            distanceOptions     = listOf("100 m", "500 m", "1 km", "5 km", "10 km"),
-            weightOptions       = listOf("6kg", "12kg", "38kg")
+            distance = uiState.selectedDistance,
+            onDistanceChange = viewModel::onDistanceChange,
+            weight = uiState.selectedWeight,
+            onWeightChange = viewModel::onWeightChange,
+            onRefresh = {
+                runWithLocation { viewModel.loadPoints() }
+            },
+            distributorOptions = listOf("SCTM", "Tradex", "Total", "Glocal Gaz"),
+            distanceOptions = listOf("1 km", "5 km", "10 km"),
+            weightOptions = listOf("6kg", "12.5kg", "28kg")
         )
 
-        if (uiState.locationGranted && uiState.selectedPoint != null) {
+        if (uiState.selectedPoint != null && uiState.locationGranted) {
+            val point = uiState.selectedPoint!!
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 32.dp)
+                    .padding(bottom = 20.dp)
             ) {
                 DistributionPointSheet(
-                    point        = uiState.selectedPoint!!,
-                    onBuyClick   = { onBuyClick(uiState.selectedPoint!!.id) },
+                    point = point,
+                    onBuyClick = {
+                        navController.navigate(Screen.DistributorDetail.createRoute(point.id))
+                    },
                     onRouteClick = {
-                        onRouteClick(
-                            uiState.selectedPoint!!.latitude,
-                            uiState.selectedPoint!!.longitude
-                        )
-                    })
+                        onRouteClick(point.latitude, point.longitude)
+                    }
+                )
             }
         }
-
         if (uiState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color    = MaterialTheme.colorScheme.primary
-            )
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 }

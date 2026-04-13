@@ -1,12 +1,11 @@
 package cm.horion.homegaz.presentation.ui.pages.location
 
-import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,47 +18,18 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
-import com.google.accompanist.permissions.*
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionScreen(
-    onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit
+    onActivateClick: () -> Unit
 ) {
-
-    var permissionRequested by remember { mutableStateOf(false) }
-
-    val locationPermissionState = rememberPermissionState(
-        permission = Manifest.permission.ACCESS_FINE_LOCATION
-    ) { isGranted ->
-        if (permissionRequested) {
-            if (isGranted) onPermissionGranted() else onPermissionDenied()
-        }
-    }
-
-    LocationPermissionContent(
-        onActivateClick = {
-            permissionRequested = true
-            locationPermissionState.launchPermissionRequest()
-        }
-    )
-}
-
-@Composable
-internal fun LocationPermissionContent(onActivateClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         LocationBackground()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp)
-                .navigationBarsPadding(),
+                .padding(horizontal = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

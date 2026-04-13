@@ -24,17 +24,9 @@ enum class Tab(val label: String) {
 
 @Composable
 fun MainScreen(
-    navController   : NavController,
-    onMarkerClick   : (pointId: String) -> Unit = {},
-    onRefreshClick  : () -> Unit = {},
-    onBuyClick      : (pointId: String) -> Unit = {},
-    onRouteClick    : (lat: Double, lng: Double) -> Unit = { _, _ -> }, // Standard function, not @Composable
-    pendingPointId  : String? = null,
-    userLat         : Double? = null,
-    userLng         : Double? = null,
-    locationGranted : Boolean = false,
-    locationDenied  : Boolean = false,
-    initialTab      : String = Tab.HOME.label
+    navController: NavController,
+    onRouteClick: (lat: Double, lng: Double) -> Unit = { _, _ -> },
+    initialTab: String = Tab.HOME.label
 ) {
     var selectedTab by remember(initialTab) { mutableStateOf(Tab.fromLabel(initialTab)) }
 
@@ -52,17 +44,9 @@ fun MainScreen(
                 .padding(innerPadding)
         ) {
             when (selectedTab) {
-                Tab.HOME         -> HomeScreen(
-                    onMarkerClick   = onMarkerClick,
-                    onRefreshClick  = onRefreshClick,
-                    onBuyClick      = onBuyClick,
-                    onRouteClick    = onRouteClick,
-                    pendingPointId  = pendingPointId,
-                    userLat         = userLat,
-                    userLng         = userLng,
-                    locationGranted = locationGranted,
-                    locationDenied  = locationDenied,
-                    navController   = navController
+                Tab.HOME -> HomeScreen(
+                    navController = navController,
+                    onRouteClick  = onRouteClick
                 )
                 Tab.RESERVATIONS -> ReservationsScreen(navController = navController)
                 Tab.ADVICES      -> AdvicesScreen()

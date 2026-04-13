@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.presentation.state.HomeUiState
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,54 +21,43 @@ class HomeViewModel(
 
     init { loadPoints() }
 
-    private fun loadPoints() {
+    fun loadPoints() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             getDistributorPointsUseCase().collect { points ->
                 _uiState.update { state ->
                     state.copy(
-                        allPoints      = points,
+                        allPoints = points,
                         filteredPoints = applyFilters(points, state),
-                        isLoading      = false
+                        isLoading = false
                     )
                 }
             }
         }
     }
 
-
-
-    fun onLocationGranted(lat: Double?, lng: Double?, pointId: String? = null) {
+    fun onLocationUpdated(lat: Double, lng: Double) {
         _uiState.update { state ->
-            val updated  = state.copy(locationGranted = true, userLat = lat, userLng = lng)
-            val filtered = applyFilters(state.allPoints, updated)
-            val selected = pointId?.let { id -> filtered.find { it.id == id } }
-            updated.copy(filteredPoints = filtered, selectedPoint = selected)
+            val newState = state.copy(userLat = lat, userLng = lng, locationGranted = true)
+            newState.copy(filteredPoints = applyFilters(state.allPoints, newState))
         }
     }
 
-    fun onLocationDenied() {
-        _uiState.update { it.copy(locationGranted = false, userLat = null, userLng = null, selectedPoint = null) }
+    fun onLocationPermissionResult(isGranted: Boolean) {
+        _uiState.update { it.copy(locationGranted = isGranted, locationDenied = !isGranted) }
     }
 
-    fun onRecenter() {
-        val lat = _uiState.value.userLat ?: return
-        val lng = _uiState.value.userLng ?: return
-        _uiState.update { it.copy(userLat = null, userLng = null) }
-        _uiState.update { it.copy(userLat = lat,  userLng = lng)  }
-    }
-
-    fun onPointSelected(point: DistributorPoint) {
+    fun onPointClick(point: DistributorPoint) {
         _uiState.update { it.copy(selectedPoint = point) }
     }
 
-    fun onPointDismissed() {
-        _uiState.update { it.copy(selectedPoint = null, routePolyline = emptyList()) }
+    fun onDismissPopup() {
+        _uiState.update { it.copy(selectedPoint = null) }
     }
 
-    fun onDistributorChange(value: String) = updateFilter { copy(selectedDistributor = value) }
-    fun onDistanceChange(value: String)    = updateFilter { copy(selectedDistance    = value) }
-    fun onWeightChange(value: String)      = updateFilter { copy(selectedWeight      = value) }
+    fun onDistributorChange(v: String) = updateFilter { copy(selectedDistributor = v) }
+    fun onDistanceChange(v: String)    = updateFilter { copy(selectedDistance = v) }
+    fun onWeightChange(v: String)      = updateFilter { copy(selectedWeight = v) }
 
     private fun updateFilter(update: HomeUiState.() -> HomeUiState) {
         _uiState.update { state ->
@@ -78,14 +66,16 @@ class HomeViewModel(
         }
     }
 
-    private fun applyFilters(points: List<DistributorPoint>, state : HomeUiState): List<DistributorPoint> {
-        val lat = state.userLat ?: return points
-        val lng = state.userLng ?: return points
+    private fun applyFilters(points: List<DistributorPoint>, state: HomeUiState): List<DistributorPoint> {
         return points.filter { p ->
-            (state.selectedDistributor == "Tous" || p.distributor.equals(state.selectedDistributor, true)) &&
-                    (state.selectedWeight == "Tous" || p.weight.equals(state.selectedWeight, true))
-        }.map { it.copy(distanceKm = haversineKm(lat, lng, it.latitude, it.longitude)) }
-            .sortedBy { it.distanceKm }
+            val mDist = state.selectedDistributor == "Tous" || p.distributor.equals(state.selectedDistributor, true)
+            val mWeight = state.selectedWeight == "Tous" || p.weight.contains(state.selectedWeight, true)
+            mDist && mWeight
+        }.map { p ->
+            if (state.userLat != null && state.userLng != null) {
+                p.copy(distanceKm = haversineKm(state.userLat, state.userLng, p.latitude, p.longitude))
+            } else p
+        }.sortedBy { it.distanceKm }
     }
 
     private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
