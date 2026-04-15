@@ -6,18 +6,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.auth.AuthContext
 import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
 import cm.horion.homegaz.presentation.ui.components.reservations.*
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
+import cm.horion.homegaz.presentation.ui.theme.HG_Background_Light
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,52 +32,54 @@ fun ReservationsScreen(
     navController: NavController,
     viewModel: ReservationsViewModel = koinViewModel()
 ) {
+
     val isLoggedIn by remember { mutableStateOf(true) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    // État local de la barre de recherche
     var searchQuery by remember { mutableStateOf("") }
-
-    // Filtrage des réservations selon la recherche
     val filteredReservations = remember(uiState.reservations, searchQuery) {
         if (searchQuery.isBlank()) uiState.reservations
         else uiState.reservations.filter { res ->
             res.id.contains(searchQuery, ignoreCase = true) ||
-                    res.brand.contains(searchQuery, ignoreCase = true) ||
-                    res.weight.contains(searchQuery, ignoreCase = true) ||
-                    res.status.label.contains(searchQuery, ignoreCase = true)
+                    res.brand.contains(searchQuery, ignoreCase = true)
         }
     }
 
     if (!isLoggedIn) {
         AuthGuardScreen(
             authContext = AuthContext(
-                title = "Mes Réservations",
-                description = "Connecte-toi pour consulter l'historique de tes commandes de gaz.",
+                title = stringResource(R.string.auth_title_reservations),
+                description = stringResource(R.string.auth_desc_reservations),
                 icon = Icons.Default.ReceiptLong
             ),
-            onLoginClick = {},
-            onRegisterClick = {},
-            onForgotPasswordClick = {}
+            onLoginClick = { /* navController.navigate("login") */ },
+            onRegisterClick = { /* navController.navigate("register") */ },
+            onForgotPasswordClick = { /* navController.navigate("forgot_password") */ }
         )
         return
     }
 
     Scaffold(
+        containerColor = HG_Background_Light,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        "Mes Réservations",
-                        style = MaterialTheme.typography.titleLarge
+                        stringResource(R.string.res_screen_title),
+                        fontWeight = FontWeight.Bold
                     )
                 },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = null)
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = Color.White
                 )
             )
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -83,14 +91,12 @@ fun ReservationsScreen(
                 completed = uiState.completedCount
             )
 
-            Spacer(Modifier.height(8.dp))
-
             ReservationSearchBar(
                 query = searchQuery,
                 onQueryChange = { searchQuery = it }
             )
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
             when {
                 uiState.isLoading -> {
@@ -102,7 +108,7 @@ fun ReservationsScreen(
                 uiState.error != null -> {
                     Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Text(
-                            "Une erreur est survenue : ${uiState.error}",
+                            text = uiState.error ?: "Erreur inconnue",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -112,18 +118,18 @@ fun ReservationsScreen(
                 filteredReservations.isEmpty() -> {
                     Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Text(
-                            if (searchQuery.isBlank()) "Aucune réservation pour l'instant."
-                            else "Aucun résultat pour \"$searchQuery\".",
+                            text = if (searchQuery.isBlank()) "Aucune réservation trouvée"
+                            else "Aucun résultat pour \"$searchQuery\"",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = Color.Gray
                         )
                     }
                 }
 
                 else -> {
                     LazyColumn(
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(
@@ -133,14 +139,16 @@ fun ReservationsScreen(
                             AnimatedVisibility(
                                 visible = true,
                                 enter = fadeIn(tween(300)) + slideInVertically(
-                                    initialOffsetY = { it / 4 },
-                                    animationSpec = tween(300)
+                                    initialOffsetY = { it / 4 }
                                 )
                             ) {
-                                ReservationItem(res = reservation)
+                                ReservationItem(
+                                    res = reservation,
+                                    onClick = {
+                                    }
+                                )
                             }
                         }
-                        item { Spacer(Modifier.height(8.dp)) }
                     }
                 }
             }

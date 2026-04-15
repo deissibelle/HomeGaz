@@ -191,10 +191,18 @@
     <string name="auth_title_account">Mon Compte</string>
     <string name="auth_desc_account">Connectez-vous pour accéder à vos informations personnelles et gérer votre profil.</string>
 
-
     <!-- Contextes spécifiques -->
     <string name="auth_title_reservations">Authentification requise</string>
-    <string name="auth_desc_reservations">Veuillez vous connecter pour accéder à vos réservations.</string>
-
-
+    <string name="auth_desc_reservations">veillez vous connecter pour accéder à vos réservations.</string>
+    <!-- Reservations -->
+    <string name="res_screen_title">Mes Réservations</string>
+    <string name="res_search_placeholder">Rechercher une réservation</string>
+    <string name="res_header_global">Global</string>
+    <string name="res_header_active">En cours</string>
+    <string name="res_header_completed">Terminé</string>
+    <string name="res_status_delivering">EN LIVRAISON</string>
+    <string name="res_status_completed">TERMINÉ</string>
+    <string name="res_label_id">ID: %1$s</string>
+    <string name="res_label_price">%1$d FCFA</string>
+    <string name="res_label_brand_detail">%1$s - %2$s</string>
 </resources>

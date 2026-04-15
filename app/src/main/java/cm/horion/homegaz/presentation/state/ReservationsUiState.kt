@@ -8,6 +8,6 @@ data class ReservationsUiState(
     val isLoading: Boolean = false,
     val error: String? = null
 ) {
-    val activeCount get() = reservations.count { it.status != ReservationStatus.COMPLETED && it.status != ReservationStatus.CANCELLED }
+    val activeCount get() = reservations.count { it.status != ReservationStatus.COMPLETED && it.status != ReservationStatus.PENDING }
     val completedCount get() = reservations.count { it.status == ReservationStatus.COMPLETED }
 }
