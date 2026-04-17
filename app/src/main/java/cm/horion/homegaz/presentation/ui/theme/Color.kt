@@ -3,7 +3,7 @@ package cm.horion.homegaz.presentation.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ─────────────────────────────────────────────
-// Light Palette (Matériel 3)
+// Light Palette (Material 3)
 // ─────────────────────────────────────────────
 internal val PrimaryLight = Color(0xFF003761)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
@@ -31,7 +31,7 @@ internal val OutlineLight = Color(0xFF717970)
 internal val OutlineVariantLight = Color(0xFFC0C9BE)
 
 // ─────────────────────────────────────────────
-// Dark Palette (Matériel 3)
+// Dark Palette (Material 3)
 // ─────────────────────────────────────────────
 internal val PrimaryDark = Color(0xFF477EEB)
 internal val OnPrimaryDark = Color(0xFF183153)
@@ -58,22 +58,55 @@ internal val OnSurfaceVariantDark = Color(0xFFC0C9BE)
 internal val OutlineDark = Color(0xFF8A9389)
 internal val OutlineVariantDark = Color(0xFF404941)
 
+// ─────────────────────────────────────────────
+// Couleurs sémantiques globales
+// ─────────────────────────────────────────────
 internal val SuccessColor = Color(0xFF10B981)
 internal val WarningOrange = Color(0xFFF59E0B)
 internal val NeutralGray = Color(0xFF717970)
 internal val DividerGray = Color(0xFFE8E8E8)
 internal val DarkGray = Color(0xFFB5B5B5)
+
+// ─────────────────────────────────────────────
+// Conseils
+// ─────────────────────────────────────────────
 internal val AdvicesHeaderEconomiser = Color(0xFFD9FFE3)
 internal val AdvicesHeaderIncendies  = Color(0xFFFFE9D9)
 internal val AdvicesHeaderQuotidien  = Color(0xFFD9F4FF)
-internal val AdvicesBodyColor  = Color(0xFF2B5278)
-internal val AdvicesDivider    = Color(0xFFE0E8F0)
-internal val AdvicesBackground = Color(0xFFF2F5F8)
+internal val AdvicesBodyColor        = Color(0xFF2B5278)
+internal val AdvicesDivider          = Color(0xFFE0E8F0)
+internal val AdvicesBackground       = Color(0xFFF2F5F8)
 
-val HG_Blue_Header_Bg = Color(0xFFD6E4F7)
-val HG_Blue_Indicator = Color(0xFF0056D2)
-val HG_Text_Dark_Header = Color(0xFF001F5B)
-val HG_Background_Light = Color(0xFFF1F4F8)
-val HG_Badge_Green_Bg = Color(0xFFE6F7ED)
-val HG_Badge_Green_Text = Color(0xFF198754)
-val HG_Map_Bg = Color(0xFFE9ECEF)
+// ─────────────────────────────────────────────
+// Réservations — StatusHeader
+// ─────────────────────────────────────────────
+val HG_Blue_Header_Bg     = Color(0xFFD6E4F7)
+val HG_Blue_Indicator     = Color(0xFF0056D2)
+val HG_Text_Dark_Header   = Color(0xFF001F5B)
+val HG_Background_Light   = Color(0xFFF1F4F8)
+val HG_Badge_Green_Bg     = Color(0xFFE6F7ED)
+val HG_Badge_Green_Text   = Color(0xFF198754)
+val HG_Map_Bg             = Color(0xFFE9ECEF)
+
+// ─────────────────────────────────────────────
+// Réservations — Statuts (badges & bordures)
+// ─────────────────────────────────────────────
+// DELIVERING
+val StatusDeliveringBg     = Color(0xFF2ECC71)
+val StatusDeliveringOnBg   = Color(0xFFFFFFFF)
+val StatusDeliveringBorder = Color(0xFF27AE60)
+
+// PENDING
+val StatusPendingBg        = Color(0xFF3498DB)
+val StatusPendingOnBg      = Color(0xFFFFFFFF)
+val StatusPendingBorder    = Color(0xFF2980B9)
+
+// COMPLETED
+val StatusCompletedBg      = Color(0xFFBDC3C7)
+val StatusCompletedOnBg    = Color(0xFFFFFFFF)
+val StatusCompletedBorder  = Color(0xFF95A5A6)
+
+// ─────────────────────────────────────────────
+// Paiement
+// ─────────────────────────────────────────────
+val OrangeMoneyColor = Color(0xFFFF6600)
