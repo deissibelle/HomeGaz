@@ -191,9 +191,6 @@
     <string name="auth_title_account">Mon Compte</string>
     <string name="auth_desc_account">Connectez-vous pour accéder à vos informations personnelles et gérer votre profil.</string>
 
-    <!-- Contextes spécifiques -->
-    <string name="auth_title_reservations">Authentification requise</string>
-    <string name="auth_desc_reservations">veillez vous connecter pour accéder à vos réservations.</string>
     <!-- Reservations -->
     <string name="res_screen_title">Mes Réservations</string>
     <string name="res_search_placeholder">Rechercher une réservation</string>
@@ -205,4 +202,33 @@
     <string name="res_label_id">ID: %1$s</string>
     <string name="res_label_price">%1$d FCFA</string>
     <string name="res_label_brand_detail">%1$s - %2$s</string>
+
+    <string name="account_title">Mon Compte</string>
+    <string name="account_user_default_name">Utilisateur HomeGaz</string>
+    <string name="account_user_default_email">utilisateur@homegaz.cm</string>
+    <string name="account_btn_edit_profile">Modifier le profil</string>
+
+    <!-- Sections -->
+    <string name="account_section_consumption">Ma consommation</string>
+    <string name="account_section_settings">Paramètres</string>
+    <string name="account_section_support">Aide &amp; Support</string>
+
+    <!-- Menu Items Labels -->
+    <string name="account_menu_gaz_profile">Mon Profil Gaz</string>
+    <string name="account_menu_notifications">Notifications</string>
+    <string name="account_menu_display">Préférences d\'affichage</string>
+    <string name="account_menu_help">Centre d\'aide</string>
+    <string name="account_menu_privacy">Confidentialité</string>
+    <string name="account_menu_logout">Déconnexion</string>
+
+    <!-- Menu Items Sublabels -->
+    <string name="account_sub_gaz_profile">Capacité, marque, consommation…</string>
+    <string name="account_sub_notifications">Gérer les alertes et rappels</string>
+    <string name="account_sub_display">Thème et langue</string>
+    <string name="account_sub_help">FAQ et assistance technique</string>
+    <string name="account_sub_privacy">Gestion de vos données</string>
+    <string name="account_version_format">Version %1$s (Build %2$d)</string>
+
+    <string name="auth_title_reservations">Authentification requise</string>
+    <string name="auth_desc_reservations">veillez vous connecter pour accéder à vos réservations.</string>
 </resources>

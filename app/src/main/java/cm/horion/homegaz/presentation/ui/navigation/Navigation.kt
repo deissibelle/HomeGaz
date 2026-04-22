@@ -1,4 +1,4 @@
-package cm.horion.homegaz.presentation.ui.pages.navigation
+package cm.horion.homegaz.presentation.ui.navigation
 
 import android.content.Intent
 import android.net.Uri
@@ -170,12 +170,20 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 }
             )
         }
-
         composable(Screen.GazProfile.route) {
             GazProfileScreen(
-                onBackClick = { navController.popBackStack() },
-                onSaved = { navController.popBackStack() }
+                onBackClick = {
+                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                },
+                onSaved = {
+                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
             )
         }
+
     }
 }
