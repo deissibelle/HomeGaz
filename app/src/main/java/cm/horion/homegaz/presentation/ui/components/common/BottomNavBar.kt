@@ -36,15 +36,14 @@ fun BottomNavBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .navigationBarsPadding()
-            .background(MaterialTheme.colorScheme.primary),
+            .height(130.dp)
+            .navigationBarsPadding(),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         navItems.forEach { item ->
             val isSelected = selectedTab == item.id
-            val contentColor = if (isSelected) Color.White else Color.White
+            val contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
             val iconRes = if (isSelected) item.iconFilled else item.iconOutlined
 
             Column(
@@ -62,11 +61,11 @@ fun BottomNavBar(
                 Icon(
                     painter = painterResource(iconRes),
                     contentDescription = item.label,
-                    modifier = Modifier.size(width = 20.dp, height = 20.dp),
+                    modifier = Modifier.size(24.dp),
                     tint = contentColor
                 )
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = item.label, fontWeight = FontWeight.Bold, fontSize = 12.sp, color = contentColor)
+                Text(text = item.label, fontWeight = FontWeight.Bold, fontSize = 14.sp, color = contentColor)
             }
         }
     }
