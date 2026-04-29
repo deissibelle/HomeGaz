@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.pages.account
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,10 +10,12 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.auth.AuthContext
@@ -36,31 +37,38 @@ fun AccountScreen(navController: NavController) {
                 description = stringResource(R.string.auth_desc_account),
                 icon = Icons.Outlined.Person
             ),
-            onLoginClick = { /* Handle navigation */ },
-            onRegisterClick = { /* Handle navigation */ },
-            onForgotPasswordClick = { /* Handle navigation */ }
+            onLoginClick = { },
+            onRegisterClick = { },
+            onForgotPasswordClick = { }
         )
     } else {
         Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text(
-                            text = stringResource(R.string.account_title),
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                        )
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background
+                Surface(
+                    color = MaterialTheme.colorScheme.background,
+                    tonalElevation = 0.dp
+                ) {
+                    CenterAlignedTopAppBar(
+                        windowInsets = WindowInsets(0, 0, 0, 0),
+                        title = {
+                            Text(
+                                text = stringResource(R.string.account_title),
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp
+                                )
+                            )
+                        },
+
                     )
-                )
+                }
             }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(paddingValues)
+                    .padding(top = paddingValues.calculateTopPadding())
                     .verticalScroll(rememberScrollState())
             ) {
                 ProfileHeaderSection()
@@ -115,7 +123,9 @@ fun AccountScreen(navController: NavController) {
                             onClick = { }
                         )
                     }
+
                     Spacer(modifier = Modifier.height(24.dp))
+
                     Button(
                         onClick = { },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -130,6 +140,7 @@ fun AccountScreen(navController: NavController) {
                         Spacer(Modifier.width(8.dp))
                         Text(stringResource(R.string.account_menu_logout), fontWeight = FontWeight.Bold)
                     }
+
                     Text(
                         text = stringResource(R.string.account_version_format, "1.0.0", 24),
                         modifier = Modifier.fillMaxWidth().padding(top = 24.dp),

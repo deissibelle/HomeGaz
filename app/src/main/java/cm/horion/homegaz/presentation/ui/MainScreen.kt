@@ -15,7 +15,7 @@ enum class Tab(val label: String) {
     HOME("Accueil"),
     RESERVATIONS("Réservations"),
     ADVICES("Conseils"),
-    ACCOUNT("Compte");
+    ACCOUNT("Profile");
 
     companion object {
         fun fromLabel(label: String) = entries.firstOrNull { it.label == label } ?: HOME

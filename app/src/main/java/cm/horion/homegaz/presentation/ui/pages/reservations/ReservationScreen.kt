@@ -2,6 +2,7 @@ package cm.horion.homegaz.presentation.ui.pages.reservations
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.R
@@ -32,12 +34,10 @@ fun ReservationsScreen(
     navController: NavController,
     viewModel: ReservationsViewModel = koinViewModel()
 ) {
-
     val isLoggedIn by remember { mutableStateOf(true) }
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     var searchQuery by remember { mutableStateOf("") }
+
     val filteredReservations = remember(uiState.reservations, searchQuery) {
         if (searchQuery.isBlank()) uiState.reservations
         else uiState.reservations.filter { res ->
@@ -53,9 +53,9 @@ fun ReservationsScreen(
                 description = stringResource(R.string.auth_desc_reservations),
                 icon = Icons.Default.ReceiptLong
             ),
-            onLoginClick = { /* navController.navigate("login") */ },
-            onRegisterClick = { /* navController.navigate("register") */ },
-            onForgotPasswordClick = { /* navController.navigate("forgot_password") */ }
+            onLoginClick = { },
+            onRegisterClick = { },
+            onForgotPasswordClick = { }
         )
         return
     }
@@ -63,41 +63,53 @@ fun ReservationsScreen(
     Scaffold(
         containerColor = HG_Background_Light,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.res_screen_title),
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                navigationIcon = {
+            Column(
+                modifier = Modifier
+                    .background(HG_Background_Light)
+                    .padding(horizontal = 8.dp)
+
+                ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = null)
+                        Icon(Icons.Default.ArrowBackIosNew, contentDescription = null )
+
                     }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.White
+                    Text(
+                        text = stringResource(R.string.res_screen_title),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                StatusHeader(
+                    active = uiState.activeCount,
+                    completed = uiState.completedCount
                 )
-            )
+
+                Spacer(Modifier.height(4.dp))
+
+                ReservationSearchBar(
+                    query = searchQuery,
+                    onQueryChange = { searchQuery = it }
+                )
+
+                Spacer(Modifier.height(8.dp))
+            }
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
-                .padding(padding)
                 .fillMaxSize()
+                .padding(top = padding.calculateTopPadding())
         ) {
-            StatusHeader(
-                active = uiState.activeCount,
-                completed = uiState.completedCount
-            )
-
-            ReservationSearchBar(
-                query = searchQuery,
-                onQueryChange = { searchQuery = it }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
             when {
                 uiState.isLoading -> {
                     Box(Modifier.fillMaxSize(), Alignment.Center) {
@@ -144,8 +156,7 @@ fun ReservationsScreen(
                             ) {
                                 ReservationItem(
                                     res = reservation,
-                                    onClick = {
-                                    }
+                                    onClick = { }
                                 )
                             }
                         }

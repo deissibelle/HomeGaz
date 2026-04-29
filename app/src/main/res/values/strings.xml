@@ -203,7 +203,7 @@
     <string name="res_label_price">%1$d FCFA</string>
     <string name="res_label_brand_detail">%1$s - %2$s</string>
 
-    <string name="account_title">Mon Compte</string>
+    <string name="account_title">Mon Profile</string>
     <string name="account_user_default_name">Utilisateur HomeGaz</string>
     <string name="account_user_default_email">utilisateur@homegaz.cm</string>
     <string name="account_btn_edit_profile">Modifier le profil</string>
