@@ -14,6 +14,8 @@ import androidx.navigation.NavController
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.rememberCameraPositionState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -43,6 +45,11 @@ fun HomeScreen(
         }
     }
 
+    var markerScreenX by remember { mutableStateOf(0f) }
+    var markerScreenY by remember { mutableStateOf(0f) }
+
+    val cameraPositionState = rememberCameraPositionState()
+
     Box(modifier = Modifier.fillMaxSize()) {
 
         InteractiveMap(
@@ -52,10 +59,17 @@ fun HomeScreen(
             userLat = uiState.userLat,
             userLng = uiState.userLng,
             onPointClick = { point ->
-                runWithLocation { viewModel.onPointClick(point) }
+                runWithLocation {
+                    viewModel.onPointClick(point)
+                }
             },
-            onDismissPopup = viewModel::onDismissPopup
+            onDismissPopup = viewModel::onDismissPopup,
+            onMarkerScreenPosition = { x, y ->
+                markerScreenX = x
+                markerScreenY = y
+            }
         )
+
         HomeFilterCard(
             modifier = Modifier.align(Alignment.TopCenter),
             distributor = uiState.selectedDistributor,
@@ -74,22 +88,36 @@ fun HomeScreen(
 
         if (uiState.selectedPoint != null && uiState.locationGranted) {
             val point = uiState.selectedPoint!!
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 20.dp)
-            ) {
-                DistributionPointSheet(
-                    point = point,
-                    onBuyClick = {
-                        navController.navigate(Screen.DistributorDetail.createRoute(point.id))
-                    },
-                    onRouteClick = {
-                        onRouteClick(point.latitude, point.longitude)
-                    }
-                )
+
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val density = androidx.compose.ui.platform.LocalDensity.current
+                val cardWidthPx = with(density) { 186.dp.toPx() }
+                val cardHeightPx = with(density) { 220.dp.toPx() }
+                val marginPx = with(density) { 8.dp.toPx() }
+                val offsetXPx = (markerScreenX - cardWidthPx - marginPx).coerceAtLeast(0f)
+                val offsetYPx = (markerScreenY - cardHeightPx / 2f)
+                    .coerceAtLeast(0f)
+                    .coerceAtMost(with(density) { maxHeight.toPx() } - cardHeightPx)
+                val offsetXDp = with(density) { offsetXPx.toDp() }
+                val offsetYDp = with(density) { offsetYPx.toDp() }
+
+                Box(
+                    modifier = Modifier
+                        .offset(x = offsetXDp, y = offsetYDp)
+                ) {
+                    DistributionPointSheet(
+                        point = point,
+                        onBuyClick = {
+                            navController.navigate(Screen.DistributorDetail.createRoute(point.id))
+                        },
+                        onRouteClick = {
+                            onRouteClick(point.latitude, point.longitude)
+                        }
+                    )
+                }
             }
         }
+
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }

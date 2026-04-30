@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.Projection
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
@@ -19,17 +20,18 @@ import com.google.maps.android.compose.*
 
 @Composable
 fun InteractiveMap(
-    points          : List<DistributorPoint>,
-    selectedPoint   : DistributorPoint?,
-    onPointClick    : (DistributorPoint) -> Unit,
-    onDismissPopup  : () -> Unit,
-    locationGranted : Boolean = false,
-    userLat         : Double? = null,
-    userLng         : Double? = null,
-    userPhotoUrl    : String? = null,
-    routePoints     : List<LatLng> = emptyList(),
-    onRecenterClick : () -> Unit = {},
-    modifier        : Modifier = Modifier
+    points                  : List<DistributorPoint>,
+    selectedPoint           : DistributorPoint?,
+    onPointClick            : (DistributorPoint) -> Unit,
+    onDismissPopup          : () -> Unit,
+    locationGranted         : Boolean = false,
+    userLat                 : Double? = null,
+    userLng                 : Double? = null,
+    userPhotoUrl            : String? = null,
+    routePoints             : List<LatLng> = emptyList(),
+    onRecenterClick         : () -> Unit = {},
+    onMarkerScreenPosition  : (x: Float, y: Float) -> Unit = { _, _ -> },
+    modifier                : Modifier = Modifier
 ) {
     val context = LocalContext.current
 
@@ -40,6 +42,8 @@ fun InteractiveMap(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 14f)
     }
+
+    var projection by remember { mutableStateOf<Projection?>(null) }
 
     LaunchedEffect(userLat, userLng) {
         if (userLat != null && userLng != null) {
@@ -57,31 +61,70 @@ fun InteractiveMap(
         }
     }
 
+
+    LaunchedEffect(selectedPoint, cameraPositionState.position) {
+        selectedPoint?.let { point ->
+            projection?.let { proj ->
+                val screenPos = proj.toScreenLocation(
+                    LatLng(point.latitude, point.longitude)
+                )
+                onMarkerScreenPosition(screenPos.x.toFloat(), screenPos.y.toFloat())
+            }
+        }
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
 
         GoogleMap(
             modifier            = modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            properties          = MapProperties(isMyLocationEnabled = false, mapStyleOptions = mapStyle),
-            uiSettings          = MapUiSettings(zoomControlsEnabled = false, myLocationButtonEnabled = false),
-            onMapClick          = { onDismissPopup() }
+            properties          = MapProperties(
+                isMyLocationEnabled = false,
+                mapStyleOptions = mapStyle
+            ),
+            uiSettings          = MapUiSettings(
+                zoomControlsEnabled = false,
+                myLocationButtonEnabled = false
+            ),
+            onMapClick          = { onDismissPopup() },
+            onMapLoaded         = {
+            }
         ) {
+            MapEffect(Unit) { map ->
+                projection = map.projection
+            }
+            MapEffect(cameraPositionState.position) { map ->
+                projection = map.projection
+                selectedPoint?.let { point ->
+                    val screenPos = map.projection.toScreenLocation(
+                        LatLng(point.latitude, point.longitude)
+                    )
+                    onMarkerScreenPosition(screenPos.x.toFloat(), screenPos.y.toFloat())
+                }
+            }
+
             if (routePoints.isNotEmpty()) {
                 Polyline(
-                    points = routePoints,
-                    color = MaterialTheme.colorScheme.primary,
-                    width = 12f,
+                    points    = routePoints,
+                    color     = MaterialTheme.colorScheme.primary,
+                    width     = 12f,
                     jointType = JointType.ROUND,
-                    startCap = RoundCap(),
-                    endCap = RoundCap()
+                    startCap  = RoundCap(),
+                    endCap    = RoundCap()
                 )
             }
+
             points.forEach { point ->
                 MarkerComposable(
-                    state = rememberMarkerState(position = LatLng(point.latitude, point.longitude)),
+                    state   = rememberMarkerState(
+                        position = LatLng(point.latitude, point.longitude)
+                    ),
                     onClick = { onPointClick(point); true }
                 ) {
-                    DistributorMarker(name = point.name, isSelected = point.id == selectedPoint?.id)
+                    DistributorMarker(
+                        name       = point.name,
+                        isSelected = point.id == selectedPoint?.id
+                    )
                 }
             }
 

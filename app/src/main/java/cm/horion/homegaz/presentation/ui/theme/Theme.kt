@@ -5,14 +5,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 
-// ─────────────────────────────────────────────
-// Conteneur de couleurs custom (hors M3)
-// ─────────────────────────────────────────────
+
 data class HomeGazColors(
     // Header réservations
     val headerBg: Color,
     val headerIndicator: Color,
     val headerTextDark: Color,
+    val surface: Color,
 
     // Background général
     val backgroundLight: Color,
@@ -53,11 +52,13 @@ data class HomeGazColors(
     val neutralGray: Color,
 )
 
+
 private val LightHomeGazColors = HomeGazColors(
     headerBg              = HG_Blue_Header_Bg,
     headerIndicator       = HG_Blue_Indicator,
     headerTextDark        = HG_Text_Dark_Header,
     backgroundLight       = HG_Background_Light,
+    surface               = SurfaceLight,
     deliveringBg          = StatusDeliveringBg,
     deliveringOnBg        = StatusDeliveringOnBg,
     deliveringBorder      = StatusDeliveringBorder,
@@ -86,6 +87,7 @@ private val DarkHomeGazColors = HomeGazColors(
     headerIndicator       = PrimaryDark,
     headerTextDark        = Color(0xFFD5E3FF),
     backgroundLight       = Color(0xFF1E2126),
+    surface               = SurfaceDark,
     deliveringBg          = Color(0xFF1B7A45),
     deliveringOnBg        = Color(0xFFFFFFFF),
     deliveringBorder      = Color(0xFF27AE60),
@@ -109,21 +111,19 @@ private val DarkHomeGazColors = HomeGazColors(
     neutralGray           = Color(0xFF8A9389),
 )
 
-// ─────────────────────────────────────────────
-// CompositionLocal
-// ─────────────────────────────────────────────
-val LocalHomeGazColors = staticCompositionLocalOf { LightHomeGazColors }
-val LocalThemeIsDark   = compositionLocalOf { mutableStateOf(false) }
+// COMPOSITION LOCALS
 
-// Extension pratique : MaterialTheme.homeGazColors
+val LocalHomeGazColors = staticCompositionLocalOf { LightHomeGazColors }
+val LocalThemeIsDark   = compositionLocalOf { false }
+
 val MaterialTheme.homeGazColors: HomeGazColors
     @Composable
     @ReadOnlyComposable
     get() = LocalHomeGazColors.current
 
-// ─────────────────────────────────────────────
-// Material 3 Schemes
-// ─────────────────────────────────────────────
+// MATERIAL 3 SCHEMES
+
+
 private val LightColorScheme = lightColorScheme(
     primary                = PrimaryLight,
     onPrimary              = OnPrimaryLight,
@@ -178,20 +178,18 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant         = OutlineVariantDark,
 )
 
-// ─────────────────────────────────────────────
-// HomeGazTheme
-// ─────────────────────────────────────────────
+// THEME FUNCTION
+
 @Composable
 fun HomeGazTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val isDarkState    = remember { mutableStateOf(darkTheme) }
-    val colorScheme    = if (isDarkState.value) DarkColorScheme else LightColorScheme
-    val homeGazColors  = if (isDarkState.value) DarkHomeGazColors else LightHomeGazColors
+    val colorScheme   = if (darkTheme) DarkColorScheme else LightColorScheme
+    val homeGazColors = if (darkTheme) DarkHomeGazColors else LightHomeGazColors
 
     CompositionLocalProvider(
-        LocalThemeIsDark   provides isDarkState,
+        LocalThemeIsDark   provides darkTheme,
         LocalHomeGazColors provides homeGazColors,
     ) {
         MaterialTheme(
