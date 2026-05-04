@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeGazButton(
@@ -64,7 +65,9 @@ fun HomeGazButton(
             }
             Text(
                 text       = text,
-                style      = MaterialTheme.typography.titleMedium,
+                style      = MaterialTheme.typography.titleSmall.copy(
+                    letterSpacing = 0.sp,
+                ),
                 fontWeight = FontWeight.Bold
             )
             if (icon != null && !iconBeforeText) {

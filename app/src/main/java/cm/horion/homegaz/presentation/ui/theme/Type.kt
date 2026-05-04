@@ -9,36 +9,63 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 
-val provider = GoogleFont.Provider(
+// Configuration du fournisseur de polices Google
+private val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
 
-val bodyFontFamily = FontFamily(
-    Font(googleFont = GoogleFont("Poppins"), fontProvider = provider)
+// Définition de la famille de police Poppins avec ses différentes graisses
+val poppinsFontFamily = FontFamily(
+    Font(
+        googleFont = GoogleFont("Poppins"),
+        fontProvider = provider,
+        weight = FontWeight.Normal
+    ),
+    Font(
+        googleFont = GoogleFont("Poppins"),
+        fontProvider = provider,
+        weight = FontWeight.Medium
+    ),
+    Font(
+        googleFont = GoogleFont("Poppins"),
+        fontProvider = provider,
+        weight = FontWeight.SemiBold
+    ),
+    Font(
+        googleFont = GoogleFont("Poppins"),
+        fontProvider = provider,
+        weight = FontWeight.Bold
+    )
 )
 
+// Configuration de la typographie pour l'application
 val AppTypography = Typography(
+    // Style pour le texte de corps
     bodyLarge = TextStyle(
-        fontFamily = bodyFontFamily,
-        fontWeight = FontWeight.Normal,
+        fontFamily = poppinsFontFamily,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.sp
+        letterSpacing = 0.5.sp
     ),
+
+    // Style pour les grands titres
     titleLarge = TextStyle(
-        fontFamily = bodyFontFamily,
+        fontFamily = poppinsFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 24.sp,
+        fontSize = 22.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
+
+    // Style pour les petits labels ou légendes
     labelSmall = TextStyle(
-        fontFamily = bodyFontFamily,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 11.sp,
-        letterSpacing = 0.5.sp
+        fontFamily = poppinsFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+        lineHeight = 0.sp,
+        letterSpacing = 0.sp
     )
 )

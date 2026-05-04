@@ -26,7 +26,7 @@ import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.distributor.ProductInfoRow
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 @Composable
 fun OrderRecapCard(summary: OrderSummary) {
@@ -109,7 +109,7 @@ private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
         Text(
             text  = stringResource(R.string.label_payment_method),
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Light,
                 fontSize   = 13.sp,
                 color      = Color(0xFFAFB0B1)
@@ -130,7 +130,7 @@ private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
             Text(
                 text  = methodLabel,
                 style = TextStyle(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 16.sp,
                     color      = MaterialTheme.colorScheme.primary
@@ -141,7 +141,7 @@ private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
                 Text(
                     text  = "  |  $phone",
                     style = TextStyle(
-                        fontFamily = bodyFontFamily,
+                        fontFamily =poppinsFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize   = 16.sp,
                         color      = Color(0xFFAFB0B1)

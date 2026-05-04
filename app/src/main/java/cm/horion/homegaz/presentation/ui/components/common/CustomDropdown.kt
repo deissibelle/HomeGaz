@@ -50,7 +50,9 @@ fun CustomDropdown(
             ) {
                 Text(
                     text = selected,
-                    fontSize = 14.sp,
+                    style      = MaterialTheme.typography.titleSmall.copy(
+                        letterSpacing = 0.sp,
+                    ),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
 

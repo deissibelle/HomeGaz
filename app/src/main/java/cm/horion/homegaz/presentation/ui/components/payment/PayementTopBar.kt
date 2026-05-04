@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -40,7 +40,7 @@ fun PaymentTopBar(
                 .fillMaxWidth()
                 .padding(start = 60.dp, end = 20.dp),
             style     = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize   = 20.sp,
                 lineHeight = (20 * 1.17).sp,

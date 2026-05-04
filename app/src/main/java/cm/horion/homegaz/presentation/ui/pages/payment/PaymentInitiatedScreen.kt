@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 private val CyanColor = Color(0xFF00D5E1)
 
@@ -61,7 +61,7 @@ fun PaymentInitiatedScreen(
         Text(
             text  = stringResource(R.string.payment_initiated_title),
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize   = 20.sp,
                 lineHeight = (20 * 1.17).sp,
@@ -133,7 +133,7 @@ private fun StepRow(number: Int, text: String) {
             Text(
                 text  = number.toString(),
                 style = TextStyle(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 20.sp,
                     color      = MaterialTheme.colorScheme.primary,
@@ -145,7 +145,7 @@ private fun StepRow(number: Int, text: String) {
         Text(
             text  = text,
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize   = 14.sp,
                 lineHeight = (14 * 1.17).sp,

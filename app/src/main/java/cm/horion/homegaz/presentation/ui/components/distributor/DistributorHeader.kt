@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 @Composable
 fun DistributorHeader(
@@ -77,7 +77,7 @@ fun DistributorHeader(
             text     = title,
             modifier = Modifier.padding(top = 189.dp, start = 97.dp),
             style    = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize   = 20.sp,
                 color      = MaterialTheme.colorScheme.primary,

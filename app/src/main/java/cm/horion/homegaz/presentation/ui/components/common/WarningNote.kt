@@ -14,8 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.theme.WarningOrange
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
-
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -42,7 +41,7 @@ fun WarningNote(
         Text(
             text = message,
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 11.sp,
                 lineHeight = 14.sp,

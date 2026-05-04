@@ -19,8 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
-
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -43,7 +42,7 @@ fun OptionSelectorRow(
         Text(
             text = label,
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -104,7 +103,7 @@ fun OptionSelectorRow(
                             Text(
                                 text = optionLabel,
                                 style = TextStyle(
-                                    fontFamily = bodyFontFamily,
+                                    fontFamily = poppinsFontFamily,
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 16.sp,
                                     color = if (isSelected) MaterialTheme.colorScheme.primary else Color.White

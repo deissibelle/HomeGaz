@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -38,7 +38,7 @@ fun TotalAmountCard(
             Text(
                 text = stringResource(R.string.total_amount),
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary
@@ -50,7 +50,7 @@ fun TotalAmountCard(
             Text(
                 text = "$total$currency",
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary

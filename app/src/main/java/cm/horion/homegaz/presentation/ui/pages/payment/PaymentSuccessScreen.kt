@@ -22,9 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.theme.SuccessColor
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
-
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -51,7 +50,7 @@ fun PaymentSuccessScreen(
                 text     = stringResource(R.string.payment_success_title),
                 modifier = Modifier.padding(horizontal = 56.dp),
                 style    = TextStyle(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 20.sp,
                     lineHeight = (20 * 1.17).sp,
@@ -106,7 +105,7 @@ fun PaymentSuccessScreen(
                 text = stringResource(R.string.payment_success_message),
                 modifier = Modifier.width(294.dp),
                 style    = TextStyle(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize   = 14.sp,
                     lineHeight = (14 * 1.17).sp,

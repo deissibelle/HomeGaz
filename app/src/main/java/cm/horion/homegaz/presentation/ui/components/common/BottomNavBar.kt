@@ -9,6 +9,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.TipsAndUpdates
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LocalShipping
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,11 +35,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.common.NavItem
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
 
@@ -36,20 +45,44 @@ fun BottomNavBar(
     onTabSelected: (String) -> Unit
 ) {
     val navItems = listOf(
-        NavItem("Accueil", R.drawable.home_outlined, R.drawable.home_filled, "Accueil"),
-        NavItem("Réservations", R.drawable.shopping_cart, R.drawable.shopping_cart_filled, "Réservations"),
-        NavItem("Conseils", R.drawable.light_bulb_outlined, R.drawable.light_bulb_filled, "Conseils"),
-        NavItem("Compte", R.drawable.account, R.drawable.account_filled, "Compte")
+        NavItem(
+            id = "Accueil",
+            iconOutlined = Icons.Outlined.Home,
+            iconFilled = Icons.Filled.Home,
+            label = "Accueil"
+        ),
+        NavItem(
+            id = "Réservations",
+            iconOutlined = Icons.Outlined.ShoppingCart,
+            iconFilled = Icons.Filled.ShoppingCart,
+            label = "Réservations"
+        ),
+        NavItem(
+            id = "Conseils",
+            iconOutlined = Icons.Outlined.TipsAndUpdates,
+            iconFilled = Icons.Filled.TipsAndUpdates,
+            label = "Conseils"
+        ),
+        NavItem(
+            id = "Compte",
+            iconOutlined = Icons.Outlined.AccountCircle,
+            iconFilled = Icons.Filled.AccountCircle,
+            label = "Compte"
+        )
     )
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val itemWidth = screenWidth / navItems.size
-    val selectedIndex = navItems.indexOfFirst { it.id == selectedTab }.coerceAtLeast(0)
+    val selectedIndex =
+        navItems.indexOfFirst { it.id == selectedTab }.coerceAtLeast(0)
 
     val animatedXOffset by animateDpAsState(
         targetValue = (itemWidth * selectedIndex) + (itemWidth / 2),
-        animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
+        animationSpec = tween(
+            durationMillis = 300,
+            easing = FastOutSlowInEasing
+        ),
         label = "BumpAnimation"
     )
 
@@ -61,6 +94,7 @@ fun BottomNavBar(
             .background(MaterialTheme.homeGazColors.surface)
             .navigationBarsPadding()
     ) {
+
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,17 +109,31 @@ fun BottomNavBar(
             val leftPath = Path().apply {
                 moveTo(x - bumpWidth / 1.2f, y)
                 cubicTo(
-                    x - bumpWidth / 2, y,
-                    x - bumpWidth / 3, y - bumpHeight,
-                    x - indicatorWidth / 2, y - bumpHeight
+                    x - bumpWidth / 2,
+                    y,
+                    x - bumpWidth / 3,
+                    y - bumpHeight,
+                    x - indicatorWidth / 2,
+                    y - bumpHeight
                 )
             }
-            drawPath(path = leftPath, color = Color.Transparent, style = Stroke(width = 2.dp.toPx()))
+
+            drawPath(
+                path = leftPath,
+                color = Color.Transparent,
+                style = Stroke(width = 2.dp.toPx())
+            )
 
             drawLine(
                 color = primaryColor,
-                start = androidx.compose.ui.geometry.Offset(x - indicatorWidth / 2, y - bumpHeight),
-                end = androidx.compose.ui.geometry.Offset(x + indicatorWidth / 2, y - bumpHeight),
+                start = androidx.compose.ui.geometry.Offset(
+                    x - indicatorWidth / 2,
+                    y - bumpHeight
+                ),
+                end = androidx.compose.ui.geometry.Offset(
+                    x + indicatorWidth / 2,
+                    y - bumpHeight
+                ),
                 strokeWidth = 3.dp.toPx(),
                 cap = StrokeCap.Round
             )
@@ -93,12 +141,20 @@ fun BottomNavBar(
             val rightPath = Path().apply {
                 moveTo(x + indicatorWidth / 2, y - bumpHeight)
                 cubicTo(
-                    x + bumpWidth / 3, y - bumpHeight,
-                    x + bumpWidth / 2, y,
-                    x + bumpWidth / 1.2f, y
+                    x + bumpWidth / 3,
+                    y - bumpHeight,
+                    x + bumpWidth / 2,
+                    y,
+                    x + bumpWidth / 1.2f,
+                    y
                 )
             }
-            drawPath(path = rightPath, color = Color.Transparent, style = Stroke(width = 1.dp.toPx()))
+
+            drawPath(
+                path = rightPath,
+                color = Color.Transparent,
+                style = Stroke(width = 1.dp.toPx())
+            )
         }
 
         Row(
@@ -109,35 +165,52 @@ fun BottomNavBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             navItems.forEach { item ->
+
                 val isSelected = selectedTab == item.id
+
                 val contentColor by animateColorAsState(
-                    targetValue = if (isSelected) primaryColor else primaryColor,
-                    animationSpec = tween(300)
+                    targetValue = if (isSelected) {
+                        primaryColor
+                    } else {
+                        primaryColor.copy(alpha = 5f)
+                    },
+                    animationSpec = tween(300),
+                    label = "IconColorAnimation"
                 )
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
                         .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
+                            interactionSource = remember {
+                                MutableInteractionSource()
+                            },
                             indication = null,
-                            onClick = { onTabSelected(item.id) }
+                            onClick = {
+                                onTabSelected(item.id)
+                            }
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
                     Spacer(modifier = Modifier.height(12.dp))
+
                     Icon(
-                        painter = painterResource(if (isSelected) item.iconFilled else item.iconOutlined),
+                        imageVector = if (isSelected) {
+                            item.iconFilled
+                        } else {
+                            item.iconOutlined
+                        },
                         contentDescription = item.label,
                         modifier = Modifier.size(26.dp),
                         tint = contentColor
                     )
+
                     Text(
                         text = item.label,
-                        fontSize = 14.sp,
-                        color = contentColor,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.labelSmall,
+                        color = contentColor
                     )
                 }
             }

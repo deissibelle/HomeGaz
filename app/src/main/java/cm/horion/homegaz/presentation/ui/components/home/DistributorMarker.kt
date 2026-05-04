@@ -30,11 +30,9 @@ fun DistributorMarker(
             ) {
                 Text(
                     text  = name,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize * 0.7f,
+                    style = MaterialTheme.typography.labelSmall,
                         color    = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
-                    )
+
                 )
             }
             Spacer(modifier = Modifier.height(2.dp))

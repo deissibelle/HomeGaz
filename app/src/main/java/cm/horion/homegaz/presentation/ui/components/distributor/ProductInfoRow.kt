@@ -12,7 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -41,7 +41,7 @@ fun ProductInfoRow(
         Text(
             text = label,
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -61,7 +61,7 @@ fun ProductInfoRow(
             Text(
                 text = value,
                 style = TextStyle(
-                    fontFamily = bodyFontFamily,
+                    fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.primary

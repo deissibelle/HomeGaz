@@ -82,8 +82,7 @@ fun DistributionPointSheet(
                     Text(
                         text = point.name,
                         color = Color.White,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold
+                       style = MaterialTheme.typography.labelSmall
                     )
                 }
 
@@ -99,8 +98,10 @@ fun DistributionPointSheet(
                 Text(
                     text = if (point.stockAvailable) "STOCK DISPONIBLE" else "STOCK INDISPONIBLE",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        lineHeight = 16.sp,
+                    ),
+
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .width(112.dp)
@@ -121,7 +122,7 @@ fun DistributionPointSheet(
                 ) {
                     Text(
                         stringResource(R.string.home_sheet_btn_order),
-                        fontSize = 12.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = Color.White
                     )
                 }
@@ -141,7 +142,7 @@ fun DistributionPointSheet(
                 ) {
                     Text(
                         stringResource(R.string.home_sheet_btn_route),
-                        fontSize = 10.sp,
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

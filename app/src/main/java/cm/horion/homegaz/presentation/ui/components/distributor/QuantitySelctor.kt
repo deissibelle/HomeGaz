@@ -20,9 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
 import cm.horion.homegaz.R
-
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -52,7 +51,7 @@ fun QuantitySelector(
         Text(
             text = stringResource(R.string.label_quantity),
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.outlineVariant
@@ -99,7 +98,7 @@ fun QuantitySelector(
                     Text(
                         text = quantity.toString(),
                         style = TextStyle(
-                            fontFamily = bodyFontFamily,
+                            fontFamily = poppinsFontFamily,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -158,7 +157,7 @@ private fun RowScope.StepperCell(
         Text(
             text = label,
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Light,
                 fontSize = 20.sp,
                 color = MaterialTheme.colorScheme.onSurface,

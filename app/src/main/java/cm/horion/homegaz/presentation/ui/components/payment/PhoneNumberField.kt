@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.bodyFontFamily
+import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 
 @Composable
@@ -31,7 +31,7 @@ fun PhoneNumberField(
         Text(
             text = "Numéro",
             style = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -45,7 +45,7 @@ fun PhoneNumberField(
                 Text(
                     text = "Ex: 673219684",
                     style = TextStyle(
-                        fontFamily = bodyFontFamily,
+                        fontFamily = poppinsFontFamily,
                         fontWeight = FontWeight.Normal,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.outline
@@ -67,7 +67,7 @@ fun PhoneNumberField(
                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             ),
             textStyle = TextStyle(
-                fontFamily = bodyFontFamily,
+                fontFamily = poppinsFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurface
