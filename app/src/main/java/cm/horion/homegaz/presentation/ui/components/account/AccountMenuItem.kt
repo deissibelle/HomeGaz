@@ -40,8 +40,8 @@ fun AccountMenuItem(
             )
         }
 
-        Spacer(Modifier.width(16.dp))
 
+        Spacer(Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = label,

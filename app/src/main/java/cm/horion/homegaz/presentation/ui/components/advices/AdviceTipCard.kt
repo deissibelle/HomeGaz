@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,7 +33,7 @@ fun AdviceTipCard(tip: AdviceTip, isLast: Boolean) {
             text       = "${tip.emoji}  ${tip.title}",
             fontWeight = FontWeight.Bold,
             fontSize   = 15.sp,
-            color      = PrimaryLight,
+            color      = MaterialTheme.colorScheme.primary,
             lineHeight = 20.sp
         )
         Spacer(modifier = Modifier.height(6.dp))
@@ -55,17 +56,18 @@ fun AdviceTipCard(tip: AdviceTip, isLast: Boolean) {
                         text       = "• ",
                         fontWeight = FontWeight.Bold,
                         fontSize   = 14.sp,
-                        color      = AdvicesBodyColor
                     )
                 } else {
                     Spacer(modifier = Modifier.width(12.dp))
                 }
                 Text(
                     text       = bullet,
-                    fontWeight = FontWeight.Normal,
-                    fontSize   = 14.sp,
-                    lineHeight = 20.sp,
-                    color      = AdvicesBodyColor,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        letterSpacing = 0.sp,
+                        lineHeight = 22.sp,
+                        fontWeight = FontWeight.Normal,
+
+                        ),
                     modifier   = Modifier.fillMaxWidth()
                 )
             }

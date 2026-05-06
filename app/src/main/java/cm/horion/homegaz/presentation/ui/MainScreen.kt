@@ -10,6 +10,7 @@ import cm.horion.homegaz.presentation.ui.pages.account.AccountScreen
 import cm.horion.homegaz.presentation.ui.pages.advices.AdvicesScreen
 import cm.horion.homegaz.presentation.ui.pages.home.HomeScreen
 import cm.horion.homegaz.presentation.ui.pages.reservations.ReservationsScreen
+import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 
 enum class Tab(val label: String) {
     HOME("Accueil"),
@@ -25,6 +26,7 @@ enum class Tab(val label: String) {
 @Composable
 fun MainScreen(
     navController: NavController,
+    reservationsViewModel : ReservationsViewModel,
     onRouteClick: (lat: Double, lng: Double) -> Unit = { _, _ -> },
     initialTab: String = Tab.HOME.label
 ) {
@@ -48,7 +50,7 @@ fun MainScreen(
                     navController = navController,
                     onRouteClick  = onRouteClick
                 )
-                Tab.RESERVATIONS -> ReservationsScreen(navController = navController)
+                Tab.RESERVATIONS -> ReservationsScreen(navController = navController,viewModel     = reservationsViewModel )
                 Tab.ADVICES      -> AdvicesScreen()
                 Tab.ACCOUNT      -> AccountScreen(navController = navController)
             }

@@ -28,7 +28,7 @@ fun ReservationSearchBar(
             Text(
                 text  = stringResource(R.string.res_search_placeholder),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 14.sp,
             )
         },
@@ -36,7 +36,7 @@ fun ReservationSearchBar(
             Icon(
                 imageVector        = Icons.Default.Search,
                 contentDescription = null,
-                tint               = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint               = MaterialTheme.colorScheme.primary,
                 modifier           = Modifier.size(18.dp),
             )
         },
@@ -44,7 +44,7 @@ fun ReservationSearchBar(
         shape       = RoundedCornerShape(12.dp),
         colors      = OutlinedTextFieldDefaults.colors(
             focusedBorderColor    = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor  = MaterialTheme.colorScheme.outlineVariant,
+            unfocusedBorderColor  = MaterialTheme.colorScheme.primary,
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
             focusedTextColor      = MaterialTheme.colorScheme.onSurface,

@@ -34,7 +34,7 @@
     <!-- Distribution Point Sheet (Détails) -->
     <string name="home_sheet_distance">À %1$s de vous</string>
     <string name="home_sheet_btn_route">Itinéraire</string>
-    <string name="home_sheet_btn_order">Commander</string>
+    <string name="home_sheet_btn_order">Acheter</string>
 
     <!-- Bottom Navigation Bar -->
     <string name="nav_home">Accueil</string>
@@ -191,17 +191,59 @@
     <string name="auth_title_account">Mon Compte</string>
     <string name="auth_desc_account">Connectez-vous pour accéder à vos informations personnelles et gérer votre profil.</string>
 
-    <!-- Reservations -->
+    <!-- Réservations — état vide -->
+    <string name="res_empty_title">Faites une réservation</string>
+    <string name="res_empty_desc">Retrouvez vos commandes dans l\'onglet réservation. Faites autant de commandes que possible</string>
+    <string name="res_empty_cta">Réserver du gaz</string>
+    <string name="res_empty_icon_desc">Aucune réservation</string>
+
+    <!-- StatusHeader -->
     <string name="res_screen_title">Mes Réservations</string>
-    <string name="res_search_placeholder">Rechercher une réservation</string>
-    <string name="res_header_global">Global</string>
     <string name="res_header_active">En cours</string>
     <string name="res_header_completed">Terminé</string>
-    <string name="res_status_delivering">EN LIVRAISON</string>
-    <string name="res_status_completed">TERMINÉ</string>
-    <string name="res_label_id">ID: %1$s</string>
-    <string name="res_label_price">%1$d FCFA</string>
-    <string name="res_label_brand_detail">%1$s - %2$s</string>
+    <string name="res_header_global">Global</string>
+
+    <!-- ReservationSearchBar -->
+    <string name="res_search_placeholder">Rechercher une réservation</string>
+
+
+    <!-- Réservations — liste -->
+    <string name="res_list_status_label">Statut</string>
+    <string name="res_list_delay_label">Délais: %1$s</string>
+    <string name="res_list_no_delay">N/A</string>
+    <string name="res_list_option_format">[%1$s]</string>
+    <string name="res_list_title_format">%1$s  %2$s</string>
+    <string name="res_search_no_result">Aucun résultat pour « %1$s »</string>
+    <string name="res_error_unknown">Erreur inconnue</string>
+
+    <!-- Réservations — statuts (badges) -->
+    <string name="res_status_delivering_label">En cours</string>
+    <string name="res_status_pending_label">En attente</string>
+    <string name="res_status_completed_label">Terminée</string>
+
+    <!-- Réservations — détail -->
+    <string name="res_detail_label_marque">Marque</string>
+    <string name="res_detail_label_poids">Poids</string>
+    <string name="res_detail_label_quantite">Quantité</string>
+    <string name="res_detail_label_option">Option</string>
+    <string name="res_detail_label_delais">Délais</string>
+    <string name="res_detail_label_statut">Statut</string>
+    <string name="res_detail_label_montant">Montant de la commande</string>
+    <string name="res_detail_price_format">%1$d fr CFA</string>
+    <string name="res_detail_status_delivering">En cours</string>
+    <string name="res_detail_status_pending">En attente</string>
+    <string name="res_detail_status_completed">Terminé</string>
+    <string name="res_detail_no_delay">N/A</string>
+    <string name="res_detail_back_desc">Retour</string>
+
+    <!-- Réservations — modèle -->
+    <string name="res_delivery_label">Livraison</string>
+    <string name="res_retrait_label">Retrait</string>
+    <string name="res_payment_om_format">OM - %1$s</string>
+    <string name="res_payment_momo_format">MoMo - %1$s</string>
+    <string name="res_default_delay_delivery">1H30</string>
+    <string name="res_default_delay_retrait">2 jours</string>
+
 
     <string name="account_title">Mon Profile</string>
     <string name="account_user_default_name">Utilisateur HomeGaz</string>

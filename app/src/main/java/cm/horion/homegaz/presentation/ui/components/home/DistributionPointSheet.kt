@@ -90,13 +90,13 @@ fun DistributionPointSheet(
 
                 // Statut stock
                 Image(
-                    painter = painterResource(if (point.stockAvailable) R.drawable.ok else R.drawable.sad),
+                    painter = painterResource ( R.drawable.ok ),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
 
                 Text(
-                    text = if (point.stockAvailable) "STOCK DISPONIBLE" else "STOCK INDISPONIBLE",
+                    text =  "STOCK DISPONIBLE",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelSmall.copy(
                         lineHeight = 16.sp,
@@ -111,7 +111,7 @@ fun DistributionPointSheet(
                 // Bouton Acheter
                 Button(
                     onClick = onBuyClick,
-                    enabled = point.stockAvailable,
+//                    enabled = point.stockAvailable,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -39,16 +40,18 @@ fun DailyPracticesBlock(title: String, practices: List<String>) {
                         bottomEnd   = 12.dp
                     )
                 )
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             practices.forEachIndexed { index, practice ->
                 Text(
                     text       = "${index + 1}. $practice",
-                    fontWeight = FontWeight.Normal,
-                    fontSize   = 14.sp,
-                    lineHeight = 22.sp,
-                    color      = AdvicesBodyColor
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        letterSpacing = 0.sp,
+                        lineHeight = 22.sp,
+                        fontWeight = FontWeight.Normal,
+
+                        ),
                 )
             }
         }

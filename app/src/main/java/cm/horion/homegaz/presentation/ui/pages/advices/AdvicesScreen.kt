@@ -141,7 +141,6 @@ fun AdvicesScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AdvicesBackground)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {

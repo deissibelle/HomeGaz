@@ -28,6 +28,7 @@ import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
+import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -38,6 +39,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
     // On récupère le ViewModel ici pour avoir accès à la liste des points chargés
     val homeViewModel: HomeViewModel = koinViewModel()
+    val reservationsViewModel : ReservationsViewModel = koinViewModel()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
     // États temporaires pour le processus d'achat (Tunnel de commande)
@@ -80,6 +82,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         composable(Screen.Home.route) {
             MainScreen(
                 navController = navController,
+                reservationsViewModel = reservationsViewModel,
                 onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
             )
         }
@@ -91,6 +94,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             val initialTab = backStackEntry.arguments?.getString("initialTab") ?: Tab.HOME.label
             MainScreen(
                 navController = navController,
+                reservationsViewModel = reservationsViewModel,
                 initialTab = initialTab,
                 onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
             )

@@ -35,7 +35,7 @@ fun StatusHeader(active: Int, completed: Int) {
             .padding(16.dp),
         shape     = RoundedCornerShape(24.dp),
         colors    = CardDefaults.cardColors(containerColor = colors.headerBg),
-        elevation = CardDefaults.cardElevation(0.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
     ) {
         Row(
             modifier          = Modifier
@@ -71,13 +71,12 @@ fun StatusHeader(active: Int, completed: Int) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text       = "$active",
-                        fontSize   = 22.sp,
-                        fontWeight = FontWeight.Bold,
+                       style      = MaterialTheme.typography.bodyLarge,
                         color      = colors.headerTextDark,
                     )
                     Text(
                         text     = stringResource(R.string.res_header_active),
-                        fontSize = 11.sp,
+                        style      = MaterialTheme.typography.labelSmall,
                         color    = colors.headerTextDark,
                     )
                 }
@@ -88,13 +87,12 @@ fun StatusHeader(active: Int, completed: Int) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text       = "$completed",
-                    fontSize   = 22.sp,
-                    fontWeight = FontWeight.Bold,
+                    style      = MaterialTheme.typography.bodyLarge,
                     color      = colors.headerTextDark,
                 )
                 Text(
                     text     = stringResource(R.string.res_header_completed),
-                    fontSize = 11.sp,
+                    style      = MaterialTheme.typography.labelSmall,
                     color    = colors.headerTextDark,
                 )
             }
@@ -116,8 +114,7 @@ fun StatusHeader(active: Int, completed: Int) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text       = stringResource(R.string.res_header_global),
-                    fontSize   = 20.sp,
-                    fontWeight = FontWeight.ExtraBold,
+                    style      = MaterialTheme.typography.titleLarge,
                     color      = colors.headerTextDark,
                 )
             }

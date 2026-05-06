@@ -43,7 +43,7 @@ class GetDistributorPointsUseCase {
                     id = "5", name = "Total Bastos",
                     latitude = 3.889, longitude = 11.517,
                     distributor = "Total", priceXaf = 6900,
-                    stockAvailable = false,
+                    stockAvailable = true,
                     weight = "12kg", logoRes = R.drawable.distributor_logo
                 ),
                 DistributorPoint(
@@ -71,7 +71,7 @@ class GetDistributorPointsUseCase {
                     id = "9", name = "Tradex Ekounou",
                     latitude = 3.845, longitude = 11.542,
                     distributor = "Tradex", priceXaf = 6700,
-                    stockAvailable = false,
+                    stockAvailable = true,
                     weight = "6kg", logoRes = R.drawable.distributor_logo
                 )
             )
