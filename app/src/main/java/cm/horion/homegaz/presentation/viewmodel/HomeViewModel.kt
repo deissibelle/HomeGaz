@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.presentation.state.HomeUiState
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +36,22 @@ class HomeViewModel(
             }
         }
     }
+    fun calculateRouteToPoint(destLat: Double, destLng: Double) {
+        val startLat = uiState.value.userLat
+        val startLng = uiState.value.userLng
 
+        if (startLat != null && startLng != null) {
+            viewModelScope.launch {
+                // On simule une liste de points (Polyline)
+                val path = listOf(
+                    LatLng(startLat, startLng),
+                    LatLng((startLat + destLat) / 2, (startLng + destLng) / 2),
+                    LatLng(destLat, destLng)
+                )
+                _uiState.update { it.copy(routePolyline = path) }
+            }
+        }
+    }
     fun onLocationUpdated(lat: Double, lng: Double) {
         _uiState.update { state ->
             val newState = state.copy(userLat = lat, userLng = lng, locationGranted = true)

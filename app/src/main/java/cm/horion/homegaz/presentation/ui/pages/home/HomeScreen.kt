@@ -14,9 +14,12 @@ import androidx.navigation.NavController
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import kotlin.let
 
 @Composable
 fun HomeScreen(
@@ -47,7 +50,7 @@ fun HomeScreen(
 
     var markerScreenX by remember { mutableStateOf(0f) }
     var markerScreenY by remember { mutableStateOf(0f) }
-
+    val scope = rememberCoroutineScope()
     val cameraPositionState = rememberCameraPositionState()
 
     Box(modifier = Modifier.fillMaxSize()) {

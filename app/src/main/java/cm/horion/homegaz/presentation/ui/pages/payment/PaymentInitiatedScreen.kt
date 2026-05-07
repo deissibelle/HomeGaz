@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.HourglassEmpty
+import androidx.compose.material.icons.outlined.HourglassTop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -73,10 +74,10 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Icon(
-            imageVector        = Icons.Outlined.HourglassEmpty,
+            imageVector        = Icons.Outlined.HourglassTop,
             contentDescription = null,
             modifier           = Modifier.size(58.dp),
-            tint               = Color(0xFFB0B0B0)
+            tint               =  MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(32.dp))
