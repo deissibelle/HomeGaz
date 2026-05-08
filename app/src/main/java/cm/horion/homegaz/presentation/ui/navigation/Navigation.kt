@@ -50,20 +50,20 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     var currentDelivery by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
     var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
 
-    // Helper pour lancer l'itinéraire externe
-    val openMapsRoute = { lat: Double, lng: Double ->
-        val uri = Uri.parse("google.navigation:q=$lat,$lng")
-        val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
-            setPackage("com.google.android.apps.maps")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        try {
-            context.startActivity(mapIntent)
-        } catch (e: Exception) {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng"))
-            context.startActivity(webIntent)
-        }
-    }
+//    // Helper pour lancer l'itinéraire externe
+//    val openMapsRoute = { lat: Double, lng: Double ->
+//        val uri = Uri.parse("google.navigation:q=$lat,$lng")
+//        val mapIntent = Intent(Intent.ACTION_VIEW, uri).apply {
+//            setPackage("com.google.android.apps.maps")
+//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        }
+//        try {
+//            context.startActivity(mapIntent)
+//        } catch (e: Exception) {
+//            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&destination=$lat,$lng"))
+//            context.startActivity(webIntent)
+//        }
+//    }
 
     if (onboardingCompleted == null) return
 
@@ -83,7 +83,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             MainScreen(
                 navController = navController,
                 reservationsViewModel = reservationsViewModel,
-                onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
+                onRouteClick = { lat, lng ->
+                    homeViewModel.calculateRouteToPoint(lat, lng) }
             )
         }
 
@@ -96,7 +97,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 navController = navController,
                 reservationsViewModel = reservationsViewModel,
                 initialTab = initialTab,
-                onRouteClick = { lat, lng -> openMapsRoute(lat, lng) }
+                onRouteClick = { lat, lng ->
+                    homeViewModel.calculateRouteToPoint(lat, lng) }
             )
         }
 

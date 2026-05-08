@@ -114,8 +114,7 @@ fun HomeScreen(
                             navController.navigate(Screen.DistributorDetail.createRoute(point.id))
                         },
                         onRouteClick = {
-                            onRouteClick(point.latitude, point.longitude)
-                        }
+                            viewModel.calculateRouteToPoint(point.latitude, point.longitude)                        }
                     )
                 }
             }

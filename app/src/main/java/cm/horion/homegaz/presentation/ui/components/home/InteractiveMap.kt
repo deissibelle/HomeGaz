@@ -20,38 +20,28 @@ import com.google.maps.android.compose.*
 
 @Composable
 fun InteractiveMap(
-    points                  : List<DistributorPoint>,
-    selectedPoint           : DistributorPoint?,
-    onPointClick            : (DistributorPoint) -> Unit,
-    onDismissPopup          : () -> Unit,
-    locationGranted         : Boolean = false,
-    userLat                 : Double? = null,
-    userLng                 : Double? = null,
-    userPhotoUrl            : String? = null,
-    routePoints             : List<LatLng> = emptyList(),
-    onRecenterClick         : () -> Unit = {},
-    onMarkerScreenPosition  : (x: Float, y: Float) -> Unit = { _, _ -> },
-    modifier                : Modifier = Modifier
+    points                 : List<DistributorPoint>,
+    selectedPoint          : DistributorPoint?,
+    onPointClick           : (DistributorPoint) -> Unit,
+    onDismissPopup         : () -> Unit,
+    locationGranted        : Boolean = false,
+    userLat                : Double? = null,
+    userLng                : Double? = null,
+    userPhotoUrl           : String? = null,
+    routePoints            : List<LatLng> = emptyList(),
+    onRecenterClick        : () -> Unit = {},
+    onMarkerScreenPosition : (x: Float, y: Float) -> Unit = { _, _ -> },
+    cameraPositionState    : CameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 14f)
+    },
+    modifier               : Modifier = Modifier
 ) {
     val context = LocalContext.current
-
     val mapStyle = remember {
         MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
     }
 
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 14f)
-    }
-
     var projection by remember { mutableStateOf<Projection?>(null) }
-
-    LaunchedEffect(userLat, userLng) {
-        if (userLat != null && userLng != null) {
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(LatLng(userLat, userLng), 14f)
-            )
-        }
-    }
 
     LaunchedEffect(selectedPoint) {
         selectedPoint?.let {
@@ -61,13 +51,10 @@ fun InteractiveMap(
         }
     }
 
-
     LaunchedEffect(selectedPoint, cameraPositionState.position) {
         selectedPoint?.let { point ->
             projection?.let { proj ->
-                val screenPos = proj.toScreenLocation(
-                    LatLng(point.latitude, point.longitude)
-                )
+                val screenPos = proj.toScreenLocation(LatLng(point.latitude, point.longitude))
                 onMarkerScreenPosition(screenPos.x.toFloat(), screenPos.y.toFloat())
             }
         }
@@ -76,23 +63,19 @@ fun InteractiveMap(
     Box(modifier = modifier.fillMaxSize()) {
 
         GoogleMap(
-            modifier            = modifier.fillMaxSize(),
+            modifier            = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             properties          = MapProperties(
                 isMyLocationEnabled = false,
-                mapStyleOptions = mapStyle
+                mapStyleOptions     = mapStyle
             ),
-            uiSettings          = MapUiSettings(
-                zoomControlsEnabled = false,
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled     = false,
                 myLocationButtonEnabled = false
             ),
-            onMapClick          = { onDismissPopup() },
-            onMapLoaded         = {
-            }
+            onMapClick = { onDismissPopup() }
         ) {
-            MapEffect(Unit) { map ->
-                projection = map.projection
-            }
+            // Capture la projection à chaque changement de caméra
             MapEffect(cameraPositionState.position) { map ->
                 projection = map.projection
                 selectedPoint?.let { point ->
@@ -116,9 +99,7 @@ fun InteractiveMap(
 
             points.forEach { point ->
                 MarkerComposable(
-                    state   = rememberMarkerState(
-                        position = LatLng(point.latitude, point.longitude)
-                    ),
+                    state   = rememberMarkerState(position = LatLng(point.latitude, point.longitude)),
                     onClick = { onPointClick(point); true }
                 ) {
                     DistributorMarker(
@@ -130,9 +111,7 @@ fun InteractiveMap(
 
             if (locationGranted && userLat != null && userLng != null) {
                 MarkerComposable(
-                    state  = rememberMarkerState(
-                        position = LatLng(userLat, userLng)
-                    ),
+                    state  = rememberMarkerState(position = LatLng(userLat, userLng)),
                     anchor = androidx.compose.ui.geometry.Offset(0.5f, 1f)
                 ) {
                     UserLocationMarker(photoUrl = userPhotoUrl)
