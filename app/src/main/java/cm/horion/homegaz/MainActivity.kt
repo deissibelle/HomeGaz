@@ -11,19 +11,23 @@ import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import com.google.android.gms.location.*
+import com.yandex.mapkit.MapKitFactory
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val userPrefs: UserPreferencesRepository by inject()
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val userPrefs   : UserPreferencesRepository by inject()
+    private val homeViewModel: HomeViewModel             by viewModel()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationCallback   : LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        MapKitFactory.initialize(this)
+
         enableEdgeToEdge()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -45,10 +49,14 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L)
             .setMinUpdateDistanceMeters(10f)
             .build()
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     override fun onResume() {

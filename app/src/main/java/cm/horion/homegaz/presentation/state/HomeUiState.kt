@@ -1,24 +1,24 @@
 package cm.horion.homegaz.presentation.state
 
 import cm.horion.homegaz.domain.model.home.DistributorPoint
-import com.google.android.gms.maps.model.LatLng
+import com.yandex.mapkit.geometry.Point
 
 data class HomeUiState(
-    val allPoints: List<DistributorPoint> = emptyList(),
-    val filteredPoints: List<DistributorPoint> = emptyList(),
-    val selectedPoint: DistributorPoint? = null,
+    val allPoints      : List<DistributorPoint> = emptyList(),
+    val filteredPoints : List<DistributorPoint> = emptyList(),
+    val selectedPoint  : DistributorPoint?      = null,
 
     val selectedDistributor: String = "Tous",
-    val selectedDistance: String = "5 km",
-    val selectedWeight: String = "Tous",
+    val selectedDistance   : String = "5 km",
+    val selectedWeight     : String = "Tous",
 
     val locationGranted: Boolean = false,
-    val locationDenied: Boolean = false,
-    val userLat: Double? = null,
-    val userLng: Double? = null,
-    val userPhotoUrl: String? = null,
-    val routePolyline: List<LatLng> = emptyList(),
+    val locationDenied : Boolean = false,
+    val userLat        : Double? = null,
+    val userLng        : Double? = null,
+    val userPhotoUrl   : String? = null,
+    val routePolyline  : List<Point> = emptyList(),
 
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error    : String? = null
 )

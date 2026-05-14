@@ -1,22 +1,25 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
+import android.graphics.PointF
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.R
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import cm.horion.homegaz.domain.model.home.DistributorPoint
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.Projection
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.RoundCap
-import com.google.maps.android.compose.*
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.*
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.mapview.MapView
+import com.yandex.runtime.image.ImageProvider
+import cm.horion.homegaz.R
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.ScreenPoint
 
 @Composable
 fun InteractiveMap(
@@ -28,97 +31,148 @@ fun InteractiveMap(
     userLat                : Double? = null,
     userLng                : Double? = null,
     userPhotoUrl           : String? = null,
-    routePoints            : List<LatLng> = emptyList(),
+    routePoints            : List<Point> = emptyList(),
     onRecenterClick        : () -> Unit = {},
     onMarkerScreenPosition : (x: Float, y: Float) -> Unit = { _, _ -> },
-    cameraPositionState    : CameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(3.848, 11.502), 14f)
-    },
     modifier               : Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val mapStyle = remember {
-        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Référence stable à la MapView créée une seule fois
+    var mapViewRef by remember { mutableStateOf<MapView?>(null) }
+
+    // Gérer le cycle de vie de la carte
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    MapKitFactory.getInstance().onStart()
+                    mapViewRef?.onStart()
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    MapKitFactory.getInstance().onStop()
+                    mapViewRef?.onStop()
+                }
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
-    var projection by remember { mutableStateOf<Projection?>(null) }
-
+    // Animer la caméra vers le point sélectionné
     LaunchedEffect(selectedPoint) {
-        selectedPoint?.let {
-            cameraPositionState.animate(
-                CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 15f)
+        selectedPoint?.let { point ->
+            mapViewRef?.mapWindow?.map?.move(
+                CameraPosition(
+                    Point(point.latitude, point.longitude),
+                    15f, 0f, 0f
+                ),
+                Animation(Animation.Type.SMOOTH, 0.4f),
+                null
             )
         }
     }
 
-    LaunchedEffect(selectedPoint, cameraPositionState.position) {
-        selectedPoint?.let { point ->
-            projection?.let { proj ->
-                val screenPos = proj.toScreenLocation(LatLng(point.latitude, point.longitude))
-                onMarkerScreenPosition(screenPos.x.toFloat(), screenPos.y.toFloat())
-            }
-        }
-    }
 
     Box(modifier = modifier.fillMaxSize()) {
 
-        GoogleMap(
-            modifier            = Modifier.fillMaxSize(),
-            cameraPositionState = cameraPositionState,
-            properties          = MapProperties(
-                isMyLocationEnabled = false,
-                mapStyleOptions     = mapStyle
-            ),
-            uiSettings = MapUiSettings(
-                zoomControlsEnabled     = false,
-                myLocationButtonEnabled = false
-            ),
-            onMapClick = { onDismissPopup() }
-        ) {
-            // Capture la projection à chaque changement de caméra
-            MapEffect(cameraPositionState.position) { map ->
-                projection = map.projection
-                selectedPoint?.let { point ->
-                    val screenPos = map.projection.toScreenLocation(
-                        LatLng(point.latitude, point.longitude)
+        AndroidView(
+            modifier = Modifier.fillMaxSize(),
+            factory = { context ->
+                MapView(context).also { mv ->
+                    mapViewRef = mv
+                    val map = mv.mapWindow.map
+
+                    // Position initiale : Yaoundé
+                    map.move(
+                        CameraPosition(Point(3.848, 11.502), 13f, 0f, 0f)
                     )
-                    onMarkerScreenPosition(screenPos.x.toFloat(), screenPos.y.toFloat())
+
+                    // Listener de tap sur la carte pour fermer le popup
+                    map.addInputListener(object : InputListener {
+                        override fun onMapTap(m: Map, point: Point) {
+                            onDismissPopup()
+                        }
+                        override fun onMapLongTap(m: Map, point: Point) {}
+                    })
+
+                    // Listener caméra pour recalculer la position écran du marqueur sélectionné
+                    map.addCameraListener { _, _, _, finished ->
+                        if (finished) {
+                            selectedPoint?.let { sp ->
+                                val screenPt: ScreenPoint = mv.mapWindow.worldToScreen(
+                                    Point(sp.latitude, sp.longitude)
+                                ) ?: return@addCameraListener
+                                onMarkerScreenPosition(screenPt.x, screenPt.y)
+                            }
+                        }
+                    }
                 }
-            }
+            },
+            update = { mv ->
+                val map = mv.mapWindow.map
 
-            if (routePoints.isNotEmpty()) {
-                Polyline(
-                    points    = routePoints,
-                    color     = MaterialTheme.colorScheme.primary,
-                    width     = 12f,
-                    jointType = JointType.ROUND,
-                    startCap  = RoundCap(),
-                    endCap    = RoundCap()
-                )
-            }
 
-            points.forEach { point ->
-                MarkerComposable(
-                    state   = rememberMarkerState(position = LatLng(point.latitude, point.longitude)),
-                    onClick = { onPointClick(point); true }
-                ) {
-                    DistributorMarker(
-                        name       = point.name,
-                        isSelected = point.id == selectedPoint?.id
+                map.mapObjects.clear()
+
+
+                if (routePoints.isNotEmpty()) {
+                    val polylineObj = map.mapObjects.addPolyline(
+                        com.yandex.mapkit.geometry.Polyline(routePoints)
+                    )
+                    polylineObj.strokeWidth = 5f
+                    polylineObj.setStrokeColor(0xFF4CAF50.toInt())
+                }
+
+                points.forEach { point ->
+                    val placemark = map.mapObjects.addPlacemark()
+                    placemark.geometry = Point(point.latitude, point.longitude)
+
+                    placemark.setIcon(
+                        ImageProvider.fromResource(mv.context, R.drawable.marker),
+                        IconStyle().apply {
+                            anchor = PointF(0.5f, 1.0f)
+                            scale  = if (point.id == selectedPoint?.id) 1.4f else 1.0f
+                        }
+                    )
+
+                    placemark.addTapListener { _, _ ->
+                        onPointClick(point)
+                        // Calculer la position écran immédiatement après le tap
+                        val screenPt: ScreenPoint = mv.mapWindow.worldToScreen(
+                            Point(point.latitude, point.longitude)
+                        ) ?: return@addTapListener true
+                        onMarkerScreenPosition(screenPt.x, screenPt.y)
+                        true
+                    }
+                }
+
+
+                if (locationGranted && userLat != null && userLng != null) {
+                    val userPlacemark = map.mapObjects.addPlacemark()
+                    userPlacemark.geometry = Point(userLat, userLng)
+                    userPlacemark.setIcon(
+                        ImageProvider.fromResource(mv.context, R.drawable.profil),
+                        IconStyle().apply {
+                            anchor = PointF(0.5f, 1.0f)
+                            scale  = 0.8f
+                        }
                     )
                 }
-            }
 
-            if (locationGranted && userLat != null && userLng != null) {
-                MarkerComposable(
-                    state  = rememberMarkerState(position = LatLng(userLat, userLng)),
-                    anchor = androidx.compose.ui.geometry.Offset(0.5f, 1f)
-                ) {
-                    UserLocationMarker(photoUrl = userPhotoUrl)
+                selectedPoint?.let { sp ->
+                    val screenPt: ScreenPoint = mv.mapWindow.worldToScreen(
+                        Point(sp.latitude, sp.longitude)
+                    ) ?: return@let
+                    onMarkerScreenPosition(screenPt.x, screenPt.y)
                 }
             }
-        }
+        )
 
+        // Bouton de recalage automatique
         RecenterButton(
             onClick  = onRecenterClick,
             modifier = Modifier

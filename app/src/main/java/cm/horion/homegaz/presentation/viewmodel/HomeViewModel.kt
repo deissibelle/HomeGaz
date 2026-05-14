@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.presentation.state.HomeUiState
-import cm.horion.homegaz.util.PolylineUtil
-import com.google.android.gms.maps.model.LatLng
+import com.yandex.mapkit.geometry.Point          // ✅ Yandex, plus Google
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,9 +28,9 @@ class HomeViewModel(
             getDistributorPointsUseCase().collect { points ->
                 _uiState.update { state ->
                     state.copy(
-                        allPoints = points,
+                        allPoints      = points,
                         filteredPoints = applyFilters(points, state),
-                        isLoading = false
+                        isLoading      = false
                     )
                 }
             }
@@ -54,25 +53,24 @@ class HomeViewModel(
     }
 
     fun onDismissPopup() {
-        _uiState.update { it.copy(selectedPoint = null,routePolyline = emptyList()) }
+        _uiState.update { it.copy(selectedPoint = null, routePolyline = emptyList()) }
     }
 
-    // Dans HomeViewModel.kt
     fun calculateRouteToPoint(destLat: Double, destLng: Double) {
         val startLat = _uiState.value.userLat
         val startLng = _uiState.value.userLng
 
-        if (startLat != null && startLng != null) {
-            viewModelScope.launch {
-                try {
-                    val encodedPolylineFromGoogle = "a~lEzg~L..."
+        if (startLat == null || startLng == null) return
 
-                    val decodedPath = PolylineUtil.decode(encodedPolylineFromGoogle)
-
-                    _uiState.update { it.copy(routePolyline = decodedPath) }
-                } catch (e: Exception) {
-                    _uiState.update { it.copy(error = "Impossible de charger l'itinéraire") }
-                }
+        viewModelScope.launch {
+            try {
+                val route = listOf(
+                    Point(startLat, startLng),
+                    Point(destLat, destLng)
+                )
+                _uiState.update { it.copy(routePolyline = route) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = "Impossible de charger l'itinéraire") }
             }
         }
     }
@@ -88,23 +86,35 @@ class HomeViewModel(
         }
     }
 
-    private fun applyFilters(points: List<DistributorPoint>, state: HomeUiState): List<DistributorPoint> {
-        return points.filter { p ->
-            val mDist = state.selectedDistributor == "Tous" || p.distributor.equals(state.selectedDistributor, true)
-            val mWeight = state.selectedWeight == "Tous" || p.weight.contains(state.selectedWeight, true)
-            mDist && mWeight
-        }.map { p ->
-            if (state.userLat != null && state.userLng != null) {
-                p.copy(distanceKm = haversineKm(state.userLat, state.userLng, p.latitude, p.longitude))
-            } else p
-        }.sortedBy { it.distanceKm }
+    private fun applyFilters(
+        points: List<DistributorPoint>,
+        state : HomeUiState
+    ): List<DistributorPoint> {
+        return points
+            .filter { p ->
+                val mDist   = state.selectedDistributor == "Tous" ||
+                        p.distributor.equals(state.selectedDistributor, true)
+                val mWeight = state.selectedWeight == "Tous" ||
+                        p.weight.contains(state.selectedWeight, true)
+                mDist && mWeight
+            }
+            .map { p ->
+                if (state.userLat != null && state.userLng != null)
+                    p.copy(distanceKm = haversineKm(state.userLat, state.userLng, p.latitude, p.longitude))
+                else p
+            }
+            .sortedBy { it.distanceKm }
     }
 
-    private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val r = 6371.0
+    private fun haversineKm(
+        lat1: Double, lng1: Double,
+        lat2: Double, lng2: Double
+    ): Double {
+        val r    = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLng = Math.toRadians(lng2 - lng1)
-        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
+        val a    = sin(dLat / 2).pow(2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
         return r * 2 * atan2(sqrt(a), sqrt(1 - a))
     }
 }
