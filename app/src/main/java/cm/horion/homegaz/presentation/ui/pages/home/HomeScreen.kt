@@ -10,6 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.domain.model.common.Screen
@@ -25,7 +28,19 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    //  Dismiss popup quand on revient sur cet écran
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.onDismissPopup()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
+    //  Launcher permission localisation
     val locationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -45,12 +60,13 @@ fun HomeScreen(
         }
     }
 
+    //  Position écran du marqueur sélectionné
     var markerScreenX by remember { mutableStateOf(0f) }
     var markerScreenY by remember { mutableStateOf(0f) }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-
+        //  Carte
         InteractiveMap(
             modifier               = Modifier.fillMaxSize(),
             points                 = uiState.filteredPoints,
@@ -58,7 +74,6 @@ fun HomeScreen(
             locationGranted        = uiState.locationGranted,
             userLat                = uiState.userLat,
             userLng                = uiState.userLng,
-            userPhotoUrl           = uiState.userPhotoUrl,
             routePoints            = uiState.routePolyline,
             onPointClick           = { point -> runWithLocation { viewModel.onPointClick(point) } },
             onDismissPopup         = viewModel::onDismissPopup,
@@ -68,6 +83,7 @@ fun HomeScreen(
             }
         )
 
+        // Filtre en haut
         HomeFilterCard(
             modifier            = Modifier.align(Alignment.TopCenter),
             distributor         = uiState.selectedDistributor,
@@ -82,17 +98,21 @@ fun HomeScreen(
             weightOptions       = listOf("6kg", "12.5kg", "28kg")
         )
 
-        // Popup du point sélectionné
+
         if (uiState.selectedPoint != null && uiState.locationGranted) {
             val point = uiState.selectedPoint!!
 
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val density      = LocalDensity.current
+                val density = LocalDensity.current
+
                 val cardWidthPx  = with(density) { 186.dp.toPx() }
                 val cardHeightPx = with(density) { 220.dp.toPx() }
                 val marginPx     = with(density) { 8.dp.toPx() }
 
-                val offsetXPx = (markerScreenX - cardWidthPx - marginPx).coerceAtLeast(0f)
+                val offsetXPx = (markerScreenX - cardWidthPx - marginPx)
+                    .coerceAtLeast(0f)
+                    .coerceAtMost(with(density) { maxWidth.toPx() } - cardWidthPx)
+
                 val offsetYPx = (markerScreenY - cardHeightPx / 2f)
                     .coerceAtLeast(0f)
                     .coerceAtMost(with(density) { maxHeight.toPx() } - cardHeightPx)
@@ -104,6 +124,7 @@ fun HomeScreen(
                     DistributionPointSheet(
                         point        = point,
                         onBuyClick   = {
+                            viewModel.onDismissPopup()
                             navController.navigate(
                                 Screen.DistributorDetail.createRoute(point.id)
                             )
@@ -125,9 +146,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
-            ) {
-                Text(errorMsg)
-            }
+            ) { Text(errorMsg) }
         }
     }
 }

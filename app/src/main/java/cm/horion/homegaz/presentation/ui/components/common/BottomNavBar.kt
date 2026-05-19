@@ -160,7 +160,7 @@ fun BottomNavBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(75.dp),
+                .height(60.dp),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -194,7 +194,6 @@ fun BottomNavBar(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.height(12.dp))
 
                     Icon(
                         imageVector = if (isSelected) {
@@ -206,7 +205,7 @@ fun BottomNavBar(
                         modifier = Modifier.size(26.dp),
                         tint = contentColor
                     )
-
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = item.label,
                         style = MaterialTheme.typography.labelSmall,

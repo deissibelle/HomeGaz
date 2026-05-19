@@ -17,7 +17,7 @@ private val provider = GoogleFont.Provider(
 )
 
 // Définition de la famille de police Poppins avec ses différentes graisses
-val poppinsFontFamily = FontFamily(
+var poppinsFontFamily = FontFamily(
     Font(
         googleFont = GoogleFont("Poppins"),
         fontProvider = provider,

@@ -34,7 +34,6 @@ fun OptionSelectorRow(
     content: (@Composable RowScope.(index: Int, isSelected: Boolean) -> Unit)? = null
 ) {
 
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center
@@ -95,7 +94,6 @@ fun OptionSelectorRow(
                                 )
                             }
                         }
-
                         Spacer(modifier = Modifier.width(8.dp))
                         if (content != null) {
                             content(index, isSelected)

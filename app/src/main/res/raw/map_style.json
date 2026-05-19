@@ -1,29 +1,30 @@
 [
   {
-    "featureType": "all",
-    "elementType": "labels.icon",
-    "stylers": [{ "visibility": "off" }]
+    "tags": { "all": ["landscape", "landuse"] },
+    "stylers": { "color": "#FFFFFF" }
   },
   {
-    "featureType": "poi",
-    "elementType": "all",
-    "stylers": [{ "visibility": "off" }]
+    "tags": { "all": ["water"] },
+    "stylers": { "color": "#C8DFF5" }
   },
   {
-    "featureType": "transit",
-    "stylers": [{ "visibility": "off" }]
+    "tags": { "all": ["road"] },
+    "elements": ["geometry"],
+    "stylers": { "color": "#D1D5DB" }
   },
   {
-    "featureType": "administrative.neighborhood",
-    "stylers": [{ "visibility": "off" }]
+    "tags": { "all": ["building"] },
+    "elements": ["geometry", "label"],
+    "stylers": { "color": "#F5F5F5" }
   },
   {
-    "featureType": "administrative.land_parcel",
-    "stylers": [{ "visibility": "off" }]
+    "tags": { "all": ["poi"] },
+    "elements": ["geometry", "label"],
+    "stylers": { "visibility": "off" }
   },
   {
-    "featureType": "road",
-    "elementType": "labels",
-    "stylers": [{ "visibility": "on" }]
+    "tags": { "all": ["transit"] },
+    "elements": ["geometry", "label"],
+    "stylers": { "visibility": "off" }
   }
 ]
