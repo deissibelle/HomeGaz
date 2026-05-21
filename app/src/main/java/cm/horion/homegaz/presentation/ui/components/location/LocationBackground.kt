@@ -1,5 +1,6 @@
 package cm.horion.homegaz.presentation.ui.components.location
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ fun LocationBackground() {
                 .align(Alignment.TopEnd)
                 .offset(x = 40.dp, y = (-20).dp)
         )
+
         Icon(
             painter = painterResource(R.drawable.marker),
             contentDescription = null,

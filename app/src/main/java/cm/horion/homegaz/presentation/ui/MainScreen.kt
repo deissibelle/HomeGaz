@@ -27,6 +27,7 @@ enum class Tab(val label: String) {
 fun MainScreen(
     navController: NavController,
     reservationsViewModel : ReservationsViewModel,
+    onRequestLocation     : () -> Unit,
     onRouteClick: (lat: Double, lng: Double) -> Unit = { _, _ -> },
     initialTab: String = Tab.HOME.label
 ) {
@@ -48,7 +49,8 @@ fun MainScreen(
             when (selectedTab) {
                 Tab.HOME -> HomeScreen(
                     navController = navController,
-                    onRouteClick  = onRouteClick
+                    onRouteClick  = onRouteClick,
+                    onRequestLocation = onRequestLocation
                 )
                 Tab.RESERVATIONS -> ReservationsScreen(navController = navController,viewModel     = reservationsViewModel )
                 Tab.ADVICES      -> AdvicesScreen()

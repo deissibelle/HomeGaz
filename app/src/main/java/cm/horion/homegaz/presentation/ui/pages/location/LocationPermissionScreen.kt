@@ -23,7 +23,10 @@ import cm.horion.homegaz.presentation.ui.components.location.LocationBackground
 fun LocationPermissionScreen(
     onActivateClick: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)
+
+    ) {
         LocationBackground()
 
         Column(
@@ -52,9 +55,11 @@ fun LocationPermissionScreen(
             Text(
                 text = stringResource(R.string.location_title),
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.titleLarge.copy(
+                    textAlign = TextAlign.Center
+
+                ),
+
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -62,6 +67,9 @@ fun LocationPermissionScreen(
             Text(
                 text = stringResource(R.string.location_subtitle),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Normal
+                ),
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )

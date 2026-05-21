@@ -13,7 +13,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
-import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -24,7 +23,6 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
 
-// Position initiale : Yaoundé
 private val YAOUNDE_CENTER = Point(3.848, 11.502)
 private const val DEFAULT_ZOOM = 13f
 
@@ -45,11 +43,11 @@ fun InteractiveMap(
     val context        = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Références stables créées une seule fois dans factory
     var mapViewRef           by remember { mutableStateOf<MapView?>(null) }
     var userLocationLayerRef by remember { mutableStateOf<UserLocationLayer?>(null) }
+    val latestOnMarkerPos   = rememberUpdatedState(onMarkerScreenPosition)
+    val latestSelectedPoint = rememberUpdatedState(selectedPoint)
 
-    // Style JSON Yandex (dans res/raw/map_style_yandex.json)
     val mapStyleJson = remember {
         context.resources.openRawResource(R.raw.map_style)
             .bufferedReader()
@@ -75,14 +73,26 @@ fun InteractiveMap(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // Activer/désactiver UserLocationLayer selon permission
+
     LaunchedEffect(locationGranted) {
-        userLocationLayerRef?.isVisible        = locationGranted
+        userLocationLayerRef?.isVisible           = locationGranted
         userLocationLayerRef?.isHeadingModeActive = locationGranted
     }
 
-    // Animer vers le point sélectionné
-    LaunchedEffect(selectedPoint) {
+    // ── Centrage sur la vraie position utilisateur
+    var hasInitiallyCentered by remember { mutableStateOf(false) }
+    LaunchedEffect(userLat, userLng) {
+        if (!hasInitiallyCentered && userLat != null && userLng != null) {
+            mapViewRef?.mapWindow?.map?.move(
+                CameraPosition(Point(userLat, userLng), 15f, 0f, 0f),
+                Animation(Animation.Type.SMOOTH, 0.8f),
+                null
+            )
+            hasInitiallyCentered = true
+        }
+    }
+
+    LaunchedEffect(selectedPoint?.id) {
         selectedPoint?.let { pt ->
             mapViewRef?.mapWindow?.map?.move(
                 CameraPosition(Point(pt.latitude, pt.longitude), 15f, 0f, 0f),
@@ -97,42 +107,32 @@ fun InteractiveMap(
         AndroidView(
             modifier = Modifier.fillMaxSize(),
 
-            //  exécuté UNE SEULE FOIS
             factory = { ctx ->
                 MapView(ctx).also { mv ->
                     mapViewRef = mv
                     val map = mv.mapWindow.map
 
-                    // Style personnalisé
                     map.setMapStyle(mapStyleJson)
-
-                    //  Position initiale Yaoundé
                     map.move(CameraPosition(YAOUNDE_CENTER, DEFAULT_ZOOM, 0f, 0f))
 
-                    // Couche GPS utilisateur
                     val kit   = MapKitFactory.getInstance()
                     val layer = kit.createUserLocationLayer(mv.mapWindow)
-                    userLocationLayerRef   = layer
-                    layer.isVisible        = locationGranted
-                    layer.isHeadingModeActive = locationGranted
-                    // Icône personnalisée & ancrage initial
+                    userLocationLayerRef          = layer
+                    layer.isVisible               = locationGranted
+                    layer.isHeadingModeActive     = locationGranted
                     setupUserLocationLayer(mv, layer)
 
-                    //  Fermer popup sur tap carte vide
                     map.addInputListener(object : InputListener {
                         override fun onMapTap(m: Map, pt: Point) = onDismissPopup()
                         override fun onMapLongTap(m: Map, pt: Point) = Unit
                     })
 
-                    // Recalculer position écran du popup après mouvement caméra
-                    map.addCameraListener { _, _, _, finished ->
-                        if (finished) {
-                            selectedPoint?.let { sp ->
-                                val screen = mv.mapWindow.worldToScreen(
-                                    Point(sp.latitude, sp.longitude)
-                                ) ?: return@addCameraListener
-                                onMarkerScreenPosition(screen.x, screen.y)
-                            }
+                    map.addCameraListener { _, _, _, _ ->
+                        latestSelectedPoint.value?.let { sp ->
+                            val screen = mv.mapWindow.worldToScreen(
+                                Point(sp.latitude, sp.longitude)
+                            ) ?: return@addCameraListener
+                            latestOnMarkerPos.value(screen.x, screen.y)
                         }
                     }
                 }
@@ -140,20 +140,18 @@ fun InteractiveMap(
 
             update = { mv ->
                 val map = mv.mapWindow.map
-
-                // Effacer tous les anciens objets
                 map.mapObjects.clear()
 
                 // Itinéraire
                 if (routePoints.size >= 2) {
                     val poly = map.mapObjects.addPolyline(Polyline(routePoints))
-                    poly.strokeWidth    = 5f
+                    poly.strokeWidth  = 5f
                     poly.setStrokeColor(0xFF003761.toInt())
-                    poly.outlineWidth   = 1.5f
+                    poly.outlineWidth = 1.5f
                     poly.setOutlineColor(0xFFFFFFFF.toInt())
                 }
 
-                // Marqueurs des distributeurs
+                // Marqueurs
                 points.forEach { point ->
                     addDistributorMarker(
                         mv           = mv,
@@ -165,7 +163,7 @@ fun InteractiveMap(
                     )
                 }
 
-                // Recalculer la position du popup après update
+                // Calcul immédiat de la position après update
                 selectedPoint?.let { sp ->
                     val screen = mv.mapWindow.worldToScreen(
                         Point(sp.latitude, sp.longitude)
@@ -175,10 +173,9 @@ fun InteractiveMap(
             }
         )
 
-        // ── Bouton Recentrer ──────────────────────────────────────
         RecenterButton(
             onClick = {
-                val mv = mapViewRef ?: return@RecenterButton
+                val mv     = mapViewRef ?: return@RecenterButton
                 val target = if (userLat != null && userLng != null)
                     Point(userLat, userLng) else YAOUNDE_CENTER
                 val zoom   = if (userLat != null) 15f else DEFAULT_ZOOM
@@ -197,27 +194,25 @@ fun InteractiveMap(
 }
 
 private fun addDistributorMarker(
-    mv           : MapView,
-    map          : Map,
-    point        : DistributorPoint,
-    isSelected   : Boolean,
-    onPointClick : (DistributorPoint) -> Unit,
-    onScreenPos  : (Float, Float) -> Unit
+    mv          : MapView,
+    map         : Map,
+    point       : DistributorPoint,
+    isSelected  : Boolean,
+    onPointClick: (DistributorPoint) -> Unit,
+    onScreenPos : (Float, Float) -> Unit
 ) {
     val placemark = map.mapObjects.addPlacemark()
     placemark.geometry = Point(point.latitude, point.longitude)
 
-    // Icône du marqueur
     placemark.setIcon(
         ImageProvider.fromResource(mv.context, R.drawable.marker),
         IconStyle().apply {
-            anchor = PointF(0.5f, 1.0f)   // bas-centre
+            anchor = PointF(0.5f, 1.0f)
             scale  = if (isSelected) 1.4f else 1.0f
             zIndex = if (isSelected) 100f else 0f
         }
     )
 
-    // Nom
     placemark.setText(
         point.name,
         TextStyle().apply {

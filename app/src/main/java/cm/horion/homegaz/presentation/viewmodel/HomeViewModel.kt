@@ -1,11 +1,15 @@
 package cm.horion.homegaz.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.Manifest
+import android.app.Application
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.presentation.state.HomeUiState
-import com.yandex.mapkit.geometry.Point          // ✅ Yandex, plus Google
+import com.yandex.mapkit.geometry.Point
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,13 +18,31 @@ import kotlinx.coroutines.launch
 import kotlin.math.*
 
 class HomeViewModel(
+    application: Application,
     private val getDistributorPointsUseCase: GetDistributorPointsUseCase
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    init { loadPoints() }
+    init {
+
+        val alreadyGranted = hasLocationPermission()
+        if (alreadyGranted) {
+            _uiState.update { it.copy(locationGranted = true) }
+        }
+        loadPoints()
+    }
+
+    private fun hasLocationPermission(): Boolean {
+        val ctx = getApplication<Application>()
+        return ContextCompat.checkSelfPermission(
+            ctx, Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(
+                    ctx, Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+    }
 
     fun loadPoints() {
         viewModelScope.launch {
@@ -59,16 +81,15 @@ class HomeViewModel(
     fun calculateRouteToPoint(destLat: Double, destLng: Double) {
         val startLat = _uiState.value.userLat
         val startLng = _uiState.value.userLng
-
         if (startLat == null || startLng == null) return
-
         viewModelScope.launch {
             try {
-                val route = listOf(
-                    Point(startLat, startLng),
-                    Point(destLat, destLng)
-                )
-                _uiState.update { it.copy(routePolyline = route) }
+                _uiState.update {
+                    it.copy(routePolyline = listOf(
+                        Point(startLat, startLng),
+                        Point(destLat, destLng)
+                    ))
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(error = "Impossible de charger l'itinéraire") }
             }
@@ -86,10 +107,7 @@ class HomeViewModel(
         }
     }
 
-    private fun applyFilters(
-        points: List<DistributorPoint>,
-        state : HomeUiState
-    ): List<DistributorPoint> {
+    private fun applyFilters(points: List<DistributorPoint>, state: HomeUiState): List<DistributorPoint> {
         return points
             .filter { p ->
                 val mDist   = state.selectedDistributor == "Tous" ||
@@ -106,10 +124,7 @@ class HomeViewModel(
             .sortedBy { it.distanceKm }
     }
 
-    private fun haversineKm(
-        lat1: Double, lng1: Double,
-        lat2: Double, lng2: Double
-    ): Double {
+    private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
         val r    = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLng = Math.toRadians(lng2 - lng1)

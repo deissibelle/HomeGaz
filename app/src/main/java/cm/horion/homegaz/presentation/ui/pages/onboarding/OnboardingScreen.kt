@@ -4,10 +4,12 @@ package cm.horion.homegaz.presentation.ui.pages.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,6 +18,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,13 +69,11 @@ fun OnboardingScreen(
     val isLastPage = pagerState.currentPage == pages.lastIndex
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .navigationBarsPadding()
         ) {
             Box(
                 modifier = Modifier
@@ -100,7 +103,8 @@ fun OnboardingScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 12.dp),
+                    .padding(horizontal = 16.dp),
+
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 PagerIndicator(
@@ -111,7 +115,7 @@ fun OnboardingScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -158,7 +162,6 @@ fun OnboardingScreen(
         }
     }
 }
-
 @Composable
 fun OnboardingPage(page: Onboarding) {
     Column(
@@ -180,16 +183,65 @@ fun OnboardingPage(page: Onboarding) {
             contentScale = ContentScale.Fit
         )
 
-        Image(
-            painter = painterResource(id = page.image),
-            contentDescription = null,
+        Box(
             modifier = Modifier
-                .fillMaxWidth(0.90f)
-                .aspectRatio(1f),
-            contentScale = ContentScale.Fit
-        )
+                .fillMaxWidth(1f)
+                .aspectRatio(1f)
+        ) {
+            Image(
+                painter = painterResource(id = page.image),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            if (page.image == R.drawable.map) {
+
+                MapLabelRaw(
+                    text = "Algo gaz",
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(start = 75.dp, top = 45.dp)
+                )
+
+                MapLabelRaw(
+                    text = "Globus gaz",
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 40.dp, start = 10.dp)
+                )
+
+                MapLabelRaw(
+                    text = "Comex",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 55.dp, top = 30.dp)
+                )
+
+                MapLabelRaw(
+                    text = "InterCom",
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(end = 20.dp, bottom = 40.dp)
+                )
+                MapLabelRaw(
+                    text = "Total",
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 30.dp, bottom = 90.dp)
+                )
+
+                MapLabelRaw(
+                    text = "Moi",
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 70.dp, start = 40.dp),
+                    isUser = true
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = page.title,
@@ -203,7 +255,7 @@ fun OnboardingPage(page: Onboarding) {
 
         Text(
             text = page.description,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 24.sp
@@ -211,4 +263,25 @@ fun OnboardingPage(page: Onboarding) {
 
         Spacer(modifier = Modifier.height(8.dp))
     }
+}
+
+@Composable
+fun MapLabelRaw(
+    text: String,
+    modifier: Modifier = Modifier,
+    isUser: Boolean = false
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        style = MaterialTheme.typography.labelSmall.copy(
+            shadow = Shadow(
+                color = Color.White.copy(alpha = 0.8f),
+                offset = Offset(2f, 2f),
+                blurRadius = 4f
+            )
+        ),
+        fontWeight = FontWeight.ExtraBold,
+        color = if (isUser) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+    )
 }

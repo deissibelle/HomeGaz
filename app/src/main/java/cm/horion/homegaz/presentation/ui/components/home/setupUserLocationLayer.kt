@@ -34,7 +34,6 @@ fun setupUserLocationLayer(
                     scale  = 0.9f
                 }
             )
-//            view.accuracyCircle.fillColor = 0x00000000  // transparent
         }
 
         override fun onObjectRemoved(view: UserLocationView) = Unit
