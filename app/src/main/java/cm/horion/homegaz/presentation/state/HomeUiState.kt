@@ -1,6 +1,7 @@
 package cm.horion.homegaz.presentation.state
 
 import cm.horion.homegaz.domain.model.home.DistributorPoint
+import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 
 data class HomeUiState(
@@ -20,8 +21,8 @@ data class HomeUiState(
     val routePolyline  : List<Point> = emptyList(),
 
     val isLoading: Boolean = false,
-    val error    : String? = null
+    val error    : String? = null,
 
+    val routeBoundingBox: BoundingBox? = null,
 
-
-)
+    )

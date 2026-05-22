@@ -11,7 +11,6 @@ import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import com.google.android.gms.location.*
-import com.yandex.mapkit.MapKitFactory
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -25,9 +24,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        MapKitFactory.initialize(this)
-
         enableEdgeToEdge()
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
