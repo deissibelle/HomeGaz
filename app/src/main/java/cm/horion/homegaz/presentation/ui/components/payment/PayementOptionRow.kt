@@ -24,14 +24,14 @@ fun PaymentOptionRow(
 ) {
     val options = listOf("Orange Money", "MoMo MTN")
     val logos = listOf(R.drawable.orange_money, R.drawable.momo)
-    val selectedIndex = if (selectedMethod == PaymentMethod.ORANGE_MONEY) 0 else 1
+    val selectedIndex = if (selectedMethod == PaymentMethod.OM) 0 else 1
 
     OptionSelectorRow(
         label = "Option",
         options = options,
         selectedIndex = selectedIndex,
         onSelect = { index ->
-            onMethodSelected(if (index == 0) PaymentMethod.ORANGE_MONEY else PaymentMethod.MOMO)
+            onMethodSelected(if (index == 0) PaymentMethod.OM else PaymentMethod.MOMO)
         },
         radioSize = 20.dp,
         cardHeight = 48.dp,

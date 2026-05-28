@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.HourglassTop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,13 +29,13 @@ import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 private val CyanColor = Color(0xFF00D5E1)
 
 private fun ussdCode(method: PaymentMethod) = when (method) {
-    PaymentMethod.ORANGE_MONEY -> "*150*50#"   // sans le # initial qui cause des soucis d'encodage
+    PaymentMethod.OM -> "*150*50#"   // sans le # initial qui cause des soucis d'encodage
     PaymentMethod.MOMO         -> "*126#"
 }
 
 @Composable
 fun PaymentInitiatedScreen(
-    paymentMethod: PaymentMethod = PaymentMethod.ORANGE_MONEY,
+    paymentMethod: PaymentMethod = PaymentMethod.OM,
     onDone: () -> Unit = {}
 ) {
     val context = LocalContext.current

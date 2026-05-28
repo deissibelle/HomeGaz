@@ -85,7 +85,7 @@ class PaymentViewModel(
         val prefix3 = normalized.take(3)   // ex: "655"
 
         return when (method) {
-            PaymentMethod.ORANGE_MONEY ->
+            PaymentMethod.OM ->
                 ORANGE_PREFIXES.any { normalized.startsWith(it) }
             PaymentMethod.MOMO ->
                 MTN_PREFIXES.any { normalized.startsWith(it) }
@@ -99,7 +99,7 @@ class PaymentViewModel(
         if (normalized.length != 9) return "Numéro invalide (9 chiffres requis)"
         return if (!isPhoneValidForMethod(phone, method)) {
             when (method) {
-                PaymentMethod.ORANGE_MONEY -> "Ce numéro n'est pas un numéro Orange"
+                PaymentMethod.OM -> "Ce numéro n'est pas un numéro Orange"
                 PaymentMethod.MOMO         -> "Ce numéro n'est pas un numéro MTN"
             }
         } else null

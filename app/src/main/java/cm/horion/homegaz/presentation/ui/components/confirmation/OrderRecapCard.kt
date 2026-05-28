@@ -95,7 +95,7 @@ fun OrderRecapCard(summary: OrderSummary) {
 @Composable
 private fun PaymentMethodRow(method: PaymentMethod, phone: String) {
     val methodLabel = when (method) {
-        PaymentMethod.ORANGE_MONEY -> stringResource(R.string.payment_method_om)
+        PaymentMethod.OM -> stringResource(R.string.payment_method_om)
         PaymentMethod.MOMO         -> stringResource(R.string.payment_method_momo)
     }
 
