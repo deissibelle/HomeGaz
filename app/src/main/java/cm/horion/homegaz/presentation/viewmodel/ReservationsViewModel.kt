@@ -12,15 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel des réservations — instance unique partagée dans tout le graphe
- * de navigation grâce au scope Koin (singleton ou activity-scoped).
- *
- * Responsabilités :
- *  - Charger la liste des réservations (mock → plus tard : repository)
- *  - Exposer l'état UI via [StateFlow] (pattern UDF)
- *  - Recevoir un [OrderSummary] confirmé et le convertir en [Reservation]
- */
 class ReservationsViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReservationsUiState())
@@ -30,9 +21,6 @@ class ReservationsViewModel : ViewModel() {
         loadReservations()
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Chargement initial
-    // ─────────────────────────────────────────────────────────────────────────
 
     private fun loadReservations() {
         viewModelScope.launch {
@@ -51,17 +39,7 @@ class ReservationsViewModel : ViewModel() {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Ajout d'une réservation depuis le tunnel de commande
-    // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Convertit le [OrderSummary] confirmé en [Reservation] (via extension fun)
-     * et l'insère en tête de liste.
-     *
-     * Appelé dans [Navigation.kt] → `onDone` de [PaymentInitiatedScreen],
-     * avant la navigation vers [PaymentSuccessScreen].
-     */
     fun addReservationFromOrder(summary: OrderSummary) {
         val newReservation = summary.toReservation()
         _uiState.update { current ->

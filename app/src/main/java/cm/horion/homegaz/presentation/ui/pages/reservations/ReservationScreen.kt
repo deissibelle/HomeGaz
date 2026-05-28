@@ -42,7 +42,7 @@ fun ReservationsScreen(
     val uiState     by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
 
-    // Réservation sélectionnée : null = vue liste, non-null = vue détail
+    // Réservation sélectionnée
     var selectedReservation by remember { mutableStateOf<Reservation?>(null) }
 
     val filteredReservations = remember(uiState.reservations, searchQuery) {
@@ -120,7 +120,7 @@ private fun ReservationListContent(
                 modifier = Modifier
                     .padding(horizontal = 8.dp),
             ) {
-                // Barre de titre + bouton retour
+
                 Row(
                     modifier          = Modifier
                         .fillMaxWidth()
@@ -203,7 +203,6 @@ private fun ReservationListContent(
                     ) {
                         items(
                             items = filteredReservations,
-                            // Clé stable et unique : combinaison id + date + time
                             key   = { "${it.id}_${it.date}_${it.time}" },
                         ) { reservation ->
                             AnimatedVisibility(

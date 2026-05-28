@@ -104,6 +104,9 @@ dependencies {
     // Yandex MapKit SDK
     implementation(libs.maps.mobile)
 
+    //splashscreen
+    implementation(libs.androidx.core.splashscreen)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

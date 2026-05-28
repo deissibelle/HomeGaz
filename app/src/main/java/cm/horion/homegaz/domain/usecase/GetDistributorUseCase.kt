@@ -4,77 +4,81 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-
+import kotlin.math.cos
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.sin
+import kotlin.random.Random
 
 class GetDistributorPointsUseCase {
+    operator fun invoke(
+        centerLat: Double = 3.848,
+        centerLng: Double = 11.502,
+        radiusKm : Double = 5.0
+    ): Flow<List<DistributorPoint>> = flow {
 
-    operator fun invoke(): Flow<List<DistributorPoint>> = flow {
-        emit(
-            listOf(
-                DistributorPoint(
-                    id = "1", name = "SCTM Bastos",
-                    latitude = 3.882, longitude = 11.514,
-                    distributor = "SCTM", priceXaf = 6500,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "2", name = "Total Melen",
-                    latitude = 3.861, longitude = 11.521,
-                    distributor = "Total", priceXaf = 6800,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "3", name = "Tradex Centre",
-                    latitude = 3.848, longitude = 11.502,
-                    distributor = "Tradex", priceXaf = 6600,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "4", name = "SCTM Essos",
-                    latitude = 3.879, longitude = 11.533,
-                    distributor = "SCTM", priceXaf = 6500,
-                    stockAvailable = true,
-                    weight = "6kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "5", name = "Total Bastos",
-                    latitude = 3.889, longitude = 11.517,
-                    distributor = "Total", priceXaf = 6900,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "6", name = "Tradex Nlongkak",
-                    latitude = 3.873, longitude = 11.526,
-                    distributor = "Tradex", priceXaf = 6600,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "7", name = "SCTM Mvog-Ada",
-                    latitude = 3.857, longitude = 11.515,
-                    distributor = "SCTM", priceXaf = 6500,
-                    stockAvailable = true,
-                    weight = "6kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "8", name = "Total Odza",
-                    latitude = 3.804, longitude = 11.549,
-                    distributor = "Total", priceXaf = 7000,
-                    stockAvailable = true,
-                    weight = "12kg", logoRes = R.drawable.distributor_logo
-                ),
-                DistributorPoint(
-                    id = "9", name = "Tradex Ekounou",
-                    latitude = 3.845, longitude = 11.542,
-                    distributor = "Tradex", priceXaf = 6700,
-                    stockAvailable = true,
-                    weight = "6kg", logoRes = R.drawable.distributor_logo
-                )
-            )
+
+        val templates = listOf(
+            Triple("SCTM Bastos",      "SCTM",   "12.5kg") to 6500,
+            Triple("Total Melen",      "Total",  "12.5kg") to 6800,
+            Triple("Tradex Centre",    "Tradex", "12.5kg") to 6600,
+            Triple("SCTM Essos",       "SCTM",   "6kg")    to 6500,
+            Triple("Total Bastos",     "Total",  "12.5kg") to 6900,
+            Triple("Tradex Nlongkak",  "Tradex", "12.5kg") to 6600,
+            Triple("SCTM Mvog-Ada",    "SCTM",   "6kg")    to 6500,
+            Triple("Total Odza",       "Total",  "28kg")   to 7000,
+            Triple("Tradex Ekounou",   "Tradex", "6kg")    to 6700,
+            Triple("Glocal Gaz Nord",  "Glocal Gaz", "12.5kg") to 6450,
+            Triple("Glocal Gaz Sud",   "Glocal Gaz", "6kg")    to 6400,
+            Triple("SCTM Biyem-Assi",  "SCTM",   "28kg")  to 6500,
         )
+
+        val points = templates.mapIndexed { index, (info, price) ->
+            val (namePair, _) = info to price
+            val (name, distributor, weight) = namePair
+
+            val (lat, lng) = randomPointAround(centerLat, centerLng, radiusKm)
+
+            DistributorPoint(
+                id             = (index + 1).toString(),
+                name           = name,
+                latitude       = lat,
+                longitude      = lng,
+                distributor    = distributor,
+                priceXaf       = price,
+                stockAvailable = true,
+                weight         = weight,
+                logoRes        = R.drawable.distributor_logo
+            )
+        }
+
+        emit(points)
+    }
+
+
+    private fun randomPointAround(
+        lat     : Double,
+        lng     : Double,
+        radiusKm: Double
+    ): Pair<Double, Double> {
+        val distance = Random.nextDouble(0.2, radiusKm)
+        val bearing  = Random.nextDouble(0.0, 360.0)
+
+        val R        = 6371.0
+        val bearingR = Math.toRadians(bearing)
+        val latR     = Math.toRadians(lat)
+        val lngR     = Math.toRadians(lng)
+        val d        = distance / R
+
+        val newLatR = asin(
+            sin(latR) * cos(d) +
+                    cos(latR) * sin(d) * cos(bearingR)
+        )
+        val newLngR = lngR + atan2(
+            sin(bearingR) * Math.sin(d) * cos(latR),
+            cos(d) - sin(latR) * sin(newLatR)
+        )
+
+        return Math.toDegrees(newLatR) to Math.toDegrees(newLngR)
     }
 }
