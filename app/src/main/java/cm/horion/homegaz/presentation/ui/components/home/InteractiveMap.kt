@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -15,7 +14,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.yandex.mapkit.Animation
+import com.yandex.mapkit.ConflictResolutionMode
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.BoundingBox
+import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.map.*
@@ -33,22 +35,23 @@ fun InteractiveMap(
     selectedPoint          : DistributorPoint?,
     onPointClick           : (DistributorPoint) -> Unit,
     onDismissPopup         : () -> Unit,
-    locationGranted        : Boolean = false,
-    userLat                : Double? = null,
-    userLng                : Double? = null,
-    routePoints            : List<Point> = emptyList(),
-    onRecenterClick        : () -> Unit = {},
+    locationGranted        : Boolean      = false,
+    userLat                : Double?      = null,
+    userLng                : Double?      = null,
+    routePoints            : List<Point>  = emptyList(),
+    routeBoundingBox       : BoundingBox? = null,
+    onRecenterClick        : () -> Unit   = {},
     onMarkerScreenPosition : (x: Float, y: Float) -> Unit = { _, _ -> },
-    modifier               : Modifier = Modifier
+    modifier               : Modifier     = Modifier
 ) {
     val context        = LocalContext.current
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var mapViewRef           by remember { mutableStateOf<MapView?>(null) }
     var userLocationLayerRef by remember { mutableStateOf<UserLocationLayer?>(null) }
-    val latestOnMarkerPos   = rememberUpdatedState(onMarkerScreenPosition)
-    val latestSelectedPoint = rememberUpdatedState(selectedPoint)
-    val latestOnDismiss     = rememberUpdatedState(onDismissPopup)
+    val latestOnMarkerPos    = rememberUpdatedState(onMarkerScreenPosition)
+    val latestSelectedPoint  = rememberUpdatedState(selectedPoint)
+    val latestOnDismiss      = rememberUpdatedState(onDismissPopup)
 
     val mapStyleJson = remember {
         context.resources.openRawResource(R.raw.map_style)
@@ -56,7 +59,7 @@ fun InteractiveMap(
             .use { it.readText() }
     }
 
-    // Cycle de vie MapKit
+    //  Cycle de vie MapKit
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -64,7 +67,7 @@ fun InteractiveMap(
                     MapKitFactory.getInstance().onStart()
                     mapViewRef?.onStart()
                 }
-                Lifecycle.Event.ON_STOP -> {
+                Lifecycle.Event.ON_STOP  -> {
                     MapKitFactory.getInstance().onStop()
                     mapViewRef?.onStop()
                 }
@@ -75,13 +78,11 @@ fun InteractiveMap(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // Couche GPS selon permission
     LaunchedEffect(locationGranted) {
         userLocationLayerRef?.isVisible           = locationGranted
         userLocationLayerRef?.isHeadingModeActive = locationGranted
     }
 
-    // Centrage initial sur la vraie position utilisateur
     var hasInitiallyCentered by remember { mutableStateOf(false) }
     LaunchedEffect(userLat, userLng) {
         if (!hasInitiallyCentered && userLat != null && userLng != null) {
@@ -94,7 +95,18 @@ fun InteractiveMap(
         }
     }
 
-    //  Animation vers le point sélectionné
+
+    LaunchedEffect(routeBoundingBox, mapViewRef) {
+        val bbox = routeBoundingBox ?: return@LaunchedEffect
+        val mv   = mapViewRef       ?: return@LaunchedEffect
+        val cameraPos = mv.mapWindow.map.cameraPosition(Geometry.fromBoundingBox(bbox))
+        mv.mapWindow.map.move(
+            cameraPos,
+            Animation(Animation.Type.SMOOTH, 0.6f),
+            null
+        )
+    }
+
     LaunchedEffect(selectedPoint?.id) {
         selectedPoint?.let { pt ->
             mapViewRef?.mapWindow?.map?.move(
@@ -108,12 +120,13 @@ fun InteractiveMap(
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
-            factory = { ctx ->
+            factory  = { ctx ->
                 MapView(ctx).also { mv ->
                     mapViewRef = mv
                     val map = mv.mapWindow.map
 
                     map.setMapStyle(mapStyleJson)
+                    map.mapObjects.conflictResolutionMode = ConflictResolutionMode.MAJOR
                     map.move(CameraPosition(YAOUNDE_CENTER, DEFAULT_ZOOM, 0f, 0f))
 
                     val kit   = MapKitFactory.getInstance()
@@ -124,13 +137,10 @@ fun InteractiveMap(
                     setupUserLocationLayer(mv, layer)
 
                     map.addInputListener(object : InputListener {
-                        override fun onMapTap(m: Map, pt: Point) {
-                            latestOnDismiss.value()
-                        }
+                        override fun onMapTap(m: Map, pt: Point) { latestOnDismiss.value() }
                         override fun onMapLongTap(m: Map, pt: Point) = Unit
                     })
 
-                    // CameraListener à chaque frame
                     map.addCameraListener { _, _, _, _ ->
                         latestSelectedPoint.value?.let { sp ->
                             val screen = mv.mapWindow.worldToScreen(
@@ -141,21 +151,21 @@ fun InteractiveMap(
                     }
                 }
             },
-
             update = { mv ->
                 val map = mv.mapWindow.map
                 map.mapObjects.clear()
 
-                // ── Itinéraire réel (polyline depuis DrivingRouter)
                 if (routePoints.size >= 2) {
                     val poly = map.mapObjects.addPolyline(Polyline(routePoints))
-                    poly.strokeWidth  = 6f
-                    poly.setStrokeColor(0xFF003761.toInt())
-                    poly.outlineWidth = 2f
-                    poly.setOutlineColor(0xFFFFFFFF.toInt())
+                    poly.apply {
+                        strokeWidth = 7f
+                        setStrokeColor(0xFF2563EB.toInt())
+                        outlineWidth = 3f
+                        setOutlineColor(0xFFFFFFFF.toInt())
+                    }
+
                 }
 
-                //Marqueurs des distributeurs
                 points.forEach { point ->
                     addDistributorMarker(
                         mv           = mv,
@@ -166,7 +176,7 @@ fun InteractiveMap(
                         onScreenPos  = onMarkerScreenPosition
                     )
                 }
-                // Position immédiate après update
+
                 selectedPoint?.let { sp ->
                     val screen = mv.mapWindow.worldToScreen(
                         Point(sp.latitude, sp.longitude)
@@ -197,6 +207,7 @@ fun InteractiveMap(
     }
 }
 
+//Ajout d'un marqueur distributeur
 private fun addDistributorMarker(
     mv          : MapView,
     map         : Map,
@@ -205,22 +216,13 @@ private fun addDistributorMarker(
     onPointClick: (DistributorPoint) -> Unit,
     onScreenPos : (Float, Float) -> Unit
 ) {
+
     val placemark = map.mapObjects.addPlacemark()
     placemark.geometry = Point(point.latitude, point.longitude)
-
-    placemark.setIcon(
-        ImageProvider.fromResource(mv.context, R.drawable.marker),
-        IconStyle().apply {
-            anchor = PointF(0.5f, 1.0f)
-            scale  = if (isSelected) 1.4f else 1.0f
-            zIndex = if (isSelected) 100f else 0f
-        }
-    )
-
     placemark.setText(
         point.name,
         TextStyle().apply {
-            size         = 11f
+            size         = 10f
             color        = 0xFF003761.toInt()
             outlineColor = 0xFFFFFFFF.toInt()
             outlineWidth = 2f
@@ -228,9 +230,31 @@ private fun addDistributorMarker(
             offset       = 5f
         }
     )
+
+    placemark.useCompositeIcon().apply {
+        setIcon(
+            "pin",
+            ImageProvider.fromResource(mv.context, R.drawable.marker),
+            IconStyle().apply {
+                anchor = PointF(0.5f, 1.0f)
+                scale = if (isSelected) 0.75f else 0.55f
+                zIndex = if (isSelected) 100f else 0f
+            }
+        )
+        setIcon(
+            "point",
+            ImageProvider.fromResource(mv.context, R.drawable.ic_circle),
+            IconStyle().apply {
+                anchor = PointF(0.5f, 0.5f)
+                flat = true
+                scale = 0.05f
+            }
+        )
+    }
+
+
     placemark.addTapListener { _, _ ->
         onPointClick(point)
-        // Position calculée immédiatement au tap, avant l'animation de caméra
         val screen = mv.mapWindow.worldToScreen(Point(point.latitude, point.longitude))
         if (screen != null) onScreenPos(screen.x, screen.y)
         true

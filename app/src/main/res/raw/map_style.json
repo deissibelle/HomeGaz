@@ -1,30 +1,68 @@
 [
   {
-    "tags": { "all": ["landscape", "landuse"] },
-    "stylers": { "color": "#FFFFFF" }
+    "tags": { "all": ["landscape", "landuse", "terrain"] },
+    "stylers": { "color": "#F8F8F6" }
   },
   {
     "tags": { "all": ["water"] },
-    "stylers": { "color": "#C8DFF5" }
+    "stylers": { "color": "#DFE5EC" }
   },
   {
     "tags": { "all": ["road"] },
-    "elements": ["geometry"],
-    "stylers": { "color": "#D1D5DB" }
+    "elements": ["geometry", "geometry.outline", "label"],
+    "stylers": { "visibility": "hidden" }
+  },
+  {
+    "tags": { "all": ["road.local"] },
+    "elements": ["geometry", "geometry.outline", "label"],
+    "stylers": { "visibility": "hidden" }
+  },
+  {
+    "tags": { "all": ["road.arterial"] },
+    "elements": ["geometry", "geometry.outline", "label"],
+    "stylers": { "visibility": "hidden" }
+  },
+  {
+    "tags": { "all": ["road.highway"] },
+    "elements": ["geometry", "geometry.outline", "label"],
+    "stylers": { "visibility": "hidden" }
+  },
+  {
+    "tags": { "all": ["road_traffic"] },
+    "stylers": { "visibility": "hidden" }
   },
   {
     "tags": { "all": ["building"] },
-    "elements": ["geometry", "label"],
-    "stylers": { "color": "#F5F5F5" }
+    "elements": ["geometry"],
+    "stylers": { "color": "#EBEBEA" }
+  },
+  {
+    "tags": { "all": ["building"] },
+    "elements": ["label"],
+    "stylers": { "visibility": "hidden" }
   },
   {
     "tags": { "all": ["poi"] },
     "elements": ["geometry", "label"],
-    "stylers": { "visibility": "off" }
+    "stylers": { "visibility": "hidden" }
   },
   {
     "tags": { "all": ["transit"] },
     "elements": ["geometry", "label"],
-    "stylers": { "visibility": "off" }
+    "stylers": { "visibility": "hidden" }
+  },
+  {
+    "tags": { "all": ["administrative"] },
+    "elements": ["label"],
+    "stylers": { "color": "#B0B7C3", "visibility": "visible" }
+  },
+  {
+    "tags": { "all": ["administrative.locality"] },
+    "elements": ["label"],
+    "stylers": { "color": "#8A94A6", "visibility": "visible" }
+  },
+  {
+    "tags": { "all": ["vegetation"] },
+    "stylers": { "color": "#EEF0EB" }
   }
 ]

@@ -114,6 +114,9 @@ dependencies {
     implementation(libs.ktor.serialization.json)
     implementation(libs.ktor.client.logging)
 
+    //splashscreen
+    implementation(libs.androidx.core.splashscreen)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

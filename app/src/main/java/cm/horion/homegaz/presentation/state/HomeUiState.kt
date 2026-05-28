@@ -13,6 +13,7 @@ data class HomeUiState(
     val selectedDistance   : String = "5 km",
     val selectedWeight     : String = "Tous",
 
+    val isFirstLaunch  : Boolean = true,
     val locationGranted: Boolean = false,
     val locationDenied : Boolean = false,
     val userLat        : Double? = null,
@@ -24,5 +25,4 @@ data class HomeUiState(
     val error    : String? = null,
 
     val routeBoundingBox: BoundingBox? = null,
-
-    )
+)

@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
@@ -30,11 +31,12 @@ fun HomeScreen(
 
     var pendingAction by remember { mutableStateOf<PendingAction?>(null) }
 
+
     LaunchedEffect(uiState.locationGranted) {
         if (uiState.locationGranted) {
             when (val action = pendingAction) {
-                is PendingAction.Refresh     -> viewModel.loadPoints()
-                is PendingAction.ClickPoint  -> {
+                is PendingAction.Refresh    -> viewModel.loadPoints()
+                is PendingAction.ClickPoint -> {
                     uiState.allPoints
                         .find { it.id == action.pointId }
                         ?.let { viewModel.onPointClick(it) }
@@ -42,6 +44,15 @@ fun HomeScreen(
                 null -> Unit
             }
             pendingAction = null
+        }
+    }
+
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    LaunchedEffect(navBackStackEntry) {
+        val route = navBackStackEntry?.destination?.route ?: return@LaunchedEffect
+        if (route == Screen.Home.route || route.startsWith("${Screen.Home.route}/")) {
+            viewModel.onDismissPopup()
         }
     }
 
@@ -61,13 +72,12 @@ fun HomeScreen(
         }
     }
 
+
     var markerScreenX by remember { mutableStateOf<Float?>(null) }
     var markerScreenY by remember { mutableStateOf<Float?>(null) }
 
-
-    val selectedPointId = uiState.selectedPoint?.id
-    LaunchedEffect(selectedPointId) {
-        if (selectedPointId == null) {
+    LaunchedEffect(uiState.selectedPoint?.id) {
+        if (uiState.selectedPoint == null) {
             markerScreenX = null
             markerScreenY = null
         }
@@ -75,22 +85,23 @@ fun HomeScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-
         InteractiveMap(
-            modifier        = Modifier.fillMaxSize(),
-            points          = uiState.filteredPoints,
-            selectedPoint   = uiState.selectedPoint,
-            locationGranted = uiState.locationGranted,
-            userLat         = uiState.userLat,
-            userLng         = uiState.userLng,
-            routePoints     = uiState.routePolyline,
-            onPointClick    = { point ->
-                runWithLocation(PendingAction.ClickPoint(point.id))
-            },
+            modifier               = Modifier.fillMaxSize(),
+            points                 = uiState.filteredPoints,
+            selectedPoint          = uiState.selectedPoint,
+            locationGranted        = uiState.locationGranted,
+            userLat                = uiState.userLat,
+            userLng                = uiState.userLng,
+            routePoints            = uiState.routePolyline,
+            routeBoundingBox       = uiState.routeBoundingBox,
+            onPointClick           = { point -> viewModel.onPointClick(point) },
             onDismissPopup         = viewModel::onDismissPopup,
             onMarkerScreenPosition = { x, y ->
                 markerScreenX = x
                 markerScreenY = y
+            },
+            onRecenterClick = {
+                if (!uiState.locationGranted) onRequestLocation()
             }
         )
 
@@ -104,16 +115,16 @@ fun HomeScreen(
             onWeightChange      = viewModel::onWeightChange,
             onRefresh           = { runWithLocation(PendingAction.Refresh) },
             distributorOptions  = listOf("SCTM", "Tradex", "Total", "Glocal Gaz"),
-            distanceOptions     = listOf("1 km", "5 km", "10 km"),
+            distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
             weightOptions       = listOf("6kg", "12.5kg", "28kg")
         )
+
 
         val selectedPoint = uiState.selectedPoint
         val sx = markerScreenX
         val sy = markerScreenY
 
-        if (selectedPoint != null && uiState.locationGranted && sx != null && sy != null) {
-
+        if (selectedPoint != null && sx != null && sy != null) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 val density = LocalDensity.current
 
@@ -144,15 +155,23 @@ fun HomeScreen(
                             )
                         },
                         onRouteClick = {
-                            viewModel.calculateRouteToPoint(
-                                selectedPoint.latitude,
-                                selectedPoint.longitude
-                            )
+                            if (uiState.locationGranted) {
+
+                                viewModel.calculateRouteToPoint(
+                                    selectedPoint.latitude,
+                                    selectedPoint.longitude
+                                )
+                            } else {
+                                pendingAction = PendingAction.ClickPoint(selectedPoint.id)
+                                onRequestLocation()
+                            }
                         }
                     )
                 }
             }
         }
+
+
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
