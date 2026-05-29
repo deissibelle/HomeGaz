@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.HomeGaz" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@color/splash_background_night</item>
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowNoTitle">true</item>
+<!--    <style name="Theme.App.Starting" parent="Theme.SplashScreen">-->
+<!--        <item name="windowSplashScreenBackground">@color/background</item>-->
+<!--        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash</item>-->
+<!--        <item name="windowSplashScreenIconBackgroundColor">@color/background</item>-->
+<!--        <item name="postSplashScreenTheme">@style/Theme.App</item>-->
+<!--    </style>-->
+
+    <style name="Theme.App" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash_icon</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/background</item>
+        <item name="android:windowSplashScreenBrandingImage" tools:targetApi="31">@drawable/by_orion_small_white</item>
+        <item name="postSplashScreenTheme">@style/Theme.App</item>
     </style>
 
 </resources>

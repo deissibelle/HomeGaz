@@ -1,11 +1,15 @@
 package cm.horion.homegaz
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,11 +23,14 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
+import cm.horion.homegaz.util.LocationUtils
 import com.google.android.gms.location.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,7 +45,25 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback   : LocationCallback
 
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                checkGpsSettings()
+            }
+            else -> {
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //installSplashScreen()
+        val splashScreen = installSplashScreen()
+
+        splashScreen.setKeepOnScreenCondition { false }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -59,15 +84,27 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HomeGazTheme {
-                var showSplash by remember { mutableStateOf(true) }
-                if (showSplash) {
-                    HomeGazSplashScreen(onFinished = { showSplash = false })
-                } else {
-                    HomeGazApp(userPrefs = userPrefs)
-                }
+                HomeGazApp(userPrefs = userPrefs)
             }
         }
+
+        checkAndRequestLocation()
     }
+
+    private fun checkAndRequestLocation() {
+        val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+        val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
+
+        val isFineGranted = ContextCompat.checkSelfPermission(this, fineLocationPermission) == PackageManager.PERMISSION_GRANTED
+        val isCoarseGranted = ContextCompat.checkSelfPermission(this, coarseLocationPermission) == PackageManager.PERMISSION_GRANTED
+
+        if (isFineGranted || isCoarseGranted) {
+            checkGpsSettings()
+        } else {
+            locationPermissionRequest.launch(arrayOf(fineLocationPermission, coarseLocationPermission))
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
@@ -91,79 +128,19 @@ class MainActivity : ComponentActivity() {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
     }
-}
 
-
-@Composable
-private fun HomeGazSplashScreen(onFinished: () -> Unit) {
-
-    val isDark     = isSystemInDarkTheme()
-    val background = if (isDark) Color(0xFF0D1B2A) else Color.White
-
-    val scale      = remember { Animatable(0.7f) }
-    val alpha      = remember { Animatable(0f) }
-    val orionAlpha = remember { Animatable(0f) }
-
-    LaunchedEffect(Unit) {
-        launch {
-            scale.animateTo(
-                targetValue   = 1f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness    = Spring.StiffnessMediumLow
-                )
-            )
+    private fun checkGpsSettings() {
+        if (!LocationUtils.isLocationEnabled(this)) {
+            // Le GPS est désactivé dans les réglages système
+            AlertDialog.Builder(this)
+                .setTitle("GPS désactivé")
+                .setMessage("Pour fonctionner correctement, l'application a besoin du GPS. Voulez-vous l'activer ?")
+                .setPositiveButton("Oui") { _, _ ->
+                    LocationUtils.showLocationSettings(this)
+                }
+                .setNegativeButton("Non", null)
+                .show()
         }
-        launch {
-            alpha.animateTo(
-                targetValue   = 1f,
-                animationSpec = tween(durationMillis = 500, easing = EaseOut)
-            )
-        }
-        delay(600L)
-        orionAlpha.animateTo(
-            targetValue   = 1f,
-            animationSpec = tween(durationMillis = 400, easing = EaseOut)
-        )
-        delay(1_400L)
-        launch {
-            alpha.animateTo(
-                targetValue   = 0f,
-                animationSpec = tween(durationMillis = 350, easing = EaseIn)
-            )
-        }
-        orionAlpha.animateTo(
-            targetValue   = 0f,
-            animationSpec = tween(durationMillis = 350, easing = EaseIn)
-        )
-        onFinished()
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(background)
-            .systemBarsPadding()
-    ) {
-        Image(
-            painter            = painterResource(id = R.drawable.logo_splash),
-            contentDescription = "Logo HomeGaz",
-            modifier           = Modifier
-                .align(Alignment.Center)
-                .size(110.dp)
-                .scale(scale.value)
-                .alpha(alpha.value)
-        )
-        Image(
-            painter            = painterResource(
-                id = if (isDark) R.drawable.by_orion_white else R.drawable.by_orion
-            ),
-            contentDescription = "by Orion",
-            modifier           = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 52.dp)
-                .height(18.dp)
-                .alpha(orionAlpha.value)
-        )
     }
 }
+

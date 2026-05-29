@@ -10,7 +10,7 @@ data class PaymentUiState(
     val quantity       : Int            = 1,
     val deliveryOption : DeliveryOption = DeliveryOption.LIVRAISON,
     val unitPrice      : Int            = 0,
-    val selectedMethod : PaymentMethod  = PaymentMethod.ORANGE_MONEY,
+    val selectedMethod : PaymentMethod  = PaymentMethod.OM,
     val phoneNumber    : String         = "",
     val isLoading      : Boolean        = false,
     val error          : String?        = null

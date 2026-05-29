@@ -50,7 +50,7 @@ fun OrderSummary.toReservation(): Reservation {
     }
 
     val paymentLabel = when (paymentMethod) {
-        PaymentMethod.ORANGE_MONEY -> "OM - $phoneNumber"
+        PaymentMethod.OM -> "OM - $phoneNumber"
         PaymentMethod.MOMO         -> "MoMo - $phoneNumber"
     }
 
