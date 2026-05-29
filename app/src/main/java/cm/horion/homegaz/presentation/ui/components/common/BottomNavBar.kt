@@ -8,18 +8,15 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme // Pour détecter le thème
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.TipsAndUpdates
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LocalShipping
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.TipsAndUpdates
 import androidx.compose.material3.Icon
@@ -35,6 +32,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.domain.model.common.NavItem
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
@@ -87,6 +85,9 @@ fun BottomNavBar(
     )
 
     val primaryColor = MaterialTheme.colorScheme.primary
+
+    val isDark = isSystemInDarkTheme()
+    val unselectedBaseColor = if (isDark) Color.White else MaterialTheme.colorScheme.primary
 
     Box(
         modifier = Modifier
@@ -172,7 +173,7 @@ fun BottomNavBar(
                     targetValue = if (isSelected) {
                         primaryColor
                     } else {
-                        primaryColor.copy(alpha = 5f)
+                        unselectedBaseColor
                     },
                     animationSpec = tween(300),
                     label = "IconColorAnimation"
@@ -209,7 +210,8 @@ fun BottomNavBar(
                     Text(
                         text = item.label,
                         style = MaterialTheme.typography.labelSmall,
-                        color = contentColor
+                        color = contentColor,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Bold
                     )
                 }
             }

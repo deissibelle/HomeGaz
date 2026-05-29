@@ -1,10 +1,12 @@
 package cm.horion.homegaz.presentation.ui.pages.home
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,106 +84,118 @@ fun HomeScreen(
             markerScreenY = null
         }
     }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        InteractiveMap(
-            modifier               = Modifier.fillMaxSize(),
-            points                 = uiState.filteredPoints,
-            selectedPoint          = uiState.selectedPoint,
-            locationGranted        = uiState.locationGranted,
-            userLat                = uiState.userLat,
-            userLng                = uiState.userLng,
-            routePoints            = uiState.routePolyline,
-            routeBoundingBox       = uiState.routeBoundingBox,
-            onPointClick           = { point -> viewModel.onPointClick(point) },
-            onDismissPopup         = viewModel::onDismissPopup,
-            onMarkerScreenPosition = { x, y ->
-                markerScreenX = x
-                markerScreenY = y
-            },
-            onRecenterClick = {
-                if (!uiState.locationGranted) onRequestLocation()
-            }
+    val isDark = isSystemInDarkTheme()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Text(
+            text = "HomeGaz",
+            modifier = Modifier.padding(start = 24.dp, bottom = 8.dp),
+            style = MaterialTheme.typography.titleLarge,
+            color = if (isDark) Color.White else MaterialTheme.colorScheme.primary,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
         )
+        Box(modifier = Modifier.fillMaxSize()) {
 
-        HomeFilterCard(
-            modifier            = Modifier.align(Alignment.TopCenter),
-            distributor         = uiState.selectedDistributor,
-            onDistributorChange = viewModel::onDistributorChange,
-            distance            = uiState.selectedDistance,
-            onDistanceChange    = viewModel::onDistanceChange,
-            weight              = uiState.selectedWeight,
-            onWeightChange      = viewModel::onWeightChange,
-            onRefresh           = { runWithLocation(PendingAction.Refresh) },
-            distributorOptions  = listOf("SCTM", "Tradex", "Total", "Glocal Gaz"),
-            distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
-            weightOptions       = listOf("6kg", "12.5kg", "28kg")
-        )
+            InteractiveMap(
+                modifier = Modifier.fillMaxSize(),
+                points = uiState.filteredPoints,
+                selectedPoint = uiState.selectedPoint,
+                locationGranted = uiState.locationGranted,
+                userLat = uiState.userLat,
+                userLng = uiState.userLng,
+                routePoints = uiState.routePolyline,
+                routeBoundingBox = uiState.routeBoundingBox,
+                onPointClick = { point -> viewModel.onPointClick(point) },
+                onDismissPopup = viewModel::onDismissPopup,
+                onMarkerScreenPosition = { x, y ->
+                    markerScreenX = x
+                    markerScreenY = y
+                },
+                onRecenterClick = {
+                    if (!uiState.locationGranted) onRequestLocation()
+                }
+            )
+
+            HomeFilterCard(
+                modifier = Modifier.align(Alignment.TopCenter),
+                distributor = uiState.selectedDistributor,
+                onDistributorChange = viewModel::onDistributorChange,
+                distance = uiState.selectedDistance,
+                onDistanceChange = viewModel::onDistanceChange,
+                weight = uiState.selectedWeight,
+                onWeightChange = viewModel::onWeightChange,
+                onRefresh = { runWithLocation(PendingAction.Refresh) },
+                distributorOptions = listOf("SCTM", "Tradex", "Total", "Glocal Gaz"),
+                distanceOptions = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
+                weightOptions = listOf("6kg", "12.5kg", "28kg")
+            )
 
 
-        val selectedPoint = uiState.selectedPoint
-        val sx = markerScreenX
-        val sy = markerScreenY
+            val selectedPoint = uiState.selectedPoint
+            val sx = markerScreenX
+            val sy = markerScreenY
 
-        if (selectedPoint != null && sx != null && sy != null) {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val density = LocalDensity.current
+            if (selectedPoint != null && sx != null && sy != null) {
+                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                    val density = LocalDensity.current
 
-                val cardWidthPx  = with(density) { 186.dp.toPx() }
-                val cardHeightPx = with(density) { 220.dp.toPx() }
-                val marginPx     = with(density) { 4.dp.toPx() }
+                    val cardWidthPx = with(density) { 186.dp.toPx() }
+                    val cardHeightPx = with(density) { 220.dp.toPx() }
+                    val marginPx = with(density) { 4.dp.toPx() }
 
-                val offsetXPx = (sx - cardWidthPx - marginPx)
-                    .coerceAtLeast(0f)
-                    .coerceAtMost(with(density) { maxWidth.toPx() } - cardWidthPx)
+                    val offsetXPx = (sx - cardWidthPx - marginPx)
+                        .coerceAtLeast(0f)
+                        .coerceAtMost(with(density) { maxWidth.toPx() } - cardWidthPx)
 
-                val offsetYPx = (sy - cardHeightPx / 2f)
-                    .coerceAtLeast(0f)
-                    .coerceAtMost(with(density) { maxHeight.toPx() } - cardHeightPx)
+                    val offsetYPx = (sy - cardHeightPx / 2f)
+                        .coerceAtLeast(0f)
+                        .coerceAtMost(with(density) { maxHeight.toPx() } - cardHeightPx)
 
-                Box(
-                    modifier = Modifier.offset(
-                        x = with(density) { offsetXPx.toDp() },
-                        y = with(density) { offsetYPx.toDp() }
-                    )
-                ) {
-                    DistributionPointSheet(
-                        point      = selectedPoint,
-                        onBuyClick = {
-                            viewModel.onDismissPopup()
-                            navController.navigate(
-                                Screen.DistributorDetail.createRoute(selectedPoint.id)
-                            )
-                        },
-                        onRouteClick = {
-                            if (uiState.locationGranted) {
-
-                                viewModel.calculateRouteToPoint(
-                                    selectedPoint.latitude,
-                                    selectedPoint.longitude
+                    Box(
+                        modifier = Modifier.offset(
+                            x = with(density) { offsetXPx.toDp() },
+                            y = with(density) { offsetYPx.toDp() }
+                        )
+                    ) {
+                        DistributionPointSheet(
+                            point = selectedPoint,
+                            onBuyClick = {
+                                viewModel.onDismissPopup()
+                                navController.navigate(
+                                    Screen.DistributorDetail.createRoute(selectedPoint.id)
                                 )
-                            } else {
-                                pendingAction = PendingAction.ClickPoint(selectedPoint.id)
-                                onRequestLocation()
+                            },
+                            onRouteClick = {
+                                if (uiState.locationGranted) {
+
+                                    viewModel.calculateRouteToPoint(
+                                        selectedPoint.latitude,
+                                        selectedPoint.longitude
+                                    )
+                                } else {
+                                    pendingAction = PendingAction.ClickPoint(selectedPoint.id)
+                                    onRequestLocation()
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
-        }
 
 
-        if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
 
-        uiState.error?.let { errorMsg ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) { Text(errorMsg) }
+            uiState.error?.let { errorMsg ->
+                Snackbar(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                ) { Text(errorMsg) }
+            }
         }
     }
 }
