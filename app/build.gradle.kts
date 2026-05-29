@@ -105,6 +105,7 @@ dependencies {
 
     // Yandex MapKit SDK
     implementation(libs.maps.mobile)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     // Client Http
     implementation(libs.ktor.client.core)

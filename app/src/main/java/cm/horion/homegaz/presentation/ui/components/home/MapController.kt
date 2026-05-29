@@ -2,6 +2,7 @@ package cm.horion.homegaz.presentation.ui.components.home
 
 import android.content.Context
 import android.graphics.PointF
+import android.location.Location
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.yandex.mapkit.Animation
@@ -9,31 +10,26 @@ import com.yandex.mapkit.ConflictResolutionMode
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.geometry.Polyline
+import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
 
-private val YAOUNDE_CENTER = Point(3.848, 11.502)
+private val YAOUNDE_FALLBACK = Point(3.848, 11.502)
 private const val DEFAULT_ZOOM = 13f
 
-/**
- * Objet Java/Kotlin pur — PAS un Composable.
- * Toutes les références JNI (listeners, collections, placemarks) vivent ici,
- * dans un objet dont le cycle de vie est contrôlé manuellement par l'Activity/Fragment,
- * jamais par le runtime Compose.
- *
- * Callbacks vers Compose : simples lambdas var, remplacées sans toucher au JNI.
- */
 class MapController(private val context: Context) {
 
-    // ── Callbacks vers le monde Compose (remplacés librement, jamais GC par MapKit) ──
+    // ── Callbacks vers le monde Compose ──
     var onPointClick           : ((DistributorPoint) -> Unit)? = null
     var onDismissPopup         : (() -> Unit)?                 = null
     var onMarkerScreenPosition : ((Float, Float) -> Unit)?     = null
 
-    // ── Références JNI stables ────────────────────────────────────────────────────────
+    // ── Références JNI stables ──
     private var mapView            : MapView?             = null
     private var markersCollection  : MapObjectCollection? = null
     private var routesCollection   : MapObjectCollection? = null
@@ -46,11 +42,14 @@ class MapController(private val context: Context) {
         ImageProvider.fromResource(context, R.drawable.ic_circle)
     }
 
-    // markersMap vit dans cette classe Java → le GC ne peut PAS le collecter
-    // tant que MapController lui-même est vivant
+    // 🚀 ICI : Charge ton icône de position utilisateur personnalisée
+    // Remplace R.drawable.ic_user_pin par le vrai nom de ton fichier ressource
+    private val userLocationImageProvider : ImageProvider by lazy {
+        ImageProvider.fromResource(context, R.drawable.profil)
+    }
+
     private val markersMap = mutableMapOf<String, MarkerEntry>()
 
-    // Listeners déclarés comme champs de classe → référence forte, jamais GC
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
             onDismissPopup?.invoke()
@@ -70,15 +69,44 @@ class MapController(private val context: Context) {
         }
     }
 
+    // 🚀 Écouteur d'ancrage visuel pour remplacer l'icône de géolocalisation par défaut de Yandex
+    private val userLocationObjectListener = object : UserLocationObjectListener {
+        override fun onObjectAdded(userLocationView: UserLocationView) {
+            // On remplace la flèche par défaut par ton icône personnalisée
+            userLocationView.pin.setIcon(userLocationImageProvider)
+            userLocationView.arrow.setIcon(userLocationImageProvider)
+
+            // On configure l'ombrage/cercle de précision autour si désiré (optionnel)
+            userLocationView.accuracyCircle.fillColor = 0x222563EB.toInt() // Bleu transparent
+        }
+
+        override fun onObjectRemoved(userLocationView: UserLocationView) {
+            // Rien à faire ici
+        }
+
+        // ✅ La bonne signature attendue par ta version du SDK Yandex
+        override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
+            // Rien à faire ici
+        }
+    }
+
     private var currentSelectedPoint : DistributorPoint? = null
     private var mapStyleJson          : String?           = null
+    private var defaultCenter         : Point  = YAOUNDE_FALLBACK
 
     // ── Cycle de vie ──────────────────────────────────────────────────────────────────
 
-    fun attachMapView(mv: MapView) {
-        if (mapView != null) return  // déjà initialisé, on ne réinitialise pas
+    fun attachMapView(mv: MapView, initialLocation: Location? = null) {
+        if (mapView != null) return
 
         mapView = mv
+
+        // 1. Définition du centre de départ
+        if (initialLocation != null) {
+            defaultCenter = Point(initialLocation.latitude, initialLocation.longitude)
+        } else {
+            defaultCenter = YAOUNDE_FALLBACK
+        }
 
         if (mapStyleJson == null) {
             mapStyleJson = context.resources
@@ -90,16 +118,25 @@ class MapController(private val context: Context) {
         val map = mv.mapWindow.map
         map.setMapStyle(mapStyleJson!!)
         map.mapObjects.conflictResolutionMode = ConflictResolutionMode.MAJOR
-        map.move(CameraPosition(YAOUNDE_CENTER, DEFAULT_ZOOM, 0f, 0f))
+
+        // 2. On applique les listeners avant le déplacement pour éviter les sauts graphiques
+        map.addInputListener(inputListener)
+        map.addCameraListener(cameraListener)
 
         markersCollection = map.mapObjects.addCollection()
         routesCollection  = map.mapObjects.addCollection()
 
-        map.addInputListener(inputListener)
-        map.addCameraListener(cameraListener)
+        // 3. Configuration de la couche de géolocalisation native
+        userLocationLayer = MapKitFactory.getInstance().createUserLocationLayer(mv.mapWindow).apply {
+            setObjectListener(userLocationObjectListener)
+        }
 
-        userLocationLayer = MapKitFactory.getInstance()
-            .createUserLocationLayer(mv.mapWindow)
+        // 4. 🚀 DEPLACEMENT DIRECT : On force la caméra sur la position calculée
+        map.move(
+            CameraPosition(defaultCenter, DEFAULT_ZOOM, 0f, 0f),
+            Animation(Animation.Type.SMOOTH, 0f), // 0f pour un placement immédiat sans transition visible
+            null
+        )
     }
 
     fun onStart() {
@@ -115,6 +152,7 @@ class MapController(private val context: Context) {
     fun destroy() {
         mapView?.mapWindow?.map?.removeInputListener(inputListener)
         mapView?.mapWindow?.map?.removeCameraListener(cameraListener)
+        userLocationLayer?.setObjectListener(null)
         markersMap.clear()
         mapView     = null
         markersCollection = null
@@ -122,7 +160,7 @@ class MapController(private val context: Context) {
         userLocationLayer = null
     }
 
-    // ── API publique appelée depuis Compose ───────────────────────────────────────────
+    // ── API publique ──────────────────────────────────────────────────────────────────
 
     fun setLocationEnabled(enabled: Boolean) {
         userLocationLayer?.isVisible           = enabled
@@ -139,7 +177,7 @@ class MapController(private val context: Context) {
 
     fun recenter(userLat: Double?, userLng: Double?) {
         val target = if (userLat != null && userLng != null)
-            Point(userLat, userLng) else YAOUNDE_CENTER
+            Point(userLat, userLng) else defaultCenter
         val zoom = if (userLat != null) 15f else DEFAULT_ZOOM
         mapView?.mapWindow?.map?.move(
             CameraPosition(target, zoom, 0f, 0f),
@@ -155,7 +193,6 @@ class MapController(private val context: Context) {
                 ?.worldToScreen(Point(point.latitude, point.longitude))
                 ?.let { onMarkerScreenPosition?.invoke(it.x, it.y) }
         }
-        // Mettre à jour les scales
         markersMap.values.forEach { entry ->
             if (!entry.placemark.isValid) return@forEach
             val isSelected = entry.point.id == point?.id
@@ -183,7 +220,6 @@ class MapController(private val context: Context) {
     fun syncMarkers(points: List<DistributorPoint>) {
         val mc = markersCollection ?: return
 
-        // Ajout des nouveaux
         points.forEach { point ->
             val existing = markersMap[point.id]
             if (existing == null || !existing.placemark.isValid) {
@@ -192,7 +228,6 @@ class MapController(private val context: Context) {
             }
         }
 
-        // Purge des supprimés
         val currentIds = points.map { it.id }.toSet()
         val iterator   = markersMap.entries.iterator()
         while (iterator.hasNext()) {
@@ -207,8 +242,6 @@ class MapController(private val context: Context) {
             }
         }
     }
-
-    // ── Création d'un marqueur ────────────────────────────────────────────────────────
 
     private fun createMarker(collection: MapObjectCollection, point: DistributorPoint) {
         val pm = collection.addPlacemark().apply {
@@ -236,21 +269,25 @@ class MapController(private val context: Context) {
             })
         }
 
-        // Le listener est un champ de MarkerEntry → référence forte dans markersMap
         val entry = MarkerEntry(point, pm, composite)
         pm.addTapListener(entry.tapListenerRef)
         markersMap[point.id] = entry
     }
 
-    // ── MarkerEntry avec listener comme champ (référence forte garantie) ──────────────
+    fun updateUserLocation(location: android.location.Location) {
+        defaultCenter = Point(location.latitude, location.longitude)
+        mapView?.mapWindow?.map?.move(
+            CameraPosition(defaultCenter, DEFAULT_ZOOM, 0f, 0f),
+            com.yandex.mapkit.Animation(com.yandex.mapkit.Animation.Type.SMOOTH, 1f),
+            null
+        )
+    }
 
     private inner class MarkerEntry(
         val point      : DistributorPoint,
         val placemark  : PlacemarkMapObject,
         val composite  : CompositeIcon
     ) {
-        // Déclaré comme val dans l'inner class → référence forte tant que MarkerEntry vit
-        // Utilise les callbacks via MapController (jamais capturé directement)
         val tapListenerRef = MapObjectTapListener { _, _ ->
             onPointClick?.invoke(point)
             mapView?.mapWindow

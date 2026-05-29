@@ -11,30 +11,29 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import cm.horion.homegaz.domain.model.home.DistributorPoint
+import cm.horion.homegaz.util.getCurrentLocation
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
 
-/**
- * Composable ultra-léger : ne fait QUE créer la MapView et la passer
- * au MapController. Toute la logique JNI est dans MapController.
- */
+
 @Composable
 fun InteractiveMap(
     controller             : MapController,
     points                 : List<DistributorPoint>,
     selectedPoint          : DistributorPoint?,
+    selectedDistance       : String,
     locationGranted        : Boolean      = false,
     userLat                : Double?      = null,
     userLng                : Double?      = null,
     routePoints            : List<Point>  = emptyList(),
     routeBoundingBox       : BoundingBox? = null,
     onRecenterClick        : () -> Unit   = {},
+    onLocationFetched      : (Double, Double) -> Unit = { _, _ -> },
     modifier               : Modifier     = Modifier
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Cycle de vie MapKit géré ici, mais les objets JNI vivent dans MapController
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -46,6 +45,47 @@ fun InteractiveMap(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    // 🚀 L'APPEL MANQUANT : Déclenche la recherche GPS dès que la permission est acquise
+//    LaunchedEffect(locationGranted) {
+//        controller.setLocationEnabled(locationGranted)
+//
+//        if (locationGranted) {
+//            // On appelle ta fonction suspendue en tâche de fond
+//            val location = getCurrentLocation()
+//            if (location != null) {
+//                // 1. On informe le MapController de déplacer la caméra sur le champ
+//                controller.updateUserLocation(location)
+//                // 2. On remonte l'info au parent/ViewModel au cas où il en a besoin pour recalculer des distances
+//                onLocationFetched(location.latitude, location.longitude)
+//            }
+//        }
+//    }
+
+    LaunchedEffect(locationGranted, selectedDistance) {
+        controller.setLocationEnabled(locationGranted)
+
+        if (locationGranted) {
+            val location = getCurrentLocation()
+            if (location != null) {
+                // 1. Calcul du zoom dynamique en fonction de la distance sélectionnée
+                val targetZoom = when (selectedDistance) {
+                    "100 mètre" -> 18.5f // Très serré, rayon d'environ 100-150m autour de toi
+                    "500 mètre" -> 16.2f // Rayon d'environ 500m visible à l'écran
+                    "1 km"      -> 15.2f // Rayon de 1km visible
+                    "5 km"      -> 13.0f // Permet de voir à 5km aux alentours
+                    "10 km"     -> 11.8f // Échelle globale de la ville de Yaoundé
+                    else        -> 14.0f
+                }
+
+                // 2. On déplace la caméra sur ta position AVEC le bon niveau de zoom
+                controller.centerOn(location.latitude, location.longitude, targetZoom)
+
+                // 3. On remonte l'info au ViewModel si besoin
+                onLocationFetched(location.latitude, location.longitude)
+            }
         }
     }
 
@@ -83,7 +123,6 @@ fun InteractiveMap(
                     controller.attachMapView(mv)
                 }
             }
-            // Pas de update{} — tout passe par les LaunchedEffect → MapController
         )
 
         RecenterButton(

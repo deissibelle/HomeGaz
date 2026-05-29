@@ -97,6 +97,7 @@ fun HomeScreen(
             points           = uiState.filteredPoints,
             selectedPoint    = uiState.selectedPoint,
             locationGranted  = uiState.locationGranted,
+            selectedDistance = uiState.selectedDistance,
             userLat          = uiState.userLat,
             userLng          = uiState.userLng,
             routePoints      = uiState.routePolyline,
