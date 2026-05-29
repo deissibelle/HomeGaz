@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,16 +27,13 @@ import cm.horion.homegaz.domain.model.home.DistributorPoint
 @Composable
 fun DistributionPointSheet(
     point: DistributorPoint,
+    isMarkerOnRight: Boolean = true, // 🚀 NOUVEAU : Permet de savoir de quel côté est le point
     onBuyClick: () -> Unit = {},
     onRouteClick: () -> Unit = {}
 ) {
-    val cardShape = RoundedCornerShape(
-        topStart = 38.dp,
-        topEnd = 38.dp,
-        bottomStart = 38.dp,
-        bottomEnd = 38.dp
-    )
+    val cardShape = RoundedCornerShape(38.dp)
 
+    // Le pointeur dessine un triangle qui pointe initialement vers la DROITE (>)
     val pointerShape = GenericShape { size, _ ->
         moveTo(0f, 0f)
         lineTo(size.width, size.height / 2f)
@@ -46,6 +44,19 @@ fun DistributionPointSheet(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // 🚀 SI LE MARQUEUR EST À GAUCHE : On affiche le triangle en premier (à gauche de la fiche)
+        if (!isMarkerOnRight) {
+            Box(
+                modifier = Modifier
+                    .size(width = 14.dp, height = 28.dp)
+                    // On lui applique une rotation de 180° pour qu'il pointe vers la GAUCHE (<)
+                    .graphicsLayer(rotationZ = 180f)
+                    .clip(pointerShape)
+                    .background(Color.White.copy(alpha = 0.8f))
+            )
+        }
+
+        // Le corps principal de ta fiche
         Box(
             modifier = Modifier
                 .width(172.dp)
@@ -58,7 +69,6 @@ fun DistributionPointSheet(
                 .background(Color.White.copy(alpha = 0.8f))
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
                 // Image
                 Image(
                     painter = painterResource(
@@ -82,7 +92,7 @@ fun DistributionPointSheet(
                     Text(
                         text = point.name,
                         color = Color.White,
-                       style = MaterialTheme.typography.labelSmall
+                        style = MaterialTheme.typography.labelSmall
                     )
                 }
 
@@ -90,18 +100,17 @@ fun DistributionPointSheet(
 
                 // Statut stock
                 Image(
-                    painter = painterResource ( R.drawable.ok ),
+                    painter = painterResource(R.drawable.ok),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 )
 
                 Text(
-                    text =  "STOCK DISPONIBLE",
+                    text = "STOCK DISPONIBLE",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelSmall.copy(
                         lineHeight = 16.sp,
                     ),
-
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .width(112.dp)
@@ -111,7 +120,6 @@ fun DistributionPointSheet(
                 // Bouton Acheter
                 Button(
                     onClick = onBuyClick,
-//                    enabled = point.stockAvailable,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary
                     ),
@@ -150,12 +158,17 @@ fun DistributionPointSheet(
                 Spacer(Modifier.height(12.dp))
             }
         }
-        Box(
-            modifier = Modifier
-                .size(width = 14.dp, height = 28.dp)
-                .clip(pointerShape)
-                .background(Color.White.copy(alpha = 0.8f))
-        )
+
+        // 🚀 SI LE MARQUEUR EST À DROITE : On remet le triangle à sa place initiale (à droite de la fiche)
+        if (isMarkerOnRight) {
+            Box(
+                modifier = Modifier
+                    .size(width = 14.dp, height = 28.dp)
+                    // Pas de rotation nécessaire, il pointe naturellement vers la DROITE (>)
+                    .clip(pointerShape)
+                    .background(Color.White.copy(alpha = 0.8f))
+            )
+        }
     }
 }
 
