@@ -18,6 +18,8 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
+import com.yandex.mapkit.geometry.Circle
+import com.yandex.mapkit.geometry.Geometry
 
 private val YAOUNDE_FALLBACK = Point(3.848, 11.502)
 private const val DEFAULT_ZOOM = 13f
@@ -30,7 +32,7 @@ class MapController(private val context: Context) {
     var onMarkerScreenPosition : ((Float, Float) -> Unit)?     = null
 
     // ── Références JNI stables ──
-    private var mapView            : MapView?             = null
+    var mapView            : MapView?             = null
     private var markersCollection  : MapObjectCollection? = null
     private var routesCollection   : MapObjectCollection? = null
     private var userLocationLayer  : UserLocationLayer?   = null
@@ -273,6 +275,31 @@ class MapController(private val context: Context) {
         pm.addTapListener(entry.tapListenerRef)
         markersMap[point.id] = entry
     }
+
+    fun centerOnRadius(latitude: Double, longitude: Double, radiusInMeters: Float) {
+        val map = mapView?.mapWindow?.map ?: return
+        val centerPoint = Point(latitude, longitude)
+
+        // 1. On crée le cercle virtuel
+        val circle = Circle(centerPoint, radiusInMeters)
+        val geometry = Geometry.fromCircle(circle)
+
+        // 2. ✅ Surchargée simplifiée : On demande la position de la caméra uniquement basée sur la géométrie
+        val cameraPosition = map.cameraPosition(geometry)
+
+        // 3. On applique le déplacement de manière fluide avec le zoom calculé
+        map.move(
+            CameraPosition(
+                cameraPosition.target,
+                cameraPosition.zoom - 0.3f, // Petite marge pour ne pas coller le cercle aux bords de l'écran
+                0f,
+                0f
+            ),
+            Animation(Animation.Type.SMOOTH, 1f),
+            null
+        )
+    }
+
 
     fun updateUserLocation(location: android.location.Location) {
         defaultCenter = Point(location.latitude, location.longitude)

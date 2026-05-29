@@ -15,6 +15,7 @@ import cm.horion.homegaz.util.getCurrentLocation
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.mapview.MapView
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -34,6 +35,22 @@ fun InteractiveMap(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    // 🚀 ICI : On crée le scope pour pouvoir lancer des coroutines dans les onClick
+    val scope = rememberCoroutineScope()
+
+    // On mémorise le rayon en mètres selon la chaîne sélectionnée
+    val currentRadiusMeters = remember(selectedDistance) {
+        when (selectedDistance) {
+            "100 mètre" -> 100f
+            "500 mètre" -> 500f
+            "1 km"      -> 1000f
+            "5 km"      -> 5000f
+            "10 km"     -> 10000f
+            else        -> 2000f
+        }
+    }
+
+    // 1. Gestion du Cycle de vie de MapKit
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -48,61 +65,20 @@ fun InteractiveMap(
         }
     }
 
-    // 🚀 L'APPEL MANQUANT : Déclenche la recherche GPS dès que la permission est acquise
-//    LaunchedEffect(locationGranted) {
-//        controller.setLocationEnabled(locationGranted)
-//
-//        if (locationGranted) {
-//            // On appelle ta fonction suspendue en tâche de fond
-//            val location = getCurrentLocation()
-//            if (location != null) {
-//                // 1. On informe le MapController de déplacer la caméra sur le champ
-//                controller.updateUserLocation(location)
-//                // 2. On remonte l'info au parent/ViewModel au cas où il en a besoin pour recalculer des distances
-//                onLocationFetched(location.latitude, location.longitude)
-//            }
-//        }
-//    }
-
+    // 2. Écoute de la localisation et des filtres au démarrage/changement
     LaunchedEffect(locationGranted, selectedDistance) {
         controller.setLocationEnabled(locationGranted)
 
         if (locationGranted) {
             val location = getCurrentLocation()
             if (location != null) {
-                // 1. Calcul du zoom dynamique en fonction de la distance sélectionnée
-                val targetZoom = when (selectedDistance) {
-                    "100 mètre" -> 18.5f // Très serré, rayon d'environ 100-150m autour de toi
-                    "500 mètre" -> 16.2f // Rayon d'environ 500m visible à l'écran
-                    "1 km"      -> 15.2f // Rayon de 1km visible
-                    "5 km"      -> 13.0f // Permet de voir à 5km aux alentours
-                    "10 km"     -> 11.8f // Échelle globale de la ville de Yaoundé
-                    else        -> 14.0f
-                }
-
-                // 2. On déplace la caméra sur ta position AVEC le bon niveau de zoom
-                controller.centerOn(location.latitude, location.longitude, targetZoom)
-
-                // 3. On remonte l'info au ViewModel si besoin
+                controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
                 onLocationFetched(location.latitude, location.longitude)
             }
         }
     }
 
-    // Centrage initial sur la position GPS (une seule fois)
-    var hasInitiallyCentered by remember { mutableStateOf(false) }
-    LaunchedEffect(userLat, userLng) {
-        if (!hasInitiallyCentered && userLat != null && userLng != null) {
-            controller.centerOn(userLat, userLng)
-            hasInitiallyCentered = true
-        }
-    }
-
-    // Synchro des données → MapController (pas de logique JNI ici)
-    LaunchedEffect(locationGranted) {
-        controller.setLocationEnabled(locationGranted)
-    }
-
+    // 3. Synchronisations vers le contrôleur
     LaunchedEffect(points) {
         controller.syncMarkers(points)
     }
@@ -115,6 +91,7 @@ fun InteractiveMap(
         controller.updateRoute(routePoints)
     }
 
+    // 4. Layout
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
             modifier = Modifier.fillMaxSize(),
@@ -125,10 +102,24 @@ fun InteractiveMap(
             }
         )
 
+        // 5. Bouton de recentrage corrigé
         RecenterButton(
             onClick  = {
-                controller.recenter(userLat, userLng)
-                onRecenterClick()
+                onRecenterClick() // Demande la permission si nécessaire
+
+                if (locationGranted) {
+                    // 🚀 ✅ CORRECT : On ouvre un bloc coroutine asynchrone sécurisé pour le clic
+                    scope.launch {
+                        val location = getCurrentLocation()
+                        if (location != null) {
+                            controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
+                        } else {
+                            controller.recenter(userLat, userLng)
+                        }
+                    }
+                } else {
+                    controller.recenter(null, null)
+                }
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
