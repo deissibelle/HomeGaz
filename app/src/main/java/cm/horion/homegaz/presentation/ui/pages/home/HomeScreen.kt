@@ -128,17 +128,30 @@ fun HomeScreen(
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 val density = LocalDensity.current
 
-                val cardWidthPx  = with(density) { 186.dp.toPx() }
-                val cardHeightPx = with(density) { 220.dp.toPx() }
-                val marginPx     = with(density) { 4.dp.toPx() }
+                // Récupération des dimensions de l'écran et de la carte en Pixels
+                val screenWidthPx  = with(density) { maxWidth.toPx() }
+                val screenHeightPx = with(density) { maxHeight.toPx() }
+                val cardWidthPx    = with(density) { 186.dp.toPx() }
+                val cardHeightPx   = with(density) { 220.dp.toPx() }
+                val marginPx       = with(density) { 16.dp.toPx() } // Marge de confort accrue
 
-                val offsetXPx = (sx - cardWidthPx - marginPx)
-                    .coerceAtLeast(0f)
-                    .coerceAtMost(with(density) { maxWidth.toPx() } - cardWidthPx)
+                // 🚀 STRATÉGIE D'AFFICHAGE DYNAMIQUE SUR L'AXE X
+                val offsetXPx = if (sx > cardWidthPx + marginPx * 2) {
+                    // Option A : Il y a de la place à gauche, on l'affiche à gauche du marqueur
+                    sx - cardWidthPx - marginPx
+                } else if (sx + cardWidthPx + marginPx * 2 < screenWidthPx) {
+                    // Option B : Le marqueur est trop à gauche, on bascule la fiche à DROITE du marqueur
+                    sx + marginPx
+                } else {
+                    // Option C : Cas extrême (écran très étroit), on centre la fiche horizontalement
+                    (screenWidthPx - cardWidthPx) / 2f
+                }
 
+                // 🚀 STRATÉGIE D'AFFICHAGE DYNAMIQUE SUR L'AXE Y
+                // On centre verticalement par rapport au point, tout en limitant dans l'écran
                 val offsetYPx = (sy - cardHeightPx / 2f)
-                    .coerceAtLeast(0f)
-                    .coerceAtMost(with(density) { maxHeight.toPx() } - cardHeightPx)
+                    .coerceAtLeast(marginPx) // Évite de coller ou dépasser en haut
+                    .coerceAtMost(screenHeightPx - cardHeightPx - marginPx) // Évite de dépasser en bas
 
                 Box(
                     modifier = Modifier.offset(
