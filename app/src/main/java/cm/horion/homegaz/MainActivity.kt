@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
@@ -39,6 +40,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var locationCallback   : LocationCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        //installSplashScreen()
+        val splashScreen = installSplashScreen()
+
+        // Ferme le splash immédiatement sans attendre
+        splashScreen.setKeepOnScreenCondition { false }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -59,12 +67,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HomeGazTheme {
-                var showSplash by remember { mutableStateOf(true) }
-                if (showSplash) {
-                    HomeGazSplashScreen(onFinished = { showSplash = false })
-                } else {
-                    HomeGazApp(userPrefs = userPrefs)
-                }
+                HomeGazApp(userPrefs = userPrefs)
+//                var showSplash by remember { mutableStateOf(true) }
+//                if (showSplash) {
+//                    HomeGazSplashScreen(onFinished = { showSplash = false })
+//                } else {
+//                    HomeGazApp(userPrefs = userPrefs)
+//                }
             }
         }
     }
@@ -155,7 +164,7 @@ private fun HomeGazSplashScreen(onFinished: () -> Unit) {
                 .alpha(alpha.value)
         )
         Image(
-            painter            = painterResource(
+            painter  = painterResource(
                 id = if (isDark) R.drawable.by_orion_white else R.drawable.by_orion
             ),
             contentDescription = "by Orion",

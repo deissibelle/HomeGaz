@@ -10,7 +10,7 @@ import org.koin.android.ext.koin.androidContext
 class HomeGazApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
+        MapKitFactory.setApiKey("34ebdf3d-6f74-49ca-9560-498aa45dd69f")
         MapKitFactory.initialize(this)
         initKoin {
             androidContext(this@HomeGazApplication)

@@ -5,11 +5,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
@@ -27,10 +27,30 @@ fun HomeScreen(
     onRouteClick      : (Double, Double) -> Unit,
     onRequestLocation : () -> Unit
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // ── MapController : créé une seule fois, vit tant que HomeScreen est en composition
+    val mapController = remember { MapController(context) }
 
     var pendingAction by remember { mutableStateOf<PendingAction?>(null) }
 
+    // States pour la position écran du marqueur sélectionné
+    val markerScreenXState = remember { mutableStateOf<Float?>(null) }
+    val markerScreenYState = remember { mutableStateOf<Float?>(null) }
+    val markerScreenX by markerScreenXState
+    val markerScreenY by markerScreenYState
+
+    // Brancher les callbacks Compose → MapController APRÈS la déclaration des states
+    // SideEffect s'exécute après chaque recomposition réussie
+    SideEffect {
+        mapController.onPointClick           = { point -> viewModel.onPointClick(point) }
+        mapController.onDismissPopup         = { viewModel.onDismissPopup() }
+        mapController.onMarkerScreenPosition = { x, y ->
+            markerScreenXState.value = x
+            markerScreenYState.value = y
+        }
+    }
 
     LaunchedEffect(uiState.locationGranted) {
         if (uiState.locationGranted) {
@@ -44,15 +64,6 @@ fun HomeScreen(
                 null -> Unit
             }
             pendingAction = null
-        }
-    }
-
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    LaunchedEffect(navBackStackEntry) {
-        val route = navBackStackEntry?.destination?.route ?: return@LaunchedEffect
-        if (route == Screen.Home.route || route.startsWith("${Screen.Home.route}/")) {
-            viewModel.onDismissPopup()
         }
     }
 
@@ -72,37 +83,26 @@ fun HomeScreen(
         }
     }
 
-
-    var markerScreenX by remember { mutableStateOf<Float?>(null) }
-    var markerScreenY by remember { mutableStateOf<Float?>(null) }
-
     LaunchedEffect(uiState.selectedPoint?.id) {
         if (uiState.selectedPoint == null) {
-            markerScreenX = null
-            markerScreenY = null
+            markerScreenXState.value = null
+            markerScreenYState.value = null
         }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
 
         InteractiveMap(
-            modifier               = Modifier.fillMaxSize(),
-            points                 = uiState.filteredPoints,
-            selectedPoint          = uiState.selectedPoint,
-            locationGranted        = uiState.locationGranted,
-            userLat                = uiState.userLat,
-            userLng                = uiState.userLng,
-            routePoints            = uiState.routePolyline,
-            routeBoundingBox       = uiState.routeBoundingBox,
-            onPointClick           = { point -> viewModel.onPointClick(point) },
-            onDismissPopup         = viewModel::onDismissPopup,
-            onMarkerScreenPosition = { x, y ->
-                markerScreenX = x
-                markerScreenY = y
-            },
-            onRecenterClick = {
-                if (!uiState.locationGranted) onRequestLocation()
-            }
+            controller       = mapController,
+            points           = uiState.filteredPoints,
+            selectedPoint    = uiState.selectedPoint,
+            locationGranted  = uiState.locationGranted,
+            userLat          = uiState.userLat,
+            userLng          = uiState.userLng,
+            routePoints      = uiState.routePolyline,
+            routeBoundingBox = uiState.routeBoundingBox,
+            onRecenterClick  = { if (!uiState.locationGranted) onRequestLocation() },
+            modifier         = Modifier.fillMaxSize()
         )
 
         HomeFilterCard(
@@ -118,7 +118,6 @@ fun HomeScreen(
             distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
             weightOptions       = listOf("6kg", "12.5kg", "28kg")
         )
-
 
         val selectedPoint = uiState.selectedPoint
         val sx = markerScreenX
@@ -156,7 +155,6 @@ fun HomeScreen(
                         },
                         onRouteClick = {
                             if (uiState.locationGranted) {
-
                                 viewModel.calculateRouteToPoint(
                                     selectedPoint.latitude,
                                     selectedPoint.longitude
@@ -170,7 +168,6 @@ fun HomeScreen(
                 }
             }
         }
-
 
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))

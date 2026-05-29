@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.components.home
 
-import android.graphics.PointF
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,110 +10,69 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.home.DistributorPoint
-import com.yandex.mapkit.Animation
-import com.yandex.mapkit.ConflictResolutionMode
-import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
-import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polyline
-import com.yandex.mapkit.map.*
-import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
-import com.yandex.mapkit.user_location.UserLocationLayer
-import com.yandex.runtime.image.ImageProvider
 
-private val YAOUNDE_CENTER = Point(3.848, 11.502)
-private const val DEFAULT_ZOOM = 13f
-
+/**
+ * Composable ultra-léger : ne fait QUE créer la MapView et la passer
+ * au MapController. Toute la logique JNI est dans MapController.
+ */
 @Composable
 fun InteractiveMap(
+    controller             : MapController,
     points                 : List<DistributorPoint>,
     selectedPoint          : DistributorPoint?,
-    onPointClick           : (DistributorPoint) -> Unit,
-    onDismissPopup         : () -> Unit,
     locationGranted        : Boolean      = false,
     userLat                : Double?      = null,
     userLng                : Double?      = null,
     routePoints            : List<Point>  = emptyList(),
     routeBoundingBox       : BoundingBox? = null,
     onRecenterClick        : () -> Unit   = {},
-    onMarkerScreenPosition : (x: Float, y: Float) -> Unit = { _, _ -> },
     modifier               : Modifier     = Modifier
 ) {
-    val context        = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var mapViewRef           by remember { mutableStateOf<MapView?>(null) }
-    var userLocationLayerRef by remember { mutableStateOf<UserLocationLayer?>(null) }
-    val latestOnMarkerPos    = rememberUpdatedState(onMarkerScreenPosition)
-    val latestSelectedPoint  = rememberUpdatedState(selectedPoint)
-    val latestOnDismiss      = rememberUpdatedState(onDismissPopup)
-
-    val mapStyleJson = remember {
-        context.resources.openRawResource(R.raw.map_style)
-            .bufferedReader()
-            .use { it.readText() }
-    }
-
-    //  Cycle de vie MapKit
+    // Cycle de vie MapKit géré ici, mais les objets JNI vivent dans MapController
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_START -> {
-                    MapKitFactory.getInstance().onStart()
-                    mapViewRef?.onStart()
-                }
-                Lifecycle.Event.ON_STOP  -> {
-                    MapKitFactory.getInstance().onStop()
-                    mapViewRef?.onStop()
-                }
+                Lifecycle.Event.ON_START -> controller.onStart()
+                Lifecycle.Event.ON_STOP  -> controller.onStop()
                 else -> Unit
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
-    LaunchedEffect(locationGranted) {
-        userLocationLayerRef?.isVisible           = locationGranted
-        userLocationLayerRef?.isHeadingModeActive = locationGranted
-    }
-
+    // Centrage initial sur la position GPS (une seule fois)
     var hasInitiallyCentered by remember { mutableStateOf(false) }
     LaunchedEffect(userLat, userLng) {
         if (!hasInitiallyCentered && userLat != null && userLng != null) {
-            mapViewRef?.mapWindow?.map?.move(
-                CameraPosition(Point(userLat, userLng), 15f, 0f, 0f),
-                Animation(Animation.Type.SMOOTH, 0.8f),
-                null
-            )
+            controller.centerOn(userLat, userLng)
             hasInitiallyCentered = true
         }
     }
 
+    // Synchro des données → MapController (pas de logique JNI ici)
+    LaunchedEffect(locationGranted) {
+        controller.setLocationEnabled(locationGranted)
+    }
 
-    LaunchedEffect(routeBoundingBox, mapViewRef) {
-        val bbox = routeBoundingBox ?: return@LaunchedEffect
-        val mv   = mapViewRef       ?: return@LaunchedEffect
-        val cameraPos = mv.mapWindow.map.cameraPosition(Geometry.fromBoundingBox(bbox))
-        mv.mapWindow.map.move(
-            cameraPos,
-            Animation(Animation.Type.SMOOTH, 0.6f),
-            null
-        )
+    LaunchedEffect(points) {
+        controller.syncMarkers(points)
     }
 
     LaunchedEffect(selectedPoint?.id) {
-        selectedPoint?.let { pt ->
-            mapViewRef?.mapWindow?.map?.move(
-                CameraPosition(Point(pt.latitude, pt.longitude), 15f, 0f, 0f),
-                Animation(Animation.Type.SMOOTH, 0.4f),
-                null
-            )
-        }
+        controller.setSelectedPoint(selectedPoint)
+    }
+
+    LaunchedEffect(routePoints) {
+        controller.updateRoute(routePoints)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -122,141 +80,20 @@ fun InteractiveMap(
             modifier = Modifier.fillMaxSize(),
             factory  = { ctx ->
                 MapView(ctx).also { mv ->
-                    mapViewRef = mv
-                    val map = mv.mapWindow.map
-
-                    map.setMapStyle(mapStyleJson)
-                    map.mapObjects.conflictResolutionMode = ConflictResolutionMode.MAJOR
-                    map.move(CameraPosition(YAOUNDE_CENTER, DEFAULT_ZOOM, 0f, 0f))
-
-                    val kit   = MapKitFactory.getInstance()
-                    val layer = kit.createUserLocationLayer(mv.mapWindow)
-                    userLocationLayerRef          = layer
-                    layer.isVisible               = locationGranted
-                    layer.isHeadingModeActive     = locationGranted
-                    setupUserLocationLayer(mv, layer)
-
-                    map.addInputListener(object : InputListener {
-                        override fun onMapTap(m: Map, pt: Point) { latestOnDismiss.value() }
-                        override fun onMapLongTap(m: Map, pt: Point) = Unit
-                    })
-
-                    map.addCameraListener { _, _, _, _ ->
-                        latestSelectedPoint.value?.let { sp ->
-                            val screen = mv.mapWindow.worldToScreen(
-                                Point(sp.latitude, sp.longitude)
-                            ) ?: return@addCameraListener
-                            latestOnMarkerPos.value(screen.x, screen.y)
-                        }
-                    }
-                }
-            },
-            update = { mv ->
-                val map = mv.mapWindow.map
-                map.mapObjects.clear()
-
-                if (routePoints.size >= 2) {
-                    val poly = map.mapObjects.addPolyline(Polyline(routePoints))
-                    poly.apply {
-                        strokeWidth = 7f
-                        setStrokeColor(0xFF2563EB.toInt())
-                        outlineWidth = 3f
-                        setOutlineColor(0xFFFFFFFF.toInt())
-                    }
-
-                }
-
-                points.forEach { point ->
-                    addDistributorMarker(
-                        mv           = mv,
-                        map          = map,
-                        point        = point,
-                        isSelected   = point.id == selectedPoint?.id,
-                        onPointClick = onPointClick,
-                        onScreenPos  = onMarkerScreenPosition
-                    )
-                }
-
-                selectedPoint?.let { sp ->
-                    val screen = mv.mapWindow.worldToScreen(
-                        Point(sp.latitude, sp.longitude)
-                    ) ?: return@let
-                    onMarkerScreenPosition(screen.x, screen.y)
+                    controller.attachMapView(mv)
                 }
             }
+            // Pas de update{} — tout passe par les LaunchedEffect → MapController
         )
 
-        // Bouton Recentrer
         RecenterButton(
-            onClick = {
-                val mv     = mapViewRef ?: return@RecenterButton
-                val target = if (userLat != null && userLng != null)
-                    Point(userLat, userLng) else YAOUNDE_CENTER
-                val zoom   = if (userLat != null) 15f else DEFAULT_ZOOM
-                mv.mapWindow.map.move(
-                    CameraPosition(target, zoom, 0f, 0f),
-                    Animation(Animation.Type.SMOOTH, 0.5f),
-                    null
-                )
+            onClick  = {
+                controller.recenter(userLat, userLng)
                 onRecenterClick()
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 16.dp, bottom = 16.dp)
         )
-    }
-}
-
-//Ajout d'un marqueur distributeur
-private fun addDistributorMarker(
-    mv          : MapView,
-    map         : Map,
-    point       : DistributorPoint,
-    isSelected  : Boolean,
-    onPointClick: (DistributorPoint) -> Unit,
-    onScreenPos : (Float, Float) -> Unit
-) {
-
-    val placemark = map.mapObjects.addPlacemark()
-    placemark.geometry = Point(point.latitude, point.longitude)
-    placemark.setText(
-        point.name,
-        TextStyle().apply {
-            size         = 10f
-            color        = 0xFF003761.toInt()
-            outlineColor = 0xFFFFFFFF.toInt()
-            outlineWidth = 2f
-            placement    = TextStyle.Placement.TOP
-            offset       = 5f
-        }
-    )
-
-    placemark.useCompositeIcon().apply {
-        setIcon(
-            "pin",
-            ImageProvider.fromResource(mv.context, R.drawable.marker),
-            IconStyle().apply {
-                anchor = PointF(0.5f, 1.0f)
-                scale = if (isSelected) 0.75f else 0.55f
-                zIndex = if (isSelected) 100f else 0f
-            }
-        )
-        setIcon(
-            "point",
-            ImageProvider.fromResource(mv.context, R.drawable.ic_circle),
-            IconStyle().apply {
-                anchor = PointF(0.5f, 0.5f)
-                flat = true
-                scale = 0.05f
-            }
-        )
-    }
-
-
-    placemark.addTapListener { _, _ ->
-        onPointClick(point)
-        val screen = mv.mapWindow.worldToScreen(Point(point.latitude, point.longitude))
-        if (screen != null) onScreenPos(screen.x, screen.y)
-        true
     }
 }

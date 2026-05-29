@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="splash_background">#FFFFFF</color>
     <color name="splash_background_night">#1A1A1A</color>
+
+    <color name="background">#F8F9FA</color>
+    <color name="on_background">#1A1C1C</color>
+    <color name="primary">#0061A6</color>
+    <color name="surface">#FFFFFF</color>
 </resources>
