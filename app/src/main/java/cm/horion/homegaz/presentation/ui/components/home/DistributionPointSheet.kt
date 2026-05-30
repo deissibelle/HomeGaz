@@ -22,11 +22,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 
 @Composable
 fun DistributionPointSheet(
-    point: DistributorPoint,
+    point: Distributor,
     isMarkerOnRight: Boolean = true, // 🚀 NOUVEAU : Permet de savoir de quel côté est le point
     onBuyClick: () -> Unit = {},
     onRouteClick: () -> Unit = {}
@@ -72,7 +73,8 @@ fun DistributionPointSheet(
                 // Image
                 Image(
                     painter = painterResource(
-                        if (point.imageUrl.isNotEmpty()) R.drawable.algogaz else R.drawable.optimum
+                        //if (point.imageUrl.isNotEmpty()) R.drawable.algogaz else R.drawable.optimum
+                         R.drawable.algogaz
                     ),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,

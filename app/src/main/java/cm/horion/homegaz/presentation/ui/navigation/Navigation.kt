@@ -1,12 +1,18 @@
 package cm.horion.homegaz.presentation.ui.navigation
 
 import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,6 +34,8 @@ import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
+import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -50,6 +58,8 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     }
 
     val homeViewModel: HomeViewModel               = koinViewModel()
+    val consumerViewModel: ConsumerViewModel = koinViewModel()
+    val distributorViewModel  : DistributorDetailViewModel = koinViewModel()
     val reservationsViewModel: ReservationsViewModel = koinViewModel()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -110,6 +120,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             MainScreen(
                 navController         = navController,
                 reservationsViewModel = reservationsViewModel,
+                consumerViewModel = consumerViewModel,
                 onRouteClick          = { lat, lng ->
                     homeViewModel.calculateRouteToPoint(lat, lng)
                 },
@@ -130,6 +141,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             MainScreen(
                 navController         = navController,
                 reservationsViewModel = reservationsViewModel,
+                consumerViewModel = consumerViewModel,
                 initialTab            = initialTab,
                 onRouteClick          = { lat, lng ->
                     homeViewModel.calculateRouteToPoint(lat, lng)
@@ -148,21 +160,34 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
             arguments       = listOf(navArgument("pointId") { type = NavType.StringType }),
             enterTransition = { fadeIn(tween(400)) + scaleIn(initialScale = 0.92f) }
         ) { backStackEntry ->
+
+            // 2. 🚀 COLLECTE L'ÉTAT ICI EN DESSOUS : Compose va maintenant observer les changements réels !
+            val uiState by consumerViewModel.uiState.collectAsState()
+
             val pointId = backStackEntry.arguments?.getString("pointId") ?: ""
-            val point   = uiState.allPoints.find { it.id == pointId }
+
+            // 3. On cherche le point dans l'état fraîchement collecté
+            val point = uiState.allPoints.find { it.enterpriseUuid == pointId }
             if (point != null) {
                 DistributorPointDetailScreen(
                     point       = point,
+                    battleUuid  = uiState.battleUuid,
+                    viewModel   = distributorViewModel,
                     onBackClick = { navController.popBackStack() },
                     onNextClick = { quantity, deliveryOption ->
-                        currentBrand     = point.distributor
-                        currentWeight    = point.weight
-                        currentUnitPrice = point.priceXaf
+                        //currentBrand     = point.distributor
+                        //currentWeight    = point.weight
+                        //currentUnitPrice = point.priceXaf
                         currentQuantity  = quantity
                         currentDelivery  = deliveryOption
                         navController.navigate(Screen.Payment.route)
                     }
                 )
+            } else {
+                // Optionnel : Affiche un écran de chargement ou d'erreur temporaire au lieu du noir total
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
             }
         }
 

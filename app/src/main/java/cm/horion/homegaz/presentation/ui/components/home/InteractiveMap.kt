@@ -10,6 +10,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.util.getCurrentLocation
 import com.yandex.mapkit.geometry.BoundingBox
@@ -21,8 +22,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun InteractiveMap(
     controller             : MapController,
-    points                 : List<DistributorPoint>,
-    selectedPoint          : DistributorPoint?,
+    points                 : List<Distributor>,
+    selectedPoint          : Distributor?,
     selectedDistance       : String,
     locationGranted        : Boolean      = false,
     userLat                : Double?      = null,
@@ -74,6 +75,11 @@ fun InteractiveMap(
             if (location != null) {
                 controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
                 onLocationFetched(location.latitude, location.longitude)
+            } else {
+                // 💡 Fallback : Si la localisation échoue, on se rabat sur les anciennes données d'état
+                val fallbackLat = userLat ?: 3.848
+                val fallbackLng = userLng ?: 11.502
+                controller.centerOnRadius(fallbackLat, fallbackLng, currentRadiusMeters)
             }
         }
     }
@@ -104,17 +110,21 @@ fun InteractiveMap(
 
         // 5. Bouton de recentrage corrigé
         RecenterButton(
-            onClick  = {
-                onRecenterClick() // Demande la permission si nécessaire
+            onClick = {
+                onRecenterClick() // Gère la demande de permission
 
                 if (locationGranted) {
-                    // 🚀 ✅ CORRECT : On ouvre un bloc coroutine asynchrone sécurisé pour le clic
                     scope.launch {
                         val location = getCurrentLocation()
                         if (location != null) {
                             controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
+                            onLocationFetched(location.latitude, location.longitude)
+                        } else if (userLat != null && userLng != null) {
+                            // Si pas de GPS frais mais qu'on a une position en mémoire du ViewModel
+                            controller.centerOnRadius(userLat, userLng, currentRadiusMeters)
                         } else {
-                            controller.recenter(userLat, userLng)
+                            // Pire des cas : pas de réseau, pas de GPS, pas de cache -> Centre-ville Yaoundé
+                            controller.centerOnRadius(3.848, 11.502, currentRadiusMeters)
                         }
                     }
                 } else {

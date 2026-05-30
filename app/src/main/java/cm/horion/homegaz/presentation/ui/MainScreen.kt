@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import cm.horion.homegaz.presentation.ui.pages.home.HomeScreen
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 
 enum class Tab(val label: String) {
     HOME("Accueil"),
@@ -34,6 +35,7 @@ enum class Tab(val label: String) {
 fun MainScreen(
     navController         : NavController,
     reservationsViewModel : ReservationsViewModel,
+    consumerViewModel     : ConsumerViewModel,
     onRequestLocation     : () -> Unit,
     onRouteClick          : (lat: Double, lng: Double) -> Unit = { _, _ -> },
     initialTab            : String = Tab.HOME.label
@@ -73,6 +75,7 @@ fun MainScreen(
                     )
             ) {
                 HomeScreen(
+                    consumerViewModel = consumerViewModel,
                     navController     = navController,
                     onRouteClick      = onRouteClick,
                     onRequestLocation = onRequestLocation

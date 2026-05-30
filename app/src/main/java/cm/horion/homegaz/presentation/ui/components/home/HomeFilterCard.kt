@@ -41,7 +41,7 @@ fun HomeFilterCard(
             Row(modifier = Modifier.fillMaxWidth()) {
                 CustomDropdown(
                     selected = distributor,
-                    options  = listOf("Tous") + distributorOptions,
+                    options  =  distributorOptions,
                     modifier = Modifier.weight(1f),
                     onSelect = onDistributorChange
                 )
@@ -62,7 +62,7 @@ fun HomeFilterCard(
             ) {
                 CustomDropdown(
                     selected = weight,
-                    options  = listOf("Tous") + weightOptions,
+                    options  =  weightOptions,
                     modifier = Modifier.weight(1f),
                     onSelect = onWeightChange
                 )

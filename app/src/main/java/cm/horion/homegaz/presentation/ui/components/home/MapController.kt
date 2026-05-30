@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.PointF
 import android.location.Location
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.ConflictResolutionMode
@@ -27,7 +28,7 @@ private const val DEFAULT_ZOOM = 13f
 class MapController(private val context: Context) {
 
     // ── Callbacks vers le monde Compose ──
-    var onPointClick           : ((DistributorPoint) -> Unit)? = null
+    var onPointClick           : ((Distributor) -> Unit)? = null
     var onDismissPopup         : (() -> Unit)?                 = null
     var onMarkerScreenPosition : ((Float, Float) -> Unit)?     = null
 
@@ -65,7 +66,7 @@ class MapController(private val context: Context) {
         } else {
             currentSelectedPoint?.let { sp ->
                 mapView?.mapWindow
-                    ?.worldToScreen(Point(sp.latitude, sp.longitude))
+                    ?.worldToScreen(Point(sp.address.location.latitude, sp.address.location.longitude))
                     ?.let { onMarkerScreenPosition?.invoke(it.x, it.y) }
             }
         }
@@ -92,7 +93,7 @@ class MapController(private val context: Context) {
         }
     }
 
-    private var currentSelectedPoint : DistributorPoint? = null
+    private var currentSelectedPoint : Distributor? = null
     private var mapStyleJson          : String?           = null
     private var defaultCenter         : Point  = YAOUNDE_FALLBACK
 
@@ -188,11 +189,11 @@ class MapController(private val context: Context) {
         )
     }
 
-    fun setSelectedPoint(point: DistributorPoint?) {
+    fun setSelectedPoint(point: Distributor?) {
         currentSelectedPoint = point
         if (point != null) {
             mapView?.mapWindow
-                ?.worldToScreen(Point(point.latitude, point.longitude))
+                ?.worldToScreen(Point(point.address.location.latitude, point.address.location.longitude))
                 ?.let { onMarkerScreenPosition?.invoke(it.x, it.y) }
         }
         markersMap.values.forEach { entry ->
@@ -219,7 +220,7 @@ class MapController(private val context: Context) {
         }
     }
 
-    fun syncMarkers(points: List<DistributorPoint>) {
+    fun syncMarkers(points: List<Distributor>) {
         val mc = markersCollection ?: return
 
         points.forEach { point ->
@@ -245,9 +246,9 @@ class MapController(private val context: Context) {
         }
     }
 
-    private fun createMarker(collection: MapObjectCollection, point: DistributorPoint) {
+    private fun createMarker(collection: MapObjectCollection, point: Distributor) {
         val pm = collection.addPlacemark().apply {
-            geometry = Point(point.latitude, point.longitude)
+            geometry = Point(point.address.location.latitude, point.address.location.longitude)
             setText(point.name, TextStyle().apply {
                 size         = 10f
                 color        = 0xFF003761.toInt()
@@ -311,14 +312,14 @@ class MapController(private val context: Context) {
     }
 
     private inner class MarkerEntry(
-        val point      : DistributorPoint,
+        val point      : Distributor,
         val placemark  : PlacemarkMapObject,
         val composite  : CompositeIcon
     ) {
         val tapListenerRef = MapObjectTapListener { _, _ ->
             onPointClick?.invoke(point)
             mapView?.mapWindow
-                ?.worldToScreen(Point(point.latitude, point.longitude))
+                ?.worldToScreen(Point(point.address.location.latitude, point.address.location.longitude))
                 ?.let { onMarkerScreenPosition?.invoke(it.x, it.y) }
             true
         }

@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.util.LocationUtils
 import com.google.android.gms.location.*
@@ -36,11 +37,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
     private val userPrefs : UserPreferencesRepository by inject()
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val homeViewModel: ConsumerViewModel by viewModel()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback   : LocationCallback
@@ -66,16 +68,20 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
 
         // Ferme le splash immédiatement sans attendre
-        splashScreen.setKeepOnScreenCondition { false }
+        //splashScreen.setKeepOnScreenCondition { false }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        splashScreen.setKeepOnScreenCondition {
+            !homeViewModel.isDataReady
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { loc ->
-                    homeViewModel.onLocationUpdated(loc.latitude, loc.longitude)
+                    homeViewModel.onLocationChanged(loc.latitude, loc.longitude)
                 }
             }
         }

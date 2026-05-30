@@ -1,6 +1,6 @@
 package cm.horion.homegaz
 
-import cm.horion.homegaz.data.remote.ConsumerService
+import cm.horion.homegaz.data.datasource.remote.ConsumerService
 import cm.horion.homegaz.domain.model.consommateur.dto.Address
 import cm.horion.homegaz.domain.model.consommateur.dto.GeoLocation
 import cm.horion.homegaz.domain.model.consommateur.request.ProfileRequest
@@ -190,7 +190,7 @@ class ConsumerServiceTest {
         val battleUuid = "b8a876c1-968c-4a3a-9f5a-063a8d11c75b" // Exemple de UUID de bouteille de gaz
 
         try {
-            val distributors = service.getDepotGaz(latitude, longitude, radiusKm, battleUuid)
+            val distributors = service.getDepotGaz(latitude.toDouble(), longitude.toDouble(), radiusKm, battleUuid)
 
             assertNotNull(distributors)
             // Le test passe même si la liste est vide (0 distributeurs trouvés), tant que le serveur répond 200 OK
@@ -210,7 +210,7 @@ class ConsumerServiceTest {
 
         try {
             // Cette ligne va lever une Exception car le serveur renverra un code 400
-            service.getDepotGaz(badLatitude, longitude, radiusKm, battleUuid)
+            service.getDepotGaz(badLatitude.toDouble(), longitude.toDouble(), radiusKm, battleUuid)
 
             // Si le code arrive ici, c'est que le serveur a renvoyé un code 200 (alors qu'on voulait un échec)
             fail("Le test aurait dû échouer à cause des mauvais paramètres, mais le serveur a répondu avec succès.")

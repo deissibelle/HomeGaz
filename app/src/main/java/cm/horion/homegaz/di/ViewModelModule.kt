@@ -1,5 +1,6 @@
 package cm.horion.homegaz.di
 
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
 import cm.horion.homegaz.presentation.viewmodel.GazProfileViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
@@ -14,9 +15,10 @@ import org.koin.dsl.module
 fun viewModelModule() = module {
     viewModel { OnboardingViewModel(get()) }
     viewModel { LocationViewModel(get()) }
-    viewModel { DistributorDetailViewModel(get()) }
+    viewModel { DistributorDetailViewModel(get(),get()) }
     viewModel { PaymentViewModel(get()) }
     viewModel { GazProfileViewModel(get(), get()) }
     viewModel { ReservationsViewModel() }
     viewModel { HomeViewModel(androidApplication(), get()) }
+    viewModel { ConsumerViewModel(androidApplication(),get(),get()) }
 }

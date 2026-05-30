@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
@@ -32,19 +33,21 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DistributorPointDetailScreen(
-    point      : DistributorPoint,
+    point      : Distributor,
+    battleUuid : String = "",
     onBackClick: () -> Unit,
     onNextClick: (quantity: Int, option: DeliveryOption) -> Unit,
     viewModel  : DistributorDetailViewModel = koinViewModel()
 ) {
-    LaunchedEffect(point.id) {
-        viewModel.loadPoint(point)
+    LaunchedEffect(battleUuid) {
+        viewModel.getGazBottle(battleUuid)
     }
 
     val uiState by viewModel.uiState.collectAsState()
 
     DistributorDetailContent(
         uiState                = uiState,
+        product                = point,
         onBackClick            = onBackClick,
         onNextClick            = onNextClick,
         onQuantityChange       = viewModel::onQuantityChange,
@@ -56,20 +59,21 @@ fun DistributorPointDetailScreen(
 @Composable
 private fun DistributorDetailContent(
     uiState                : DistributorDetailUiState,
+    product                : Distributor,
     onBackClick            : () -> Unit,
     onNextClick            : (quantity: Int, option: DeliveryOption) -> Unit,
     onQuantityChange       : (Int) -> Unit,
     onDeliveryOptionChange : (DeliveryOption) -> Unit
 ) {
-    if (uiState.isLoading || uiState.product == null) {
-        Box(
-            modifier         = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) { CircularProgressIndicator() }
-        return
-    }
+//    if (uiState.isLoading || uiState.product == null) {
+//        Box(
+//            modifier         = Modifier.fillMaxSize(),
+//            contentAlignment = Alignment.Center
+//        ) { CircularProgressIndicator() }
+//        return
+//    }
 
-    val product = uiState.product
+    //val product = uiState.product
 
     Column(
         modifier = Modifier
@@ -81,15 +85,15 @@ private fun DistributorDetailContent(
     ) {
 
         DistributorHeader(
-            title       = product.pointName,
-            logoRes     = product.logoRes,
+            title       = product.name,
+            logoRes     = null,
             onBackClick = onBackClick
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        ProductInfoRow(label = "Marque", value = product.brand,  icon = Icons.Outlined.Settings)
-        ProductInfoRow(label = "Poids",  value = product.weight, icon = Icons.Outlined.Scale)
+        ProductInfoRow(label = "Marque", value = "${uiState.gaz?.company?.name}" ,  icon = Icons.Outlined.Settings)
+        ProductInfoRow(label = "Poids",  value = "${uiState.gaz?.gazSize?.size} kg" , icon = Icons.Outlined.Scale)
 
         QuantitySelector(
             quantity         = uiState.quantity,
