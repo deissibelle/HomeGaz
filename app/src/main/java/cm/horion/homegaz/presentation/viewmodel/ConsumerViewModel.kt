@@ -47,7 +47,6 @@ class ConsumerViewModel(
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(ConsumerUiState())
-    // Cette propriété publique reste le point d'écoute pour la vue et la navigation
     val uiState: StateFlow<ConsumerUiState> = _uiState.asStateFlow()
 
     var isDataReady by mutableStateOf(false)
@@ -58,7 +57,6 @@ class ConsumerViewModel(
     init {
         prepareGazBottles()
         val granted = hasLocationPermission()
-        // 🚀 CORRECT : On passe par _uiState.value pour modifier l'état initial
         _uiState.value = _uiState.value.copy(locationGranted = granted, isFirstLaunch = !granted)
         fetch()
     }
@@ -66,13 +64,10 @@ class ConsumerViewModel(
     private fun prepareGazBottles() {
         viewModelScope.launch {
             val localBottles = gazBottleLocal.getGazBottles()
-
             if (!localBottles.isNullOrEmpty()) {
-                Log.d("Splash", "Bouteilles trouvées en local !")
                 _uiState.update { it.copy(availableBottles = localBottles) }
                 isDataReady = true
             } else {
-                Log.d("Splash", "Local vide, téléchargement réseau...")
                 try {
                     val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetGaz.path}") {
                         accept(ContentType.Application.Json)
@@ -84,7 +79,6 @@ class ConsumerViewModel(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 } finally {
-                    // Qu'il y ait une erreur ou non, on libère le splash screen pour ne pas bloquer l'utilisateur
                     isDataReady = true
                 }
             }
@@ -100,31 +94,26 @@ class ConsumerViewModel(
     fun onLocationPermissionResult(isGranted: Boolean) {
         _uiState.value = _uiState.value.copy(
             locationGranted = isGranted,
-            locationDenied = !isGranted,
-            isFirstLaunch = false
+            locationDenied  = !isGranted,
+            isFirstLaunch   = false
         )
         if (isGranted) fetch()
     }
 
     fun onLocationChanged(latitude: Double, longitude: Double) {
         val wasWithoutLocation = _uiState.value.userLat == null
-        Log.d("Location","latitude : $latitude")
-        Log.d("Location","longitude : $longitude")
-
         _uiState.value = _uiState.value.copy(
-            userLat = latitude,
-            userLng = longitude,
+            userLat         = latitude,
+            userLng         = longitude,
             locationGranted = true,
-            isFirstLaunch = false
+            isFirstLaunch   = false
         )
         if (wasWithoutLocation) fetch()
     }
 
-    // ─── FILTRES ET APPELS RÉSEAU ───
-
     fun onDistanceChange(newDistance: String) {
         _uiState.value = _uiState.value.copy(selectedDistance = newDistance)
-        fetch() // Déclenche un rafraîchissement réseau automatique avec le nouveau rayon
+        fetch()
     }
 
     fun onDistributorChange(companyName: String) {
@@ -139,28 +128,17 @@ class ConsumerViewModel(
 
     private fun updateSelectedBottle(
         companyName: String = _uiState.value.selectedDistributor,
-        weightName: String = _uiState.value.selectedWeight
+        weightName: String  = _uiState.value.selectedWeight
     ) {
         val bottles = _uiState.value.availableBottles
         if (bottles.isEmpty()) return
-
-        // On cherche la bouteille qui matche la compagnie, la taille ET qui est du BUTANE
         val matchingBottle = bottles.find { bottle ->
-            val matchesCompany = bottle.company.name == companyName
-            val matchesSize = "${bottle.gazSize.size} kg" == weightName
-            val isButane = bottle.gazType == GazType.BUTANE
-
-            matchesCompany && matchesSize && isButane
-        }
-        // Optionnel : Si aucun match exact n'est trouvé (ex: cette marque n'a pas ce poids en Butane),
-        // on cherche n'importe quelle bouteille de Butane de cette marque en secours.
-            ?: bottles.find { it.company.name == companyName && it.gazType == GazType.BUTANE }
-
+            bottle.company.name == companyName &&
+                    "${bottle.gazSize.size} kg" == weightName &&
+                    bottle.gazType == GazType.BUTANE
+        } ?: bottles.find { it.company.name == companyName && it.gazType == GazType.BUTANE }
         matchingBottle?.let { bottle ->
-            _uiState.value = _uiState.value.copy(
-                battleUuid = bottle.uuid
-            )
-            // Optionnel : Si tu veux re-déclencher la recherche réseau/backend immédiatement :
+            _uiState.value = _uiState.value.copy(battleUuid = bottle.uuid)
             fetch()
         }
     }
@@ -181,68 +159,53 @@ class ConsumerViewModel(
             _uiState.value = _uiState.value.copy(error = "Position utilisateur indisponible")
             return
         }
-
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                isLoading = true,
-                error = null
-            )
-
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                Log.d("Dist",_uiState.value.battleUuid)
-                Log.d("Dist","entrer 1")
                 val result = consumerUseCase.getDepotGaz(
-                    lat,
-                    lng,
+                    lat, lng,
                     _uiState.value.selectedDistance,
                     _uiState.value.battleUuid
                 )
-
                 _uiState.value = _uiState.value.copy(
-                    allPoints = result,
+                    allPoints      = result,
                     filteredPoints = applyLocalFilters(result, _uiState.value.selectedDistributor, _uiState.value.selectedWeight),
-                    isLoading = false
+                    isLoading      = false
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.localizedMessage ?: "Une erreur est survenue lors de la récupération des dépôts"
+                    error     = e.localizedMessage ?: "Erreur lors de la récupération des dépôts"
                 )
             }
         }
     }
 
-    // Version optimisée qui accepte les filtres mis à jour en paramètres pour éviter les décalages d'états
-    private fun applyLocalFilters(points: List<Distributor>, distributorFilter: String, weightFilter: String): List<Distributor> {
+    private fun applyLocalFilters(
+        points: List<Distributor>,
+        distributorFilter: String,
+        weightFilter: String
+    ): List<Distributor> {
         val lat = _uiState.value.userLat
         val lng = _uiState.value.userLng
-
         return points
             .map { p ->
-                if (lat != null && lng != null) {
+                if (lat != null && lng != null)
                     p.copy(distance = haversineKm(lat, lng, p.address.location.latitude, p.address.location.longitude))
-                } else p
+                else p
             }
             .filter { p ->
-                val matchDistributor = distributorFilter == "Tous" ||
-                        p.name.contains(distributorFilter, ignoreCase = true)
-
-                // Décommente si ton modèle possède la liste des poids supportés
-                // val matchWeight = weightFilter == "Tous" || p.availableWeights.contains(weightFilter)
-
-                matchDistributor
+                distributorFilter == "Tous" || p.name.contains(distributorFilter, ignoreCase = true)
             }
             .sortedBy { it.distance }
     }
-
-    // ─── GESTION DES SELECTIONS ET MAPKIT ───
 
     fun onPointClick(point: Distributor) {
         drivingSession?.cancel()
         drivingSession = null
         _uiState.value = _uiState.value.copy(
-            selectedPoint = point,
-            routePolyline = emptyList(),
+            selectedPoint    = point,
+            routePolyline    = emptyList(),
             routeBoundingBox = null
         )
     }
@@ -251,52 +214,68 @@ class ConsumerViewModel(
         drivingSession?.cancel()
         drivingSession = null
         _uiState.value = _uiState.value.copy(
-            selectedPoint = null,
-            routePolyline = emptyList(),
+            selectedPoint    = null,
+            routePolyline    = emptyList(),
             routeBoundingBox = null
         )
     }
 
+    // ── CALCUL D'ITINÉRAIRE ───────────────────────────────────────────────────
     fun calculateRouteToPoint(destLat: Double, destLng: Double) {
         val startLat = _uiState.value.userLat ?: return
         val startLng = _uiState.value.userLng ?: return
 
         drivingSession?.cancel()
+        drivingSession = null
+
+        // On garde selectedPoint visible pendant le calcul
+        // pour que l'utilisateur sache sur quel dépôt porte l'itinéraire
         _uiState.value = _uiState.value.copy(
-            selectedPoint = null,
-            isLoading = true,
-            routePolyline = emptyList(),
+            isLoading        = true,
+            error            = null,
+            routePolyline    = emptyList(),
             routeBoundingBox = null
         )
 
         val start = Point(startLat, startLng)
-        val dest = Point(destLat, destLng)
+        val dest  = Point(destLat, destLng)
 
         drivingSession = DirectionsFactory.getInstance()
             .createDrivingRouter(DrivingRouterType.COMBINED)
             .requestRoutes(
                 listOf(
                     RequestPoint(start, RequestPointType.WAYPOINT, null, null, null),
-                    RequestPoint(dest, RequestPointType.WAYPOINT, null, null, null)
+                    RequestPoint(dest,  RequestPointType.WAYPOINT, null, null, null)
                 ),
                 DrivingOptions().apply { routesCount = 1 },
                 VehicleOptions(),
                 object : DrivingSession.DrivingRouteListener {
                     override fun onDrivingRoutes(routes: MutableList<DrivingRoute>) {
-                        if (routes.isEmpty()) return
+                        if (routes.isEmpty()) {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error     = "Aucun itinéraire trouvé"
+                            )
+                            return
+                        }
                         val geometry = routes[0].geometry.points
                         _uiState.value = _uiState.value.copy(
-                            routePolyline = geometry,
+                            // On ferme le sheet SEULEMENT quand la route est prête
+                            selectedPoint    = null,
+                            routePolyline    = geometry,
                             routeBoundingBox = computeBoundingBox(geometry),
-                            isLoading = false
+                            isLoading        = false
                         )
                     }
 
                     override fun onDrivingRoutesError(error: Error) {
+                        // Fallback : ligne droite si pas de réseau
                         _uiState.value = _uiState.value.copy(
-                            routePolyline = listOf(start, dest),
-                            isLoading = false,
-                            error = "Itinéraire calculé hors-ligne"
+                            selectedPoint    = null,
+                            routePolyline    = listOf(start, dest),
+                            routeBoundingBox = computeBoundingBox(listOf(start, dest)),
+                            isLoading        = false,
+                            error            = "Itinéraire approximatif (hors ligne)"
                         )
                     }
                 }
@@ -306,16 +285,22 @@ class ConsumerViewModel(
     private fun computeBoundingBox(points: List<Point>): BoundingBox? {
         if (points.isEmpty()) return null
         return BoundingBox(
-            Point(points.minOf { it.latitude }, points.minOf { it.longitude }),
-            Point(points.maxOf { it.latitude }, points.maxOf { it.longitude })
+            Point(points.minOf { it.latitude },  points.minOf { it.longitude }),
+            Point(points.maxOf { it.latitude },  points.maxOf { it.longitude })
         )
     }
 
     private fun haversineKm(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val r = 6371.0
+        val r    = 6371.0
         val dLat = Math.toRadians(lat2 - lat1)
         val dLng = Math.toRadians(lng2 - lng1)
-        val a = sin(dLat / 2).pow(2) + cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
+        val a    = sin(dLat / 2).pow(2) +
+                cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLng / 2).pow(2)
         return r * 2 * atan2(sqrt(a), sqrt(1 - a))
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        drivingSession?.cancel()
     }
 }
