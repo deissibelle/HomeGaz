@@ -100,7 +100,7 @@ class PaymentViewModel(
         return if (!isPhoneValidForMethod(phone, method)) {
             when (method) {
                 PaymentMethod.OM -> "Ce numéro n'est pas un numéro Orange"
-                PaymentMethod.MOMO         -> "Ce numéro n'est pas un numéro MTN"
+                PaymentMethod.MOMO -> "Ce numéro n'est pas un numéro MTN"
             }
         } else null
     }

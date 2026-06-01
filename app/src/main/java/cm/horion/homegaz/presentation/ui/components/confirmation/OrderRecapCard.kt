@@ -25,11 +25,12 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.components.distributor.ProductInfoRow
 import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 @Composable
-fun OrderRecapCard(summary: OrderSummary) {
+fun OrderRecapCard(summary: DistributorDetailUiState) {
     val borderColor = MaterialTheme.colorScheme.outlineVariant
 
     Column(
@@ -63,12 +64,12 @@ fun OrderRecapCard(summary: OrderSummary) {
     ) {
         ProductInfoRow(
             label = stringResource(R.string.label_brand),
-            value = summary.brand,
+            value = summary.gaz?.company?.name!!,
             icon = Icons.Outlined.Settings
         )
         ProductInfoRow(
             label = stringResource(R.string.label_weight),
-            value = summary.weight,
+            value = summary.gaz?.let { "${it.gazType} - ${it.gazSize.size} kg" } ?: "--",
             icon = Icons.Outlined.Scale
         )
         ProductInfoRow(
@@ -77,7 +78,7 @@ fun OrderRecapCard(summary: OrderSummary) {
             icon = Icons.Outlined.Inventory2
         )
 
-        val optionLabel = if (summary.deliveryOption == DeliveryOption.LIVRAISON)
+        val optionLabel = if (summary.selectedOption == DeliveryOption.LIVRAISON)
             stringResource(R.string.delivery_option_delivery)
         else
             stringResource(R.string.delivery_option_pickup)
@@ -88,7 +89,7 @@ fun OrderRecapCard(summary: OrderSummary) {
             icon = Icons.Outlined.LocalShipping
         )
 
-        PaymentMethodRow(method = summary.paymentMethod, phone = summary.phoneNumber)
+        PaymentMethodRow(method = summary.selectedMethod, phone = summary.phoneNumber)
     }
 }
 

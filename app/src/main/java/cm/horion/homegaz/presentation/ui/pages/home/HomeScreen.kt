@@ -13,7 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.domain.model.common.Screen
+import cm.horion.homegaz.domain.model.consommateur.dto.Company
+import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
+import cm.horion.homegaz.domain.model.consommateur.dto.GazType
 import cm.horion.homegaz.presentation.ui.components.home.*
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -24,29 +28,55 @@ private sealed class PendingAction {
 
 @Composable
 fun HomeScreen(
-    viewModel         : HomeViewModel = koinViewModel(),
+    consumerViewModel : ConsumerViewModel = koinViewModel(),
     navController     : NavController,
     onRouteClick      : (Double, Double) -> Unit,
     onRequestLocation : () -> Unit
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by consumerViewModel.uiState.collectAsState()
 
     val mapController = remember { MapController(context) }
-
     var pendingAction by remember { mutableStateOf<PendingAction?>(null) }
 
-    // States pour la position écran du marqueur sélectionné
     val markerScreenXState = remember { mutableStateOf<Float?>(null) }
     val markerScreenYState = remember { mutableStateOf<Float?>(null) }
     val markerScreenX by markerScreenXState
     val markerScreenY by markerScreenYState
 
+    // 🚀 1. Extraction dynamique des distributeurs proposant du BUTANE
+    val distributorOptions = remember(uiState.availableBottles) {
+        val butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
-    // SideEffect s'exécute après chaque recomposition réussie
+        if (butaneBottles.isEmpty()) {
+            Company.entries.map { it.name }
+        } else {
+            butaneBottles.map { it.company.name }.distinct()
+        }
+    }
+
+// 🚀 2. Extraction dynamique des tailles/poids disponibles en BUTANE
+    val weightOptions = remember(uiState.availableBottles, uiState.selectedDistributor) {
+        // On filtre d'abord par BUTANE
+        var butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
+
+        // Optionnel : Si un distributeur est déjà sélectionné, on ne montre que ses tailles à lui
+        if (uiState.selectedDistributor.isNotEmpty()) {
+            butaneBottles = butaneBottles.filter { it.company.name == uiState.selectedDistributor }
+        }
+
+        if (butaneBottles.isEmpty()) {
+            GazSize.entries.map { "${it.size} kg" }
+        } else {
+            butaneBottles.map { "${it.gazSize.size} kg" }.distinct()
+        }
+    }
+
+
+
     SideEffect {
-        mapController.onPointClick           = { point -> viewModel.onPointClick(point) }
-        mapController.onDismissPopup         = { viewModel.onDismissPopup() }
+        mapController.onPointClick           = { point -> consumerViewModel.onPointClick(point) }
+        mapController.onDismissPopup         = { consumerViewModel.onDismissPopup() }
         mapController.onMarkerScreenPosition = { x, y ->
             markerScreenXState.value = x
             markerScreenYState.value = y
@@ -56,11 +86,11 @@ fun HomeScreen(
     LaunchedEffect(uiState.locationGranted) {
         if (uiState.locationGranted) {
             when (val action = pendingAction) {
-                is PendingAction.Refresh    -> viewModel.loadPoints()
+                is PendingAction.Refresh    -> consumerViewModel.fetch()
                 is PendingAction.ClickPoint -> {
                     uiState.allPoints
                         .find { it.id == action.pointId }
-                        ?.let { viewModel.onPointClick(it) }
+                        ?.let { consumerViewModel.onPointClick(it) }
                 }
                 null -> Unit
             }
@@ -71,11 +101,11 @@ fun HomeScreen(
     val runWithLocation = { action: PendingAction ->
         if (uiState.locationGranted) {
             when (action) {
-                is PendingAction.Refresh    -> viewModel.loadPoints()
+                is PendingAction.Refresh    -> consumerViewModel.fetch()
                 is PendingAction.ClickPoint -> {
                     uiState.allPoints
                         .find { it.id == action.pointId }
-                        ?.let { viewModel.onPointClick(it) }
+                        ?.let { consumerViewModel.onPointClick(it) }
                 }
             }
         } else {
@@ -105,33 +135,52 @@ fun HomeScreen(
     Box(modifier = Modifier.fillMaxSize()) {
 
         InteractiveMap(
-            controller       = mapController,
-            points           = uiState.filteredPoints,
-            selectedPoint    = uiState.selectedPoint,
-            locationGranted  = uiState.locationGranted,
-            selectedDistance = uiState.selectedDistance,
-            userLat          = uiState.userLat,
-            userLng          = uiState.userLng,
-            routePoints      = uiState.routePolyline,
-            routeBoundingBox = uiState.routeBoundingBox,
-            onRecenterClick  = { if (!uiState.locationGranted) onRequestLocation() },
-            modifier         = Modifier.fillMaxSize()
+            controller        = mapController,
+            points            = uiState.allPoints, // Branchement direct sur tes listes d'API
+            selectedPoint     = uiState.selectedPoint,
+            locationGranted   = uiState.locationGranted,
+            selectedDistance  = uiState.selectedDistance,
+            userLat           = uiState.userLat,
+            userLng           = uiState.userLng,
+            routePoints       = uiState.routePolyline,
+            routeBoundingBox  = uiState.routeBoundingBox,
+            onRecenterClick   = { if (!uiState.locationGranted) onRequestLocation() },
+            onLocationFetched = { lat, lng -> consumerViewModel.onLocationChanged(lat, lng) },
+            modifier          = Modifier.fillMaxSize()
         )
 
         HomeFilterCard(
             modifier            = Modifier.align(Alignment.TopCenter),
             distributor         = uiState.selectedDistributor,
-            onDistributorChange = viewModel::onDistributorChange,
+            onDistributorChange = { brand ->
+                consumerViewModel.onDismissPopup()
+                consumerViewModel.onDistributorChange(brand)
+            },
             distance            = uiState.selectedDistance,
-            onDistanceChange    = viewModel::onDistanceChange,
+            onDistanceChange    = { dist ->
+                consumerViewModel.onDismissPopup()
+                consumerViewModel.onDistanceChange(dist)
+            },
             weight              = uiState.selectedWeight,
-            onWeightChange      = viewModel::onWeightChange,
+            onWeightChange      = { weight ->
+                consumerViewModel.onDismissPopup()
+                consumerViewModel.onWeightChange(weight)
+
+                // 🚀 3. Met à jour le battleUuid du ViewModel pour cibler la bonne bouteille sur l'API
+                if (weight == "Tous") {
+                    consumerViewModel.onBattleUuidChange("")
+                } else {
+                    val matchingBottle = uiState.availableBottles.find { "${it.gazSize.size} kg" == weight }
+                    matchingBottle?.let { consumerViewModel.onBattleUuidChange(it.uuid) }
+                }
+            },
             onRefresh           = { runWithLocation(PendingAction.Refresh) },
-            distributorOptions  = listOf("SCTM", "Tradex", "Total", "Glocal Gaz"),
+            distributorOptions  = distributorOptions, // ✅ Dynamique
             distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
-            weightOptions       = listOf("6kg", "12.5kg", "28kg")
+            weightOptions       = weightOptions       // ✅ Dynamique ("6.5 kg", etc.)
         )
 
+        // --- Reste de ton code pour le DistributionPointSheet (Inchangé et parfaitement fonctionnel) ---
         val selectedPoint = uiState.selectedPoint
         val sx = markerScreenX
         val sy = markerScreenY
@@ -139,48 +188,27 @@ fun HomeScreen(
         if (selectedPoint != null && sx != null && sy != null) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                 val density = LocalDensity.current
-
-                // Récupération des dimensions de l'écran et de la carte en Pixels
                 val screenWidthPx  = with(density) { maxWidth.toPx() }
                 val screenHeightPx = with(density) { maxHeight.toPx() }
                 val cardWidthPx    = with(density) { 186.dp.toPx() }
                 val cardHeightPx   = with(density) { 220.dp.toPx() }
                 val marginPx       = with(density) { 16.dp.toPx() }
 
-                val offsetXPx = if (sx > cardWidthPx + marginPx * 2) {
-                    sx - cardWidthPx - marginPx
-                } else if (sx + cardWidthPx + marginPx * 2 < screenWidthPx) {
+                val isMarkerOnRight = sx > cardWidthPx + marginPx * 2
+                val offsetXPx = if (isMarkerOnRight) sx - cardWidthPx - marginPx else if (sx + cardWidthPx + marginPx * 2 < screenWidthPx) sx + marginPx else (screenWidthPx - cardWidthPx) / 2f
+                val offsetYPx = (sy - cardHeightPx / 2f).coerceAtLeast(marginPx).coerceAtMost(screenHeightPx - cardHeightPx - marginPx)
 
-                    sx + marginPx
-                } else {
-
-                    (screenWidthPx - cardWidthPx) / 2f
-                }
-
-                val offsetYPx = (sy - cardHeightPx / 2f)
-                    .coerceAtLeast(marginPx)
-                    .coerceAtMost(screenHeightPx - cardHeightPx - marginPx)
-
-                Box(
-                    modifier = Modifier.offset(
-                        x = with(density) { offsetXPx.toDp() },
-                        y = with(density) { offsetYPx.toDp() }
-                    )
-                ) {
+                Box(modifier = Modifier.offset(x = with(density) { offsetXPx.toDp() }, y = with(density) { offsetYPx.toDp() })) {
                     DistributionPointSheet(
-                        point      = selectedPoint,
+                        point = selectedPoint,
+                        isMarkerOnRight = isMarkerOnRight,
                         onBuyClick = {
-                            viewModel.onDismissPopup()
-                            navController.navigate(
-                                Screen.DistributorDetail.createRoute(selectedPoint.id)
-                            )
+                            consumerViewModel.onDismissPopup()
+                            navController.navigate(Screen.DistributorDetail.createRoute(selectedPoint.enterpriseUuid!!))
                         },
                         onRouteClick = {
                             if (uiState.locationGranted) {
-                                viewModel.calculateRouteToPoint(
-                                    selectedPoint.latitude,
-                                    selectedPoint.longitude
-                                )
+                                consumerViewModel.calculateRouteToPoint(selectedPoint.address.location.latitude, selectedPoint.address.location.longitude)
                             } else {
                                 pendingAction = PendingAction.ClickPoint(selectedPoint.id)
                                 onRequestLocation()
@@ -196,11 +224,7 @@ fun HomeScreen(
         }
 
         uiState.error?.let { errorMsg ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-            ) { Text(errorMsg) }
+            Snackbar(modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)) { Text(errorMsg) }
         }
     }
 }}

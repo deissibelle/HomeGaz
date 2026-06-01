@@ -1,5 +1,6 @@
 package cm.horion.homegaz.domain.model.common
 
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 
 
 sealed class Screen(val route: String) {
@@ -8,7 +9,7 @@ sealed class Screen(val route: String) {
     object LocationPermission: Screen("location_permission")
 
     object DistributorDetail : Screen("distributor_detail/{pointId}") {
-        fun createRoute(pointId: String) = "distributor_detail/$pointId"
+        fun createRoute(pointId: String) = "distributor_detail/${pointId}"
     }
     object Payment: Screen("payment")
     object Confirmation: Screen("confirmation")

@@ -1,6 +1,7 @@
 package cm.horion.homegaz.data.repository
 
-import cm.horion.homegaz.data.remote.ConsumerService
+import android.util.Log
+import cm.horion.homegaz.data.datasource.remote.ConsumerService
 import cm.horion.homegaz.domain.model.consommateur.dto.Address
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.consommateur.dto.GeoLocation
@@ -104,10 +105,19 @@ class ConsumerRepositoryImpl(
         }
     }
 
-    override suspend fun getDepotGaz(latitude: String, longitude: String, radiusKm: String, battleUuid: String): List<Distributor> {
+    override suspend fun getDepotGaz(latitude: Double, longitude: Double, radiusKm: String, battleUuid: String): List<Distributor> {
         return withContext(Dispatchers.IO) {
             try {
-                consumerService.getDepotGaz(latitude,longitude,radiusKm,battleUuid)
+                Log.d("Dist","entrer 3")
+                val radiusInKm: Double = when (radiusKm) {
+                    "100 mètre" -> 0.1
+                    "500 mètre" -> 0.5
+                    "1 km"      -> 1.0
+                    "5 km"      -> 5.0
+                    "10 km"     -> 10.0
+                    else        -> 2.0 // 2 km par défaut
+                }
+                consumerService.getDepotGaz(latitude,longitude,radiusInKm.toString(),battleUuid)
             } catch (e : Exception) {
                 emptyList()
             }

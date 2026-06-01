@@ -1,5 +1,6 @@
-package cm.horion.homegaz.data.remote
+package cm.horion.homegaz.data.datasource.remote
 
+import android.util.Log
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.consommateur.dto.Profile
@@ -70,12 +71,13 @@ class ConsumerService {
         }
     }
 
-    suspend fun getDepotGaz(latitude : String, longitude: String,radiusKm: String,battleUuid: String) : List<Distributor> {
+    suspend fun getDepotGaz(latitude : Double, longitude: Double,radiusKm: String,battleUuid: String) : List<Distributor> {
+        Log.d("Dist","entrer 4")
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetDepotGaz.path}") {
             accept(ContentType.Application.Json)
             url {
-                parameters.append("latitude", latitude)
-                parameters.append("longitude", longitude)
+                parameters.append("latitude", latitude.toString())
+                parameters.append("longitude", longitude.toString())
                 parameters.append("radiusKm", radiusKm)
                 parameters.append("battleUuid", battleUuid)
 

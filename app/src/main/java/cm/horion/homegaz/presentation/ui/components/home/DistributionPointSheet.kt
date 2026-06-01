@@ -16,24 +16,22 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.home.DistributorPoint
+import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 
 @Composable
 fun DistributionPointSheet(
-    point: DistributorPoint,
+    point: Distributor,
     isMarkerOnRight: Boolean = true,
-    modifier: Modifier = Modifier,
     onBuyClick: () -> Unit = {},
     onRouteClick: () -> Unit = {}
 ) {
     val cardShape = RoundedCornerShape(38.dp)
 
+    // Le pointeur dessine un triangle qui pointe initialement vers la DROITE
     val pointerShape = GenericShape { size, _ ->
         moveTo(0f, 0f)
         lineTo(size.width, size.height / 2f)
@@ -42,19 +40,21 @@ fun DistributionPointSheet(
     }
 
     Row(
-        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // 🚀 SI LE MARQUEUR EST À GAUCHE : On affiche le triangle en premier (à gauche de la fiche)
         if (!isMarkerOnRight) {
             Box(
                 modifier = Modifier
                     .size(width = 14.dp, height = 28.dp)
+                    // On lui applique une rotation de 180° pour qu'il pointe vers la GAUCHE (<)
                     .graphicsLayer(rotationZ = 180f)
                     .clip(pointerShape)
                     .background(Color.White.copy(alpha = 0.8f))
             )
         }
 
+        // Le corps principal de ta fiche
         Box(
             modifier = Modifier
                 .width(172.dp)
@@ -70,7 +70,8 @@ fun DistributionPointSheet(
                 // Image
                 Image(
                     painter = painterResource(
-                        if (point.imageUrl.isNotEmpty()) R.drawable.algogaz else R.drawable.optimum
+                        //if (point.imageUrl.isNotEmpty()) R.drawable.algogaz else R.drawable.optimum
+                         R.drawable.algogaz
                     ),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -157,13 +158,16 @@ fun DistributionPointSheet(
             }
         }
 
+        // 🚀 SI LE MARQUEUR EST À DROITE : On remet le triangle à sa place initiale (à droite de la fiche)
         if (isMarkerOnRight) {
             Box(
                 modifier = Modifier
                     .size(width = 14.dp, height = 28.dp)
+                    // Pas de rotation nécessaire, il pointe naturellement vers la DROITE (>)
                     .clip(pointerShape)
                     .background(Color.White.copy(alpha = 0.8f))
             )
         }
     }
 }
+

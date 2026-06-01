@@ -34,6 +34,6 @@ interface ConsumerRepository {
 
     suspend fun getProfile() : Response
 
-    suspend fun getDepotGaz(latitude : String, longitude: String,radiusKm: String,battleUuid: String) : List<Distributor>
+    suspend fun getDepotGaz(latitude : Double, longitude: Double,radiusKm: String,battleUuid: String) : List<Distributor>
 
 }

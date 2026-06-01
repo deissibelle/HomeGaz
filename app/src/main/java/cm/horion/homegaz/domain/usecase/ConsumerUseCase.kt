@@ -1,5 +1,6 @@
 package cm.horion.homegaz.domain.usecase
 
+import android.util.Log
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
@@ -45,7 +46,8 @@ class ConsumerUseCase (
         return repository.getProfile()
     }
 
-    suspend fun getDepotGaz(latitude : String, longitude: String,radiusKm: String,battleUuid: String) : List<Distributor> {
+    suspend fun getDepotGaz(latitude : Double, longitude: Double,radiusKm: String,battleUuid: String) : List<Distributor> {
+        Log.d("Dist","entrer 2")
         return repository.getDepotGaz(latitude,longitude,radiusKm,battleUuid)
     }
 

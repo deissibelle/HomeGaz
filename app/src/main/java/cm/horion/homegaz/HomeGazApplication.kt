@@ -14,6 +14,7 @@ class HomeGazApplication : Application() {
         initSettings(this)
         MapKitFactory.setApiKey("34ebdf3d-6f74-49ca-9560-498aa45dd69f")
         MapKitFactory.initialize(this)
+        //DirectionsFactory.initialize(this)
         initKoin {
             androidContext(this@HomeGazApplication)
         }

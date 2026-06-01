@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
+import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.util.LocationUtils
 import com.google.android.gms.location.*
@@ -36,23 +37,27 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
     private val userPrefs : UserPreferencesRepository by inject()
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val homeViewModel: ConsumerViewModel by viewModel()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback   : LocationCallback
 
+    // Déclarer le lanceur de permission
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                // Permission accordée, on vérifie maintenant si le GPS est activé
                 checkGpsSettings()
             }
             else -> {
+                // Permission refusée : Gérer le cas
             }
         }
     }
@@ -62,16 +67,21 @@ class MainActivity : ComponentActivity() {
         //installSplashScreen()
         val splashScreen = installSplashScreen()
 
-        splashScreen.setKeepOnScreenCondition { false }
+        // Ferme le splash immédiatement sans attendre
+        //splashScreen.setKeepOnScreenCondition { false }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        splashScreen.setKeepOnScreenCondition {
+            !homeViewModel.isDataReady
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { loc ->
-                    homeViewModel.onLocationUpdated(loc.latitude, loc.longitude)
+                    homeViewModel.onLocationChanged(loc.latitude, loc.longitude)
                 }
             }
         }
@@ -85,6 +95,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HomeGazTheme {
                 HomeGazApp(userPrefs = userPrefs)
+//
             }
         }
 
@@ -95,12 +106,15 @@ class MainActivity : ComponentActivity() {
         val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION
         val coarseLocationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
 
+        // On vérifie si l'une des deux permissions est déjà accordée
         val isFineGranted = ContextCompat.checkSelfPermission(this, fineLocationPermission) == PackageManager.PERMISSION_GRANTED
         val isCoarseGranted = ContextCompat.checkSelfPermission(this, coarseLocationPermission) == PackageManager.PERMISSION_GRANTED
 
         if (isFineGranted || isCoarseGranted) {
+            // ✅ Permissions déjà accordées : on vérifie juste si le bouton GPS est allumé
             checkGpsSettings()
         } else {
+            // ❌ Permissions manquantes : on lance la demande système
             locationPermissionRequest.launch(arrayOf(fineLocationPermission, coarseLocationPermission))
         }
     }
@@ -144,3 +158,77 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+private fun HomeGazSplashScreen(onFinished: () -> Unit) {
+
+    val isDark     = isSystemInDarkTheme()
+    val background = if (isDark) Color(0xFF0D1B2A) else Color.White
+
+    val scale      = remember { Animatable(0.7f) }
+    val alpha      = remember { Animatable(0f) }
+    val orionAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch {
+            scale.animateTo(
+                targetValue   = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness    = Spring.StiffnessMediumLow
+                )
+            )
+        }
+        launch {
+            alpha.animateTo(
+                targetValue   = 1f,
+                animationSpec = tween(durationMillis = 500, easing = EaseOut)
+            )
+        }
+        delay(600L)
+        orionAlpha.animateTo(
+            targetValue   = 1f,
+            animationSpec = tween(durationMillis = 400, easing = EaseOut)
+        )
+        delay(1_400L)
+        launch {
+            alpha.animateTo(
+                targetValue   = 0f,
+                animationSpec = tween(durationMillis = 350, easing = EaseIn)
+            )
+        }
+        orionAlpha.animateTo(
+            targetValue   = 0f,
+            animationSpec = tween(durationMillis = 350, easing = EaseIn)
+        )
+        onFinished()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(background)
+            .systemBarsPadding()
+    ) {
+        Image(
+            painter            = painterResource(id = R.drawable.logo_splash),
+            contentDescription = "Logo HomeGaz",
+            modifier           = Modifier
+                .align(Alignment.Center)
+                .size(110.dp)
+                .scale(scale.value)
+                .alpha(alpha.value)
+        )
+        Image(
+            painter  = painterResource(
+                id = if (isDark) R.drawable.by_orion_white else R.drawable.by_orion
+            ),
+            contentDescription = "by Orion",
+            modifier           = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 52.dp)
+                .height(18.dp)
+                .alpha(orionAlpha.value)
+        )
+    }
+}
