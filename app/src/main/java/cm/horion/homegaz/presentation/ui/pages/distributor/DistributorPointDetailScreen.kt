@@ -57,6 +57,7 @@ fun DistributorPointDetailScreen(
 
     DistributorDetailContent(
         uiState                = uiState,
+        battleUuid             = battleUuid,
         product                = point,
         onBackClick            = onBackClick,
         onNextClick            = onNextClick,
@@ -70,6 +71,7 @@ fun DistributorPointDetailScreen(
 @Composable
 private fun DistributorDetailContent(
     uiState                : DistributorDetailUiState,
+    battleUuid             : String,
     product                : Distributor,
     onBackClick            : () -> Unit,
     onNextClick            : (quantity: Int, option: DeliveryOption) -> Unit,
@@ -104,40 +106,43 @@ private fun DistributorDetailContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🌟 SECTION : Choix de la bouteille disponible dans ce dépôt
-        Text(
-            text = "Sélectionnez votre format de bouteille :",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
+        if (battleUuid.isEmpty()){
+            // 🌟 SECTION : Choix de la bouteille disponible dans ce dépôt
+            Text(
+                text = "Sélectionnez votre format de bouteille :",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
 
-        Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // Une liste horizontale de boutons (Chips)
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(uiState.availableBottles) { bottle ->
-                val isSelected = bottle.uuid == uiState.gaz?.uuid
+            // Une liste horizontale de boutons (Chips)
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(uiState.availableBottles) { bottle ->
+                    val isSelected = bottle.uuid == uiState.gaz?.uuid
 
-                FilterChip(
-                    selected = isSelected,
-                    onClick = { onBottleSelected(bottle) },
-                    label = {
-                        Text(text = "${bottle.company.name} (${bottle.gazSize.size} kg)")
-                    },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = { onBottleSelected(bottle) },
+                        label = {
+                            Text(text = "${bottle.company.name} (${bottle.gazSize.size} kg)")
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     )
-                )
+                }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
 
         ProductInfoRow(
             label = "Marque sélectionnée",
