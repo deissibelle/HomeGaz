@@ -15,7 +15,7 @@ import org.koin.dsl.module
 fun viewModelModule() = module {
     viewModel { OnboardingViewModel(get()) }
     viewModel { LocationViewModel(get()) }
-    viewModel { DistributorDetailViewModel(get(),get()) }
+    viewModel { DistributorDetailViewModel(get(),get(),get()) }
     viewModel { PaymentViewModel(get()) }
     viewModel { GazProfileViewModel(get(), get()) }
     viewModel { ReservationsViewModel() }

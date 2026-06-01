@@ -62,6 +62,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
     val distributorViewModel  : DistributorDetailViewModel = koinViewModel()
     val reservationsViewModel: ReservationsViewModel = koinViewModel()
     val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val sharedUiState by distributorViewModel.uiState.collectAsState()
 
     var currentBrand        by remember { mutableStateOf("") }
     var currentWeight       by remember { mutableStateOf("") }
@@ -175,11 +176,6 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                     viewModel   = distributorViewModel,
                     onBackClick = { navController.popBackStack() },
                     onNextClick = { quantity, deliveryOption ->
-                        //currentBrand     = point.distributor
-                        //currentWeight    = point.weight
-                        //currentUnitPrice = point.priceXaf
-                        currentQuantity  = quantity
-                        currentDelivery  = deliveryOption
                         navController.navigate(Screen.Payment.route)
                     }
                 )
@@ -194,14 +190,11 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         // ── PAYMENT ───────────────────────────────────────────────────────────
         composable(Screen.Payment.route) {
             PaymentScreen(
-                brand          = currentBrand,
-                weight         = currentWeight,
-                quantity       = currentQuantity,
-                deliveryOption = currentDelivery,
-                unitPrice      = currentUnitPrice,
+                uiState          = sharedUiState,
+                onPhoneChange    = { distributorViewModel.onPhoneNumberChange(it) },
+                onMethodSelected = { distributorViewModel.onPaymentMethodChange(it) },
                 onBackClick    = { navController.popBackStack() },
-                onNextClick    = { summary ->
-                    currentOrderSummary = summary
+                onNextClick    = {
                     navController.navigate(Screen.Confirmation.route)
                 }
             )
@@ -209,10 +202,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
 
         // ── CONFIRMATION ──────────────────────────────────────────────────────
         composable(Screen.Confirmation.route) {
-            currentOrderSummary?.let { summary ->
                 ConfirmationScreen(
-                    summary        = summary,
+                    uiState        = sharedUiState,
                     onBackClick    = { navController.popBackStack() },
+                    onStartOrder   = distributorViewModel::initOrder,
+                    onStartPayment = distributorViewModel::initPayment,
+                    dismissError   = distributorViewModel::dismissError,
                     onModifyClick  = {
                         navController.popBackStack(Screen.DistributorDetail.route, false)
                     },
@@ -220,7 +215,7 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                         navController.navigate(Screen.PaymentInitiated.route)
                     }
                 )
-            }
+
         }
 
         // ── PAYMENT INITIATED ─────────────────────────────────────────────────

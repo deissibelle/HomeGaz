@@ -23,52 +23,43 @@ import cm.horion.homegaz.presentation.ui.components.payment.PhoneNumberField
 import cm.horion.homegaz.presentation.viewmodel.PaymentViewModel
 import org.koin.androidx.compose.koinViewModel
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import cm.horion.homegaz.presentation.state.DistributorDetailUiState
+import cm.horion.homegaz.util.phoneErrorMessage
 
 @Composable
 fun PaymentScreen(
-    brand          : String,
-    weight         : String,
-    quantity       : Int,
-    deliveryOption : DeliveryOption,
-    unitPrice      : Int,
+    uiState        : DistributorDetailUiState,
+    onPhoneChange  : (String) -> Unit = {},
+    onMethodSelected : (PaymentMethod) -> Unit = {},
     onBackClick    : () -> Unit = {},
-    onNextClick    : (summary: OrderSummary) -> Unit = {},
-    viewModel      : PaymentViewModel = koinViewModel()
+    onNextClick    : () -> Unit = {},
 ) {
-    LaunchedEffect(brand, quantity, unitPrice) {
-        viewModel.loadOrder(
-            brand          = brand,
-            weight         = weight,
-            quantity       = quantity,
-            deliveryOption = deliveryOption,
-            unitPrice      = unitPrice
-        )
-    }
 
-    val uiState by viewModel.uiState.collectAsState()
+    //val uiState by viewModel.uiState.collectAsState()
 
-    val phoneError = viewModel.phoneErrorMessage(uiState.phoneNumber, uiState.selectedMethod)
+    val phoneError = phoneErrorMessage(uiState.phoneNumber, uiState.selectedMethod)
+    //val phoneError = viewModel.phoneErrorMessage(uiState.phoneNumber, uiState.selectedMethod)
 
     PaymentContent(
         uiState               = uiState,
         phoneError            = phoneError,
         onBackClick           = onBackClick,
         onNextClick           = {
-            val summary = viewModel.buildSummary() ?: return@PaymentContent
-            onNextClick(summary)
+            onNextClick()
         },
-        onPaymentMethodChange = viewModel::onPaymentMethodChange,
-        onPhoneNumberChange   = viewModel::onPhoneNumberChange
+        onPaymentMethodChange = onMethodSelected,
+        onPhoneNumberChange   = onPhoneChange
     )
 }
 
 @Composable
 private fun PaymentContent(
-    uiState               : PaymentUiState,
+    uiState               : DistributorDetailUiState,
     phoneError            : String?,
     onBackClick           : () -> Unit,
     onNextClick           : () -> Unit,
-    onPaymentMethodChange : (cm.horion.homegaz.domain.model.distributor.PaymentMethod) -> Unit,
+    onPaymentMethodChange : (PaymentMethod) -> Unit,
     onPhoneNumberChange   : (String) -> Unit
 ) {
     if (uiState.isLoading) {

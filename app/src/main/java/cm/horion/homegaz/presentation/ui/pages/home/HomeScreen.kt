@@ -140,12 +140,17 @@ fun HomeScreen(
             modifier            = Modifier.align(Alignment.TopCenter),
             distributor         = uiState.selectedDistributor,
             onDistributorChange = { brand ->
+                consumerViewModel.onDismissPopup()
                 consumerViewModel.onDistributorChange(brand)
             },
             distance            = uiState.selectedDistance,
-            onDistanceChange    = { dist -> consumerViewModel.onDistanceChange(dist) },
+            onDistanceChange    = { dist ->
+                consumerViewModel.onDismissPopup()
+                consumerViewModel.onDistanceChange(dist)
+            },
             weight              = uiState.selectedWeight,
             onWeightChange      = { weight ->
+                consumerViewModel.onDismissPopup()
                 consumerViewModel.onWeightChange(weight)
 
                 // 🚀 3. Met à jour le battleUuid du ViewModel pour cibler la bonne bouteille sur l'API

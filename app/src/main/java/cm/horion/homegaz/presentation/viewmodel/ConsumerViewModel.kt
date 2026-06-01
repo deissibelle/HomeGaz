@@ -101,6 +101,8 @@ class ConsumerViewModel(
     }
 
     fun onLocationChanged(latitude: Double, longitude: Double) {
+        Log.d("Location","latitude : $latitude")
+        Log.d("Location","longitude : $longitude")
         val wasWithoutLocation = _uiState.value.userLat == null
         _uiState.value = _uiState.value.copy(
             userLat         = latitude,
