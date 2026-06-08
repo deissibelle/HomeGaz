@@ -158,12 +158,12 @@ fun DistributionPointSheet(
             }
         }
 
-        // 🚀 SI LE MARQUEUR EST À DROITE : On remet le triangle à sa place initiale (à droite de la fiche)
+        // SI LE MARQUEUR EST À DROITE : On remet le triangle à sa place initiale (à droite de la fiche)
         if (isMarkerOnRight) {
             Box(
                 modifier = Modifier
                     .size(width = 14.dp, height = 28.dp)
-                    // Pas de rotation nécessaire, il pointe naturellement vers la DROITE (>)
+                    // Pas de rotation nécessaire, il pointe naturellement vers la DROITE
                     .clip(pointerShape)
                     .background(Color.White.copy(alpha = 0.8f))
             )

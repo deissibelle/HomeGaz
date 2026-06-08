@@ -30,6 +30,11 @@ fun GazProfileFormCard(
     onCapacityChange : (String) -> Unit,
     onBrandChange    : (String) -> Unit,
     onLocationChange : (String) -> Unit,
+    onRegionChange   : (String) -> Unit,
+    onVilleChange    : (String) -> Unit,
+    onQuartierChange : (String) -> Unit,
+    onLieuDitChange  : (String) -> Unit,
+    onDetectGps      : () -> Unit,
 ) {
     val capacityOptions = listOf(
         stringResource(R.string.gaz_profile_capacity_6),
@@ -64,6 +69,8 @@ fun GazProfileFormCard(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
+
+            // Capacité
             FormSection(
                 stepNumber = 1,
                 title      = stringResource(R.string.gaz_profile_capacity),
@@ -78,6 +85,7 @@ fun GazProfileFormCard(
 
             FormDivider()
 
+            // Marque
             FormSection(
                 stepNumber = 2,
                 title      = stringResource(R.string.gaz_profile_brand),
@@ -94,21 +102,33 @@ fun GazProfileFormCard(
 
             FormDivider()
 
+            // Localisation complète
             FormSection(
                 stepNumber = 3,
                 title      = stringResource(R.string.gaz_profile_location),
                 isFilled   = uiState.usageLocation.isNotBlank()
+                        || uiState.region.isNotBlank()
             ) {
-                GazProfileLocationField(
-                    value         = uiState.usageLocation,
-                    onValueChange = onLocationChange,
-                    showLabel     = false
+                GazProfileLocationSection(
+                    usageLocation    = uiState.usageLocation,
+                    region           = uiState.region,
+                    ville            = uiState.ville,
+                    quartier         = uiState.quartier,
+                    lieuDit          = uiState.lieuDit,
+                    onLocationChange = onLocationChange,
+                    onRegionChange   = onRegionChange,
+                    onVilleChange    = onVilleChange,
+                    onQuartierChange = onQuartierChange,
+                    onLieuDitChange  = onLieuDitChange,
+                    onDetectGps      = onDetectGps,
                 )
             }
         }
     }
 }
 
+
+// Helpers UI
 
 @Composable
 private fun FormDivider() {
@@ -118,7 +138,6 @@ private fun FormDivider() {
         color     = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
     )
 }
-
 
 @Composable
 private fun FormSection(
@@ -152,7 +171,6 @@ private fun FormSection(
     }
 }
 
-
 @Composable
 private fun StepBadge(number: Int, completed: Boolean) {
     val bgColor by animateColorAsState(
@@ -181,7 +199,7 @@ private fun StepBadge(number: Int, completed: Boolean) {
         contentAlignment = Alignment.Center
     ) {
         AnimatedContent(
-            targetState   = completed,
+            targetState    = completed,
             transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) },
             label          = "badge_content"
         ) { done ->
@@ -204,7 +222,7 @@ private fun StepBadge(number: Int, completed: Boolean) {
     }
 }
 
-// ─── Chips de capacité ────────────────────────────────────────────────────────
+//  Chips de capacité
 
 @Composable
 private fun CapacityChipSelector(

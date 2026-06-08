@@ -152,15 +152,15 @@
     <string name="gaz_profile_subtitle">Ajoutez les informations de votre bouteille de gaz que vous utilisez.</string>
 
     <string name="gaz_profile_capacity">Capacité (kg)</string>
-    <string name="gaz_profile_capacity_6">6 kg</string>
-    <string name="gaz_profile_capacity_12">12 kg</string>
-    <string name="gaz_profile_capacity_38">38 kg</string>
+    <string name="gaz_profile_capacity_6">6.5 kg</string>
+    <string name="gaz_profile_capacity_12">12.5kg</string>
+    <string name="gaz_profile_capacity_38">22.5kg</string>
 
     <string name="gaz_profile_brand">Marque</string>
     <string name="gaz_profile_brand_hint">Ex : Total, Tradex, SCTM…</string>
 
-    <string name="gaz_profile_location">Lieu d\'utilisation</string>
-    <string name="gaz_profile_location_hint">Ex : Yaoundé, Bastos</string>
+    <string name="gaz_profile_location">Localisation</string>
+    <string name="gaz_profile_location_hint">Ex: Bastos</string>
     <string name="gaz_profile_location_detect">Détecter ma position</string>
 
     <string name="gaz_profile_consumption">Consommation moyenne</string>
@@ -273,4 +273,20 @@
 
     <string name="auth_title_reservations">Authentification requise</string>
     <string name="auth_desc_reservations">veillez vous connecter pour accéder à vos réservations.</string>
+
+    <!-- Champs localisation -->
+    <string name="gaz_profile_region">Région</string>
+    <string name="gaz_profile_ville">Ville</string>
+    <string name="gaz_profile_quartier">Quartier</string>
+    <string name="gaz_profile_lieu_dit">Lieu-dit</string>
+
+    <!-- Placeholders -->
+    <string name="gaz_profile_ville_hint">Sélectionner une ville</string>
+    <string name="gaz_profile_ville_hint_select_region">Choisissez d\'abord une région</string>
+    <string name="gaz_profile_quartier_hint">Ex : Bastos, Messa…</string>
+    <string name="gaz_profile_lieu_dit_hint">Ex : Carrefour Shell, Marché central…</string>
+
+
+
+
 </resources>

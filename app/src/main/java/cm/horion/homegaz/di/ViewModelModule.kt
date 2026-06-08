@@ -17,7 +17,10 @@ fun viewModelModule() = module {
     viewModel { LocationViewModel(get()) }
     viewModel { DistributorDetailViewModel(get(),get(),get()) }
     viewModel { PaymentViewModel(get()) }
-    viewModel { GazProfileViewModel(get(), get()) }
+    viewModel { GazProfileViewModel(
+        get(), get(),
+        context = androidApplication()
+    ) }
     viewModel { ReservationsViewModel() }
     viewModel { HomeViewModel(androidApplication(), get()) }
     viewModel { ConsumerViewModel(androidApplication(),get(),get()) }

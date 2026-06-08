@@ -44,7 +44,7 @@ fun HomeScreen(
     val markerScreenX by markerScreenXState
     val markerScreenY by markerScreenYState
 
-    // 🚀 1. Extraction dynamique des distributeurs proposant du BUTANE
+    // Extraction dynamique des distributeurs proposant du BUTANE
     val distributorOptions = remember(uiState.availableBottles) {
         val butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
@@ -55,12 +55,12 @@ fun HomeScreen(
         }
     }
 
-// 🚀 2. Extraction dynamique des tailles/poids disponibles en BUTANE
+// Extraction dynamique des tailles/poids disponibles en BUTANE
     val weightOptions = remember(uiState.availableBottles, uiState.selectedDistributor) {
         // On filtre d'abord par BUTANE
         var butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
-        // Optionnel : Si un distributeur est déjà sélectionné, on ne montre que ses tailles à lui
+        //  Si un distributeur est déjà sélectionné, on ne montre que ses tailles à lui
         if (uiState.selectedDistributor.isNotEmpty()) {
             butaneBottles = butaneBottles.filter { it.company.name == uiState.selectedDistributor }
         }
@@ -136,7 +136,7 @@ fun HomeScreen(
 
         InteractiveMap(
             controller        = mapController,
-            points            = uiState.allPoints, // Branchement direct sur tes listes d'API
+            points            = uiState.allPoints,
             selectedPoint     = uiState.selectedPoint,
             locationGranted   = uiState.locationGranted,
             selectedDistance  = uiState.selectedDistance,
@@ -166,7 +166,7 @@ fun HomeScreen(
                 consumerViewModel.onDismissPopup()
                 consumerViewModel.onWeightChange(weight)
 
-                // 🚀 3. Met à jour le battleUuid du ViewModel pour cibler la bonne bouteille sur l'API
+                // Met à jour le battleUuid du ViewModel pour cibler la bonne bouteille sur l'API
                 if (weight == "Tous") {
                     consumerViewModel.onBattleUuidChange("")
                 } else {
@@ -175,12 +175,11 @@ fun HomeScreen(
                 }
             },
             onRefresh           = { runWithLocation(PendingAction.Refresh) },
-            distributorOptions  = distributorOptions, // ✅ Dynamique
+            distributorOptions  = distributorOptions,
             distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
-            weightOptions       = weightOptions       // ✅ Dynamique ("6.5 kg", etc.)
+            weightOptions       = weightOptions
         )
 
-        // --- Reste de ton code pour le DistributionPointSheet (Inchangé et parfaitement fonctionnel) ---
         val selectedPoint = uiState.selectedPoint
         val sx = markerScreenX
         val sy = markerScreenY

@@ -5,6 +5,10 @@ data class GazProfileUiState(
     val capacityKg  : String  = "",
     val brand  : String  = "",
     val usageLocation: String  = "",
+    val region        : String  = "",
+    val ville         : String  = "",
+    val quartier      : String  = "",
+    val lieuDit       : String  = "",
     val isSaving        : Boolean = false,
     val isSaved         : Boolean = false,
     val errorMessage    : String? = null

@@ -36,7 +36,7 @@ fun InteractiveMap(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // 🚀 ICI : On crée le scope pour pouvoir lancer des coroutines dans les onClick
+    //  On crée le scope pour pouvoir lancer des coroutines dans les onClick
     val scope = rememberCoroutineScope()
 
     // On mémorise le rayon en mètres selon la chaîne sélectionnée
@@ -51,7 +51,7 @@ fun InteractiveMap(
         }
     }
 
-    // 1. Gestion du Cycle de vie de MapKit
+    //  Gestion du Cycle de vie de MapKit
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -66,7 +66,7 @@ fun InteractiveMap(
         }
     }
 
-    // 2. Écoute de la localisation et des filtres au démarrage/changement
+    // Écoute de la localisation et des filtres au démarrage/changement
     LaunchedEffect(locationGranted, selectedDistance) {
         controller.setLocationEnabled(locationGranted)
 
@@ -76,7 +76,7 @@ fun InteractiveMap(
                 controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
                 onLocationFetched(location.latitude, location.longitude)
             } else {
-                // 💡 Fallback : Si la localisation échoue, on se rabat sur les anciennes données d'état
+                //  Si la localisation échoue, on se rabat sur les anciennes données d'état
                 val fallbackLat = userLat ?: 3.848
                 val fallbackLng = userLng ?: 11.502
                 controller.centerOnRadius(fallbackLat, fallbackLng, currentRadiusMeters)
@@ -84,7 +84,7 @@ fun InteractiveMap(
         }
     }
 
-    // 3. Synchronisations vers le contrôleur
+    // Synchronisations vers le contrôleur
     LaunchedEffect(points) {
         controller.syncMarkers(points)
     }
@@ -108,7 +108,7 @@ fun InteractiveMap(
             }
         )
 
-        // 5. Bouton de recentrage corrigé
+        // Bouton de recentrage
         RecenterButton(
             onClick = {
                 onRecenterClick() // Gère la demande de permission
@@ -120,7 +120,6 @@ fun InteractiveMap(
                             controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
                             onLocationFetched(location.latitude, location.longitude)
                         } else if (userLat != null && userLng != null) {
-                            // Si pas de GPS frais mais qu'on a une position en mémoire du ViewModel
                             controller.centerOnRadius(userLat, userLng, currentRadiusMeters)
                         } else {
                             // Pire des cas : pas de réseau, pas de GPS, pas de cache -> Centre-ville Yaoundé

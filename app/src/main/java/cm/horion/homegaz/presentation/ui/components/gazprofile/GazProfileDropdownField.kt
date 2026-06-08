@@ -32,7 +32,8 @@ fun GazProfileDropdownField(
                 placeholder   = {
                     Text(
                         "Sélectionner",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall
                     )
                 },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

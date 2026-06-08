@@ -20,6 +20,7 @@ import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider
 
+
 private val YAOUNDE_FALLBACK = Point(3.848, 11.502)
 private const val DEFAULT_ZOOM = 13f
 
@@ -34,6 +35,9 @@ class MapController(private val context: Context) {
     private var routesCollection   : MapObjectCollection? = null
     private var userLocationLayer  : UserLocationLayer?   = null
 
+    // Flag pour éviter de reconfigurer le pin à chaque onObjectAdded
+    private var isUserLocationConfigured = false
+
     private val markerImageProvider : ImageProvider by lazy {
         ImageProvider.fromResource(context, R.drawable.marker)
     }
@@ -43,18 +47,16 @@ class MapController(private val context: Context) {
     private val userLocationImageProvider : ImageProvider by lazy {
         ImageProvider.fromResource(context, R.drawable.profil)
     }
+    private val profileStrokeImageProvider : ImageProvider by lazy {
+        ImageProvider.fromResource(context, R.drawable.profile_stroke)
+    }
 
     private val markersMap = mutableMapOf<String, MarkerEntry>()
 
-    // FIX 1 : on track si une route est active.
-    // Le dismiss sur gesture NE s'applique que s'il n'y a pas de route affichée.
-    // Quand une route est visible, l'utilisateur doit pouvoir zoomer/scroller librement.
     private var hasActiveRoute : Boolean = false
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
-            // FIX 2 : un tap simple sur la carte sans route → dismiss du sheet
-            // Avec route active → on ignore (l'utilisateur explore l'itinéraire)
             if (!hasActiveRoute) {
                 onDismissPopup?.invoke()
             }
@@ -64,8 +66,6 @@ class MapController(private val context: Context) {
 
     private val cameraListener = CameraListener { _, _, reason, _ ->
         if (reason == CameraUpdateReason.GESTURES) {
-            // FIX 1 : on ne ferme le sheet que si PAS de route active
-            // Avant : tout geste (zoom, scroll) fermait le sheet ET effaçait la route
             if (!hasActiveRoute && currentSelectedPoint != null) {
                 onDismissPopup?.invoke()
             }
@@ -79,20 +79,76 @@ class MapController(private val context: Context) {
     }
 
     private val userLocationObjectListener = object : UserLocationObjectListener {
+
         override fun onObjectAdded(userLocationView: UserLocationView) {
-            userLocationView.pin.setIcon(userLocationImageProvider)
-            userLocationView.arrow.setIcon(userLocationImageProvider)
+            // Guard : configuration unique, évite le flash lors des recrétions MapKit
+            if (isUserLocationConfigured) return
+            isUserLocationConfigured = true
+
+            // 1. Désactiver définitivement le triangle par défaut
+            userLocationView.arrow.isVisible = false
+
+            // 2. Cercle de précision bleu sous le marqueur
             userLocationView.accuracyCircle.fillColor = 0x222563EB.toInt()
+
+            val pinPlacemark = userLocationView.pin
+
+            // 3. Label "Moi" avec bordure blanche
+            pinPlacemark.setText("Moi", TextStyle().apply {
+                size         = 12f
+                color        = 0xFF003761.toInt()
+                outlineColor = 0xFFFFFFFF.toInt()
+                outlineWidth = 3f
+                placement    = TextStyle.Placement.RIGHT
+                offset       = 7f
+            })
+
+            // 4. Icône composite (construite une seule fois)
+            pinPlacemark.useCompositeIcon().apply {
+
+                // Ombre au sol
+                setIcon("shadow", circleImageProvider, IconStyle().apply {
+                    anchor = PointF(0.5f, 0.5f)
+                    scale  = 0.9f
+                    zIndex = 0f
+                })
+
+                // Tige verticale bleue
+                setIcon("stroke", profileStrokeImageProvider, IconStyle().apply {
+                    anchor = PointF(0.5f, 1.0f)
+                    scale  = 0.9f
+                    zIndex = 1f
+                })
+
+                // Photo de profil ronde
+                setIcon("avatar", userLocationImageProvider, IconStyle().apply {
+                    anchor = PointF(0.5f, 1.45f)
+                    scale  = 0.85f
+                    zIndex = 2f
+                })
+            }
         }
-        override fun onObjectRemoved(userLocationView: UserLocationView) {}
-        override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {}
+
+        override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
+            // Cacher la flèche si MapKit tente de la réactiver lors d'un déplacement
+            if (userLocationView.arrow.isVisible) {
+                userLocationView.arrow.isVisible = false
+            }
+        }
+
+        override fun onObjectRemoved(userLocationView: UserLocationView) {
+            // Reset du flag si le layer est vraiment supprimé → permettra une reconfiguration propre
+            isUserLocationConfigured = false
+        }
     }
 
     private var currentSelectedPoint : Distributor? = null
     private var mapStyleJson          : String?      = null
     private var defaultCenter         : Point        = YAOUNDE_FALLBACK
 
-    // ── Cycle de vie ─────────────────────────────────────────────────────────
+    // -------------------------------------------------------------------------
+    // Cycle de vie
+    // -------------------------------------------------------------------------
 
     fun attachMapView(mv: MapView, initialLocation: android.location.Location? = null) {
         if (mapView != null) return
@@ -118,8 +174,12 @@ class MapController(private val context: Context) {
         markersCollection = map.mapObjects.addCollection()
         routesCollection  = map.mapObjects.addCollection()
 
+        // IMPORTANT : isVisible = false dès la création pour empêcher
+        // l'affichage du triangle par défaut avant onObjectAdded
         userLocationLayer = MapKitFactory.getInstance()
             .createUserLocationLayer(mv.mapWindow).apply {
+                isVisible           = false
+                isHeadingModeActive = false
                 setObjectListener(userLocationObjectListener)
             }
 
@@ -145,18 +205,23 @@ class MapController(private val context: Context) {
         mapView?.mapWindow?.map?.removeCameraListener(cameraListener)
         userLocationLayer?.setObjectListener(null)
         markersMap.clear()
-        mapView           = null
-        markersCollection = null
-        routesCollection  = null
-        userLocationLayer = null
-        hasActiveRoute    = false
+        mapView                  = null
+        markersCollection        = null
+        routesCollection         = null
+        userLocationLayer        = null
+        hasActiveRoute           = false
+        isUserLocationConfigured = false
     }
 
-    // ── API publique ──────────────────────────────────────────────────────────
-
     fun setLocationEnabled(enabled: Boolean) {
-        userLocationLayer?.isVisible           = enabled
-        userLocationLayer?.isHeadingModeActive = enabled
+        if (enabled) {
+            // Activer proprement la couche
+            userLocationLayer?.isVisible           = true
+            userLocationLayer?.isHeadingModeActive = true
+        } else {
+
+            userLocationLayer?.isHeadingModeActive = false
+        }
     }
 
     fun centerOn(lat: Double, lng: Double, zoom: Float = 15f) {
@@ -207,7 +272,7 @@ class MapController(private val context: Context) {
         }
     }
 
-    // ── ITINÉRAIRE ────────────────────────────────────────────────────────────
+    // Itinéraire
     fun updateRoute(routePoints: List<Point>) {
         val rc = routesCollection ?: return
         val mv = mapView          ?: return
@@ -220,13 +285,12 @@ class MapController(private val context: Context) {
 
             rc.addPolyline(polyline).apply {
                 strokeWidth = 7f
-                setStrokeColor(0xFF2563EB.toInt())
+                setStrokeColor(0xFF003761.toInt())
                 outlineWidth = 3f
                 setOutlineColor(0xFFFFFFFF.toInt())
             }
 
-            // Marqueur de départ uniquement (ta position GPS)
-            // Le marqueur d'arrivée existe déjà dans markersCollection → pas de doublon
+            // Marqueur de départ (position GPS)
             rc.addPlacemark().apply {
                 geometry = routePoints.first()
                 setIcon(
@@ -239,8 +303,6 @@ class MapController(private val context: Context) {
                 )
             }
 
-            // ← supprimé : rc.addPlacemark() sur routePoints.last()
-
             val geometry = Geometry.fromPolyline(polyline)
             val position = mv.mapWindow.map.cameraPosition(geometry, null, null, null)
             mv.mapWindow.map.move(
@@ -252,6 +314,8 @@ class MapController(private val context: Context) {
             hasActiveRoute = false
         }
     }
+
+
 
     fun syncMarkers(points: List<Distributor>) {
         val mc = markersCollection ?: return
@@ -320,12 +384,10 @@ class MapController(private val context: Context) {
         val composite : CompositeIcon
     ) {
         val tapListenerRef = MapObjectTapListener { _, _ ->
-            // FIX : un tap sur un marqueur pendant une route active
-            // efface la route avant d'ouvrir le nouveau sheet
             if (hasActiveRoute) {
                 hasActiveRoute = false
                 routesCollection?.clear()
-                onDismissPopup?.invoke()  // remet routePolyline = [] dans le ViewModel
+                onDismissPopup?.invoke()
             }
             onPointClick?.invoke(point)
             mapView?.mapWindow
