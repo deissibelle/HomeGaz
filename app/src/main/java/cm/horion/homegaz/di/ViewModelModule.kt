@@ -8,6 +8,7 @@ import cm.horion.homegaz.presentation.viewmodel.LocationViewModel
 import cm.horion.homegaz.presentation.viewmodel.OnboardingViewModel
 import cm.horion.homegaz.presentation.viewmodel.PaymentViewModel
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
+import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -22,6 +23,7 @@ fun viewModelModule() = module {
         context = androidApplication()
     ) }
     viewModel { ReservationsViewModel() }
+    single { ThemeViewModel(get()) }
     viewModel { HomeViewModel(androidApplication(), get()) }
     viewModel { ConsumerViewModel(androidApplication(),get(),get()) }
 }

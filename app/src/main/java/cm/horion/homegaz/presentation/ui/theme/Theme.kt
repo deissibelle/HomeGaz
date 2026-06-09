@@ -4,6 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cm.horion.homegaz.presentation.viewmodel.AppTheme
+import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
+import org.koin.compose.koinInject
 
 
 data class HomeGazColors(
@@ -182,14 +186,25 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun HomeGazTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme   = if (darkTheme) DarkColorScheme else LightColorScheme
-    val homeGazColors = if (darkTheme) DarkHomeGazColors else LightHomeGazColors
+    // Récupère le singleton ThemeViewModel via Koin
+    val themeViewModel : ThemeViewModel = koinInject()
+    val prefs          by themeViewModel.prefs.collectAsStateWithLifecycle()
+    val isSystemDark    = isSystemInDarkTheme()
+
+    // Résout le booléen isDark depuis l'enum AppTheme
+    val isDark = when (prefs.theme) {
+        AppTheme.LIGHT  -> false
+        AppTheme.DARK   -> true
+        AppTheme.SYSTEM -> isSystemDark
+    }
+
+    val colorScheme   = if (isDark) DarkColorScheme   else LightColorScheme
+    val homeGazColors = if (isDark) DarkHomeGazColors  else LightHomeGazColors
 
     CompositionLocalProvider(
-        LocalThemeIsDark   provides darkTheme,
+        LocalThemeIsDark   provides isDark,
         LocalHomeGazColors provides homeGazColors,
     ) {
         MaterialTheme(
