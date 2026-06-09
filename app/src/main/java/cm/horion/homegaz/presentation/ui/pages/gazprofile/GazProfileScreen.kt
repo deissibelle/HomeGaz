@@ -14,6 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cm.horion.homegaz.domain.model.consommateur.dto.Company
+import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
+import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
+import cm.horion.homegaz.domain.model.consommateur.dto.GazType
 import cm.horion.homegaz.presentation.state.GazProfileUiState
 import cm.horion.homegaz.presentation.ui.components.gazprofile.GazProfileFormCard
 import cm.horion.homegaz.presentation.ui.components.gazprofile.GazProfileHeader
@@ -49,28 +53,102 @@ fun GazProfileScreen(
         }
     }
 
-    LaunchedEffect(uiState.isSaved) {
-        if (uiState.isSaved) onSaved()
+    // ── 1. Marques disponibles (BUTANE) ──
+    val distributorOptions = remember(uiState.availableBottles) {
+        val butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
+        if (butaneBottles.isEmpty()) {
+            Company.entries.map { it.name }
+        } else {
+            butaneBottles.map { it.company.name }.distinct()
+        }
+    }
+
+    // ── 2. Tailles disponibles selon la marque choisie ──
+    val weightOptions = remember(uiState.availableBottles, uiState.brand) {
+        var butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
+        if (uiState.brand.isNotEmpty()) {
+            butaneBottles = butaneBottles.filter { it.company.name == uiState.brand }
+        }
+        if (butaneBottles.isEmpty()) {
+            GazSize.entries.map { "${it.size} kg" }
+        } else {
+            // Trié par taille numérique pour un affichage propre (ex: 6kg, 12.5kg)
+            butaneBottles.sortedBy { it.gazSize.size }.map { "${it.gazSize.size} kg" }.distinct()
+        }
+    }
+
+    // ── 3. Interception de la sélection pour trouver le UUID unique de la bouteille ──
+    val handleBrandChange: (String) -> Unit = { newBrand ->
+        viewModel.onBrandChange(newBrand)
+        updateMatchingBottleUuid(newBrand, uiState.capacityKg, uiState.availableBottles, viewModel)
+    }
+
+    val handleCapacityChange: (String) -> Unit = { newCapacity ->
+        viewModel.onCapacityChange(newCapacity)
+        updateMatchingBottleUuid(uiState.brand, newCapacity, uiState.availableBottles, viewModel)
+    }
+
+    // 🔥 STRATÉGIE DE SÉCURITÉ : Si la liste des bouteilles arrive APRÈS le chargement du profil,
+    // on force un recalcul automatique pour ne pas bloquer le battleUuid au démarrage
+    LaunchedEffect(uiState.availableBottles, uiState.brand, uiState.capacityKg) {
+        if (uiState.brand.isNotBlank() && uiState.capacityKg.isNotBlank() && uiState.battleUuid.isBlank()) {
+            updateMatchingBottleUuid(uiState.brand, uiState.capacityKg, uiState.availableBottles, viewModel)
+        }
+    }
+
+    LaunchedEffect(uiState.isSavedProfilSuccess) {
+        if (uiState.isSavedProfilSuccess) onSaved()
     }
 
     GazProfileContent(
         uiState          = uiState,
+        distributorOptions = distributorOptions, // 🔥 Passé à la vue
+        weightOptions      = weightOptions,      // 🔥 Passé à la vue
         onBackClick      = onBackClick,
-        onCapacityChange = viewModel::onCapacityChange,
-        onBrandChange    = viewModel::onBrandChange,
+        onCapacityChange = handleCapacityChange,
+        onBrandChange    = handleBrandChange,
         onLocationChange = viewModel::onLocationChange,
         onRegionChange   = viewModel::onRegionChange,
         onVilleChange    = viewModel::onVilleChange,
         onQuartierChange = viewModel::onQuartierChange,
         onLieuDitChange  = viewModel::onLieuDitChange,
         onDetectGps      = onDetectGps,
-        onSave           = { viewModel.saveProfile(onSaved) }
+        onSave           = { viewModel.saveProfile() }
     )
+}
+
+private fun updateMatchingBottleUuid(
+    brand: String,
+    capacityStr: String,
+    bottles: List<GazBottle>,
+    viewModel: GazProfileViewModel
+) {
+    if (brand.isNotBlank() && capacityStr.isNotBlank()) {
+        // ✅ Extraction en Float? pour correspondre au type de GazSize.size
+        val numericSize = capacityStr.replace(" kg", "")
+            .replace(",", ".") // Sécurité au cas où le séparateur est une virgule
+            .trim()
+            .toFloatOrNull()
+
+        if (numericSize != null) {
+            val matchedBottle = bottles.find {
+                it.gazType == GazType.BUTANE &&
+                        it.company.name == brand &&
+                        it.gazSize.size == numericSize
+            }
+
+            if (matchedBottle != null) {
+                viewModel.onBottleSelected(matchedBottle.uuid)
+            }
+        }
+    }
 }
 
 @Composable
 private fun GazProfileContent(
     uiState          : GazProfileUiState,
+    distributorOptions : List<String>,
+    weightOptions      : List<String>,
     onBackClick      : () -> Unit,
     onCapacityChange : (String) -> Unit,
     onBrandChange    : (String) -> Unit,
@@ -83,53 +161,56 @@ private fun GazProfileContent(
     onSave           : () -> Unit
 ) {
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            Box(modifier = Modifier.statusBarsPadding()) {
+                GazProfileHeader(onBackClick = onBackClick)
+            }
+        },
+        bottomBar = {
+            Box(modifier = Modifier.navigationBarsPadding()) {
+                GazProfileSaveButton(
+                    isSaving  = uiState.isLoading,
+                    isEnabled = uiState.isFormValid && !uiState.isLoading,
+                    onSave    = onSave
+                )
+            }
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .statusBarsPadding()
-                .navigationBarsPadding()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                GazProfileHeader(onBackClick = onBackClick)
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-                GazProfileFormCard(
-                    uiState          = uiState,
-                    onCapacityChange = onCapacityChange,
-                    onBrandChange    = onBrandChange,
-                    onLocationChange = onLocationChange,
-                    onRegionChange   = onRegionChange,
-                    onVilleChange    = onVilleChange,
-                    onQuartierChange = onQuartierChange,
-                    onLieuDitChange  = onLieuDitChange,
-                    onDetectGps      = onDetectGps,
+            GazProfileFormCard(
+                uiState          = uiState,
+                distributorOptions = distributorOptions,
+                weightOptions      = weightOptions,
+                onCapacityChange = onCapacityChange,
+                onBrandChange    = onBrandChange,
+                onLocationChange = onLocationChange,
+                onRegionChange   = onRegionChange,
+                onVilleChange    = onVilleChange,
+                onQuartierChange = onQuartierChange,
+                onLieuDitChange  = onLieuDitChange,
+                onDetectGps      = onDetectGps
+            )
+
+            uiState.errorMessage?.let { msg ->
+                Text(
+                    text     = msg,
+                    color    = MaterialTheme.colorScheme.error,
+                    style    = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                 )
-
-                uiState.errorMessage?.let { msg ->
-                    Text(
-                        text     = msg,
-                        color    = MaterialTheme.colorScheme.error,
-                        style    = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
             }
 
-            GazProfileSaveButton(
-                isSaving  = uiState.isSaving,
-                isEnabled = uiState.isFormValid && !uiState.isSaving,
-                onSave    = onSave
-            )
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
+

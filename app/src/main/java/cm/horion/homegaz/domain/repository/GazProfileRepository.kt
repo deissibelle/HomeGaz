@@ -3,36 +3,32 @@ package cm.horion.homegaz.domain.repository
 
 import android.content.Context
 import android.content.SharedPreferences
+import cm.horion.homegaz.domain.model.consommateur.request.ProfileRequest
 import cm.horion.homegaz.domain.model.gazprofile.GazProfile
+import kotlinx.serialization.json.Json
 
 class GazProfileRepository(context: Context) {
 
     private val prefs: SharedPreferences =
         context.getSharedPreferences("gaz_profile_prefs", Context.MODE_PRIVATE)
 
-    fun save(profile: GazProfile) {
-        prefs.edit()
-            .putString(KEY_CAPACITY,  profile.capacityKg)
-            .putString(KEY_BRAND,     profile.brand)
-            .putString(KEY_LOCATION,  profile.usageLocation)
-            .apply()
+    companion object {
+        private const val KEY_PROFILE_JSON = "gaz_profile_json"
     }
 
-    fun load(): GazProfile? {
-        val capacity = prefs.getString(KEY_CAPACITY, null) ?: return null
-        return GazProfile(
-            capacityKg = capacity,
-            brand  = prefs.getString(KEY_BRAND,    "") ?: "",
-            usageLocation = prefs.getString(KEY_LOCATION, "") ?: "",
-        )
+    fun save(profile: ProfileRequest) {
+        val jsonString = Json.encodeToString(profile)
+        prefs.edit().putString(KEY_PROFILE_JSON, jsonString).apply()
+    }
+
+    fun load(): ProfileRequest? {
+        val jsonString = prefs.getString(KEY_PROFILE_JSON, null) ?: return null
+        return try {
+            Json.decodeFromString<ProfileRequest>(jsonString)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun clear() = prefs.edit().clear().apply()
-
-    private companion object {
-        const val KEY_CAPACITY = "capacity"
-        const val KEY_BRAND    = "brand"
-        const val KEY_LOCATION = "location"
-
-    }
 }

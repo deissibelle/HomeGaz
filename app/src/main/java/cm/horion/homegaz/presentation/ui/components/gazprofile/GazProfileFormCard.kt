@@ -20,13 +20,12 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.presentation.state.GazProfileUiState
 
-private val GAZ_BRANDS = listOf(
-    "Total", "Tradex", "SCTM", "Liquigaz", "Camgaz", "Mviwa", "Autre"
-)
 
 @Composable
 fun GazProfileFormCard(
     uiState          : GazProfileUiState,
+    distributorOptions : List<String>,
+    weightOptions      : List<String>,
     onCapacityChange : (String) -> Unit,
     onBrandChange    : (String) -> Unit,
     onLocationChange : (String) -> Unit,
@@ -36,11 +35,6 @@ fun GazProfileFormCard(
     onLieuDitChange  : (String) -> Unit,
     onDetectGps      : () -> Unit,
 ) {
-    val capacityOptions = listOf(
-        stringResource(R.string.gaz_profile_capacity_6),
-        stringResource(R.string.gaz_profile_capacity_12),
-        stringResource(R.string.gaz_profile_capacity_38)
-    )
 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -77,7 +71,7 @@ fun GazProfileFormCard(
                 isFilled   = uiState.capacityKg.isNotBlank()
             ) {
                 CapacityChipSelector(
-                    options  = capacityOptions,
+                    options  = weightOptions,
                     selected = uiState.capacityKg,
                     onSelect = onCapacityChange
                 )
@@ -94,7 +88,7 @@ fun GazProfileFormCard(
                 GazProfileDropdownField(
                     icon     = Icons.Outlined.LocalOffer,
                     label    = "",
-                    options  = GAZ_BRANDS,
+                    options  = distributorOptions,
                     selected = uiState.brand,
                     onSelect = onBrandChange
                 )

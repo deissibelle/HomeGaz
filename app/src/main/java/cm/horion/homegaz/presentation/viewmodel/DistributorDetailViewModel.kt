@@ -171,6 +171,35 @@ class DistributorDetailViewModel(
         }
     }
 
+//    fun checkPaymentStatus(paymentId: String) {
+//        // 1. On lance le Worker de suivi
+//        startTrackingPayment(paymentId)
+//        uiState = PaymentUiState.Loading
+//
+//        // 2. On observe les changements d'état du Worker en tâche de fond
+//        viewModelScope.launch {
+//            workManager.getWorkInfoByIdFlow(paymentId) // Observe le flux
+//                .collect { workInfo ->
+//                    if (workInfo != null) {
+//                        when (workInfo.state) {
+//                            WorkInfo.State.SUCCEEDED -> {
+//                                // 🎉 Le Worker a renvoyé Result.success() !
+//                                uiState = PaymentUiState.Success
+//                            }
+//                            WorkInfo.State.FAILED -> {
+//                                // ❌ Le Worker a renvoyé Result.failure()
+//                                uiState = PaymentUiState.Error("Le paiement a échoué")
+//                            }
+//                            WorkInfo.State.RUNNING -> {
+//                                uiState = PaymentUiState.Loading
+//                            }
+//                            else -> { /* En attente / En cours de retry */ }
+//                        }
+//                    }
+//                }
+//        }
+//    }
+
 
     fun onBottleSelected(gazBottle: GazBottle) = _uiState.update { it.copy(gaz = gazBottle) }
     fun onQuantityChange(newQuantity: Int) = _uiState.update { it.copy(quantity = newQuantity) }

@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Geocoder
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cm.horion.homegaz.data.datasource.local.GazBottleLocal
+import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.gazprofile.CameroonData
 import cm.horion.homegaz.domain.model.gazprofile.GazProfile
+import cm.horion.homegaz.domain.usecase.ConsumerUseCase
+import cm.horion.homegaz.domain.usecase.DistributorUseCase
 import cm.horion.homegaz.domain.usecase.LoadGazProfileUseCase
-import cm.horion.homegaz.domain.usecase.SaveGazProfileUseCase
 import cm.horion.homegaz.presentation.state.GazProfileUiState
 import com.google.android.gms.location.*
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +25,9 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 class GazProfileViewModel(
-    private val saveProfile : SaveGazProfileUseCase,
+    private val gazBottleLocal: GazBottleLocal,
     private val loadProfile : LoadGazProfileUseCase,
+    private val consumerUseCase: ConsumerUseCase,
     private val context     : Context
 ) : ViewModel() {
 
@@ -37,19 +42,82 @@ class GazProfileViewModel(
 
     private fun loadExistingProfile() {
         viewModelScope.launch(Dispatchers.IO) {
+            val localBottles = gazBottleLocal.getGazBottles()
+
+            if (!localBottles.isNullOrEmpty()) {
+                _uiState.update { it.copy(availableBottles = localBottles) }
+            }
+
             val profile = loadProfile() ?: return@launch
+            val bottle = gazBottleLocal.getGazBottleByUuid(profile.gazBottle)
+            
             _uiState.update {
                 it.copy(
-                    capacityKg    = profile.capacityKg,
-                    brand         = profile.brand,
-                    usageLocation = profile.usageLocation,
-                    region        = profile.region        ?: "",
-                    ville         = profile.ville         ?: "",
-                    quartier      = profile.quartier      ?: "",
-                    lieuDit       = profile.lieuDit       ?: "",
-                    latitude      = profile.latitude,
-                    longitude     = profile.longitude,
+                    capacityKg    = bottle?.gazSize?.size?.let { size -> "$size kg" } ?: "",
+                    battleUuid    = bottle?.uuid ?: "",
+                    usageLocation = profile.address.city ?: profile.address.quarter ?: "",
+                    brand         = bottle?.company?.name ?: "",
+                    region        = profile.address.region        ?: "",
+                    ville         = profile.address.city         ?: "",
+                    quartier      = profile.address.quarter      ?: "",
+                    lieuDit       = profile.address.lieuDit       ?: "",
+                    latitude      = profile.address.location.latitude,
+                    longitude     = profile.address.location.longitude,
                 )
+            }
+        }
+    }
+
+    fun saveProfile() {
+        val state = _uiState.value
+        if (!state.isFormValid) return
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update { it.copy(isLoading = true, isSavedProfilSuccess = false, errorMessage = null) }
+            try {
+
+                val response = consumerUseCase.saveProfil(
+                    latitude = state.latitude ?: 0.0,
+                    longitude = state.longitude ?: 0.0,
+                    paymentMethod = PaymentMethod.OM,
+                    quarter = state.quartier,
+                    city = state.ville,
+                    region = state.region,
+                    lieuDit = state.lieuDit,
+                    gazBottle = state.battleUuid
+                )
+                if(response.success) {
+                    loadProfile.save(
+                        latitude = state.latitude ?: 0.0,
+                        longitude = state.longitude ?: 0.0,
+                        paymentMethod = PaymentMethod.OM,
+                        quarter = state.quartier,
+                        city = state.ville,
+                        region = state.region,
+                        lieuDit = state.lieuDit,
+                        gazBottle = state.battleUuid
+                    )
+
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isSavedProfilSuccess = true
+                        )
+                    }
+
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = response.message
+                        )
+                    }
+                }
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isSaving = false, errorMessage = "Erreur lors de la sauvegarde")
+                }
             }
         }
     }
@@ -63,6 +131,10 @@ class GazProfileViewModel(
     fun onVilleChange(value: String)     = _uiState.update { it.copy(ville         = value, quartier = "") }
     fun onQuartierChange(value: String)  = _uiState.update { it.copy(quartier      = value) }
     fun onLieuDitChange(value: String)   = _uiState.update { it.copy(lieuDit       = value) }
+    // Dans ton GazProfileViewModel
+    fun onBottleSelected(uuid: String) {
+        _uiState.update { it.copy(battleUuid = uuid) }
+    }
 
     // Détection GPS
 
@@ -210,33 +282,6 @@ class GazProfileViewModel(
 
     //Sauvegarde
 
-    fun saveProfile(onSuccess: () -> Unit = {}) {
-        val state = _uiState.value
-        if (!state.isFormValid) return
 
-        viewModelScope.launch(Dispatchers.IO) {
-            _uiState.update { it.copy(isSaving = true, errorMessage = null) }
-            try {
-                saveProfile(
-                    GazProfile(
-                        capacityKg    = state.capacityKg,
-                        brand         = state.brand,
-                        usageLocation = state.usageLocation,
-                        region        = state.region,
-                        ville         = state.ville,
-                        quartier      = state.quartier,
-                        lieuDit       = state.lieuDit,
-                        latitude      = state.latitude,
-                        longitude     = state.longitude,
-                    )
-                )
-                _uiState.update { it.copy(isSaving = false, isSaved = true) }
-                launch(Dispatchers.Main) { onSuccess() }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(isSaving = false, errorMessage = "Erreur lors de la sauvegarde")
-                }
-            }
-        }
-    }
+
 }

@@ -18,7 +18,7 @@ fun viewModelModule() = module {
     viewModel { DistributorDetailViewModel(get(),get(),get()) }
     viewModel { PaymentViewModel(get()) }
     viewModel { GazProfileViewModel(
-        get(), get(),
+        get(), get(), get(),
         context = androidApplication()
     ) }
     viewModel { ReservationsViewModel() }

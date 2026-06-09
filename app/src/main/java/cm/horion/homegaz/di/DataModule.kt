@@ -21,7 +21,6 @@ import cm.horion.homegaz.domain.usecase.GetDistributorDetailUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorPointsUseCase
 import cm.horion.homegaz.domain.usecase.LoadGazProfileUseCase
 import cm.horion.homegaz.domain.usecase.RequestLocationPermissionUseCase
-import cm.horion.homegaz.domain.usecase.SaveGazProfileUseCase
 import cm.horion.homegaz.domain.usecase.SaveOnboardingExitUseCase
 import cm.horion.homegaz.util.appContext
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +54,6 @@ fun dataModule() = module {
     factory { GetDistributorDetailUseCase() }
     factory { RequestLocationPermissionUseCase() }
     factory { BuildOrderSummaryUseCase() }
-    factory { SaveGazProfileUseCase(get()) }
     factory { LoadGazProfileUseCase(get()) }
     single { ConsumerUseCase(get()) }
     single { DistributorUseCase(get()) }
