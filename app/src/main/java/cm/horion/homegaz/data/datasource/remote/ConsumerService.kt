@@ -72,7 +72,6 @@ class ConsumerService {
     }
 
     suspend fun getDepotGaz(latitude : Double, longitude: Double,radiusKm: String,battleUuid: String) : List<Distributor> {
-        Log.d("Dist","entrer 4")
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetDepotGaz.path}") {
             accept(ContentType.Application.Json)
             url {

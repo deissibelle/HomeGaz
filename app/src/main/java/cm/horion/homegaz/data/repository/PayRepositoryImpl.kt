@@ -60,4 +60,14 @@ class PayRepositoryImpl(
         }
     }
 
+    override suspend fun startTrackingPayment(paymentId: String) {
+        return withContext(Dispatchers.IO) {
+            try {
+                payService.startTrackingPayment(paymentId)
+            } catch (e : Exception) {
+                println(e.message)
+            }
+        }
+    }
+
 }

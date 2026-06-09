@@ -108,7 +108,6 @@ class ConsumerRepositoryImpl(
     override suspend fun getDepotGaz(latitude: Double, longitude: Double, radiusKm: String, battleUuid: String): List<Distributor> {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("Dist","entrer 3")
                 val radiusInKm: Double = when (radiusKm) {
                     "100 mètre" -> 0.1
                     "500 mètre" -> 0.5

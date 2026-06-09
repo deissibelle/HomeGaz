@@ -8,6 +8,7 @@ import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.DistributorProduct
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
+import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.util.isPaymentMethodValid
 
 
@@ -30,7 +31,8 @@ data class DistributorDetailUiState(
     val isPaymentSuccess   : Boolean         = false,
     val phoneNumber      : String          = "",
     val sessionsUuid      : String          = "",
-    val isProcessingPay  : Boolean         = false
+    val isProcessingPay  : Boolean         = false,
+    val isPaySuccess     : PaymentStatus   = PaymentStatus.PENDING
 ) {
     val unitPrice   : Int get() = gaz?.gazSize?.price ?: 6500
     val total       : Int get() = unitPrice * quantity

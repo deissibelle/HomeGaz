@@ -47,7 +47,6 @@ class ConsumerUseCase (
     }
 
     suspend fun getDepotGaz(latitude : Double, longitude: Double,radiusKm: String,battleUuid: String) : List<Distributor> {
-        Log.d("Dist","entrer 2")
         return repository.getDepotGaz(latitude,longitude,radiusKm,battleUuid)
     }
 

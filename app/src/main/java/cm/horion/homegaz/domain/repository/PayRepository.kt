@@ -15,4 +15,6 @@ interface PayRepository {
 
     suspend fun getCvStatus(sessionUuid: String): SessionsResponse
 
+    suspend fun startTrackingPayment(paymentId: String)
+
 }

@@ -94,6 +94,7 @@ dependencies {
     // DataStore
     implementation(libs.datastore.preferences)
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
 
     // Koin
     implementation(libs.koin.android)

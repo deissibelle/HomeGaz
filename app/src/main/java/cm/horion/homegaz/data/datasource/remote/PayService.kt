@@ -1,5 +1,12 @@
 package cm.horion.homegaz.data.datasource.remote
 
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.Profile
 import cm.horion.homegaz.domain.model.order.dto.OrderRequest
@@ -9,6 +16,7 @@ import cm.horion.homegaz.domain.model.response.Response
 import cm.horion.homegaz.util.ApiClient.client
 import cm.horion.homegaz.util.Constants.GAZ_URL
 import cm.horion.homegaz.util.Constants.PAY_URL
+import cm.horion.homegaz.util.appContext
 import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
@@ -23,6 +31,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
+import java.util.concurrent.TimeUnit
 
 class PayService {
 
@@ -117,6 +126,52 @@ class PayService {
                 message = e.message ?: "Erreur réseau"
             )
         }
+    }
+
+//    fun startTrackingPayment(paymentId: String) {
+//        // On impose des contraintes (il faut internet pour vérifier le statut)
+//        val constraints = Constraints.Builder()
+//            .setRequiredNetworkType(NetworkType.CONNECTED)
+//            .build()
+//
+//        // On prépare les données à envoyer au Worker
+//        val paymentData = workDataOf("sessionUuid" to paymentId)
+//
+//        // On configure le Worker
+//        val paymentWorkRequest = OneTimeWorkRequestBuilder<PaymentCheckWorker>()
+//            .setInputData(paymentData)
+//            .setConstraints(constraints)
+//            // STRATÉGIE DES SENIORS : Si le paiement est "PENDING", on réessaie toutes les 10 secondes
+//            .setBackoffCriteria(
+//                BackoffPolicy.LINEAR,
+//                10,
+//                TimeUnit.SECONDS
+//            )
+//            .build()
+//
+//        // On donne l'ordre à Android d'exécuter la tâche
+//        WorkManager.getInstance(appContext).enqueue(paymentWorkRequest)
+//    }
+
+    fun startTrackingPayment(paymentId: String) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val paymentData = workDataOf("sessionUuid" to paymentId)
+
+        val paymentWorkRequest = OneTimeWorkRequestBuilder<PaymentCheckWorker>()
+            .setInputData(paymentData)
+            .setConstraints(constraints)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+            .build()
+
+        // ✅ STRATÉGIE : On utilise 'enqueueUniqueWork' en lui donnant l'ID du paiement comme nom unique
+        WorkManager.getInstance(appContext).enqueueUniqueWork(
+            paymentId, // Le nom unique de la tâche
+            ExistingWorkPolicy.KEEP, // Si une tâche existe déjà pour ce paiement, on la garde
+            paymentWorkRequest
+        )
     }
 
 

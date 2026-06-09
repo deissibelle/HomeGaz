@@ -40,4 +40,8 @@ class DistributorUseCase(
         return payRepository.getCvStatus(sessionUuid)
     }
 
+    suspend fun startTrackingPayment(paymentId: String) {
+        return payRepository.startTrackingPayment(paymentId)
+    }
+
 }
