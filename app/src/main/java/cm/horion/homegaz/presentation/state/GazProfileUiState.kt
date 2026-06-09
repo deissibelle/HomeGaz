@@ -9,6 +9,8 @@ data class GazProfileUiState(
     val ville         : String  = "",
     val quartier      : String  = "",
     val lieuDit       : String  = "",
+    val latitude  : Double? = null,
+    val longitude : Double? = null,
     val isSaving        : Boolean = false,
     val isSaved         : Boolean = false,
     val errorMessage    : String? = null

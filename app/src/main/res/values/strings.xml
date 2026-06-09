@@ -159,7 +159,9 @@
     <string name="gaz_profile_brand">Marque</string>
     <string name="gaz_profile_brand_hint">Ex : Total, Tradex, SCTM…</string>
 
+    <string name="gaz_profile_position">Coordonnées GPS</string>
     <string name="gaz_profile_location">Localisation</string>
+
     <string name="gaz_profile_location_hint">Ex: Bastos</string>
     <string name="gaz_profile_location_detect">Détecter ma position</string>
 
