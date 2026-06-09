@@ -19,6 +19,7 @@ data class GazProfileUiState(
     val availableBottles: List<GazBottle> = emptyList(),
 
     val isLoading     : Boolean = false,
+    val isUpdateOption     : Boolean = false,
     val isSavedProfilSuccess : Boolean = false,
     val isSaving      : Boolean = false,
     val isSaved       : Boolean = false,

@@ -7,6 +7,7 @@ import cm.horion.homegaz.domain.model.consommateur.dto.Profile
 import cm.horion.homegaz.domain.model.consommateur.request.ProfileRequest
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.response.Response
+import cm.horion.homegaz.domain.usecase.LoadGazProfileUseCase
 import cm.horion.homegaz.util.ApiClient.client
 import cm.horion.homegaz.util.Constants.GAZ_URL
 import io.ktor.client.request.accept
@@ -21,7 +22,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
-class ConsumerService {
+class ConsumerService(
+    private val loadProfile : LoadGazProfileUseCase
+) {
 
     suspend fun getGaz() : List<GazBottle> {
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetGaz.path}") {
@@ -37,13 +40,22 @@ class ConsumerService {
     }
 
     suspend fun saveProfil(request : ProfileRequest) : Response {
-        val response: HttpResponse = client.post("$GAZ_URL${Endpoint.SaveProfile.path}") {
-            contentType(ContentType.Application.Json)
-            accept(ContentType.Application.Json)
-            setBody(request)
+        return try {
+            val response: HttpResponse = client.post("$GAZ_URL${Endpoint.SaveProfile.path}") {
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                setBody(request)
+            }
+            val responseText = response.bodyAsText()
+            val profil = Json.decodeFromString<Response>(responseText)
+            if (profil.profile != null) {
+                loadProfile.save(profil.profile)
+            }
+            profil
+        } catch (e : Exception){
+            Response(false, e.message.toString())
         }
-        val responseText = response.bodyAsText()
-        return Json.decodeFromString<Response>(responseText)
+
     }
 
     suspend fun updateProfile(request : ProfileRequest) : Response {
@@ -53,17 +65,22 @@ class ConsumerService {
             setBody(request)
         }
         val responseText = response.bodyAsText()
-        return Json.decodeFromString<Response>(responseText)
+        val profil = Json.decodeFromString<Response>(responseText)
+        if (profil.profile != null){
+            loadProfile.save(profil.profile)
+        }
+        return profil
     }
 
     suspend fun getProfile() : Response {
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetProfile.path}") {
             accept(ContentType.Application.Json)
-
         }
+
         if (response.status == HttpStatusCode.OK) {
             val responseText = response.bodyAsText()
             val profile = Json.decodeFromString<Profile>(responseText)
+            loadProfile.save(profile)
             return Response(true,"profile trouver")
         } else {
             val responseText = response.bodyAsText()

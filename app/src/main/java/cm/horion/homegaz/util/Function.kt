@@ -3,6 +3,7 @@ package cm.horion.homegaz.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import androidx.annotation.RequiresPermission
 import cm.horion.homegaz.data.security.JwtHelper
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import com.google.android.gms.location.LocationServices
@@ -18,25 +19,30 @@ fun initSettings(context: Context) {
     appContext = context.applicationContext
 }
 
-@SuppressLint("MissingPermission")
+@RequiresPermission(anyOf = ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"])
 suspend fun getCurrentLocation(): Location? {
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext)
 
     return try {
-        // ⏱️ STRATÉGIE 1 : On limite l'attente à 4 secondes max pour ne pas bloquer l'expérience utilisateur
-        withTimeoutOrNull(4000L) {
+        // 🚀 STRATÉGIE 1 : On tente le cache d'abord. C'est INSTANTANÉ (0 milliseconde).
+        val cachedLocation = fusedLocationClient.lastLocation.await()
+
+        // Optionnel : Vérifier si la position n'est pas trop vieille (ex: moins de 5 minutes)
+        if (cachedLocation != null && (System.currentTimeMillis() - cachedLocation.time) < 5 * 60 * 1000) {
+            return cachedLocation
+        }
+
+        // ⏱️ STRATÉGIE 2 : Si pas de cache (ou trop vieux), on demande une position fraîche mais avec un timeout plus court
+        withTimeoutOrNull(2500L) { // 2.5 secondes suffisent généralement pour un fix réseau/Wi-Fi
             fusedLocationClient.getCurrentLocation(
                 Priority.PRIORITY_HIGH_ACCURACY,
                 null
             ).await()
-        } ?: run {
-            // 🔄 STRATÉGIE 2 : Si le Timeout a expiré (retourne null), on tente instantanément le cache
-            println("⚠️ Connexion faible ou instable. Tentative de récupération de la dernière position connue...")
-            fusedLocationClient.lastLocation.await()
-        }
+        } ?: cachedLocation // Fallback ultime sur le cache même s'il est vieux, plutôt que de renvoyer null
+
     } catch (e: Exception) {
         e.printStackTrace()
-        // 🔍 Si tout a échoué, on tente quand même une ultime fois le cache au cas où l'erreur venait uniquement du fix direct
+        // En cas de crash de l'API Google, tentative de secours finale sur le cache
         runCatching { fusedLocationClient.lastLocation.await() }.getOrNull()
     }
 }

@@ -2,9 +2,11 @@ package cm.horion.homegaz.di
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.work.WorkManager
 import cm.horion.homegaz.data.datasource.local.GazBottleLocal
 import cm.horion.homegaz.data.datasource.remote.ConsumerService
 import cm.horion.homegaz.data.datasource.remote.PayService
+import cm.horion.homegaz.data.datasource.remote.PaymentCheckWorker
 import cm.horion.homegaz.data.repository.ConsumerRepositoryImpl
 import cm.horion.homegaz.data.repository.PayRepositoryImpl
 import cm.horion.homegaz.data.security.SecureStorage
@@ -27,19 +29,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 
 private val Context.dataStore by preferencesDataStore(name = "homegaz_prefs")
 
 fun dataModule() = module {
 
+    single { WorkManager.getInstance(androidContext()) }
     single { androidContext().dataStore }
 
     //service
-    single { SecureStorage(appContext) }
-    single { ConsumerService() }
+    single { SecureStorage(androidContext()) }
+    single { ConsumerService(get()) }
     single { GazBottleLocal(get()) }
     single { PayService() }
+
+    worker { PaymentCheckWorker(get(), get(), get()) }
 
     // Repository
     single { UserPreferencesRepository(androidContext()) }

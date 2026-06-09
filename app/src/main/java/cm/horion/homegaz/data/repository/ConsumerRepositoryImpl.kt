@@ -56,7 +56,7 @@ class ConsumerRepositoryImpl(
                 )
                 consumerService.saveProfil(request)
             } catch (e : Exception) {
-                Response(true, e.message.toString())
+                Response(false, e.message.toString())
             }
         }
     }

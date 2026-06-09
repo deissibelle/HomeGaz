@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -97,7 +98,7 @@ fun GazProfileScreen(
     }
 
     LaunchedEffect(uiState.isSavedProfilSuccess) {
-        if (uiState.isSavedProfilSuccess) onSaved()
+        if (uiState.isSavedProfilSuccess) {onSaved()}
     }
 
     GazProfileContent(
@@ -113,7 +114,13 @@ fun GazProfileScreen(
         onQuartierChange = viewModel::onQuartierChange,
         onLieuDitChange  = viewModel::onLieuDitChange,
         onDetectGps      = onDetectGps,
-        onSave           = { viewModel.saveProfile() }
+        onSave           = {
+            if (!uiState.isUpdateOption){
+                viewModel.saveProfile()
+            } else {
+                viewModel.updateProfile()
+            }
+        }
     )
 }
 
@@ -160,8 +167,32 @@ private fun GazProfileContent(
     onDetectGps      : () -> Unit,
     onSave           : () -> Unit
 ) {
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // 🚀 Effet déclenché dès que le message d'erreur change et n'est pas nul
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { msg ->
+            snackbarHostState.showSnackbar(
+                message = msg,
+                withDismissAction = true,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    dismissActionContentColor = MaterialTheme.colorScheme.error,
+                    shape = RoundedCornerShape(14.dp)
+                )
+            }
+        },
         topBar = {
             Box(modifier = Modifier.statusBarsPadding()) {
                 GazProfileHeader(onBackClick = onBackClick)
@@ -200,16 +231,7 @@ private fun GazProfileContent(
                 onDetectGps      = onDetectGps
             )
 
-            uiState.errorMessage?.let { msg ->
-                Text(
-                    text     = msg,
-                    color    = MaterialTheme.colorScheme.error,
-                    style    = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                )
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

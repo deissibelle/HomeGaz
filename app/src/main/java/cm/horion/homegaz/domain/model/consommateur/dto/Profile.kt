@@ -10,7 +10,7 @@ data class Profile (
     @SerialName(value = "_id")
     val id: String ,
     val userUuid: String,
-    val address: String,
+    val address: Address,
     val paymentMethod: PaymentMethod,
     val gazBottle: String,
     val createdAt: String,

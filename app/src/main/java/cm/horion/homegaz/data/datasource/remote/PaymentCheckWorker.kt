@@ -3,6 +3,8 @@ package cm.horion.homegaz.data.datasource.remote
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
+import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.payment.dto.SessionsResponse
 import cm.horion.homegaz.domain.model.response.Response
@@ -21,38 +23,43 @@ import kotlinx.serialization.json.Json
 
 class PaymentCheckWorker(
     appContext: Context,
-    workerParams: WorkerParameters
+    workerParams: WorkerParameters,
+    private val authRepository : UserDataStore
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        // 🛠️ Note : Assure-toi que la clé lue correspond à celle injectée (ex: "sessionUuid")
         val paymentId = inputData.getString("sessionUuid") ?: return Result.failure()
+        val token = authRepository.getExchangeToken()
 
         return try {
             val response: HttpResponse = client.get("$GAZ_URL${Endpoint.Status.path}?sessionUuid=$paymentId") {
                 accept(ContentType.Application.Json)
                 headers {
-                    append(HttpHeaders.Authorization, "Bearer token")
+                    append(HttpHeaders.Authorization, "Bearer $token")
                 }
             }
 
             val responseText = response.bodyAsText()
-            val status = Json.decodeFromString<SessionsResponse>(responseText)
-            when (status.status.name) {
+            val session = Json.decodeFromString<SessionsResponse>(responseText)
+
+            when (session.status.name) {
                 "SUCCESS" -> {
                     showNotification("Paiement Réussi", "Votre commande a été validée avec succès.")
                     Result.success()
                 }
                 "FAILED" -> {
-                    showNotification("Échec du paiement", "Le paiement a été refusé.")
-                    Result.failure()
+                    showNotification("Échec du paiement", session.message)
+                    // 🔥 On injecte le message de l'API dans les données de sortie de l'échec
+                    val outputData = workDataOf("error_message" to session.message)
+                    Result.failure(outputData)
                 }
                 else -> {
-                    // Toujours "PENDING" : on demande à WorkManager de retenter selon la BackoffPolicy
-                    Result.retry()
+                    Result.retry() // PENDING ou autre : le WorkManager planifie un nouveau call
                 }
             }
         } catch (e: Exception) {
-            // Erreur réseau, timeout ou problème Ktor : on retente plus tard
+            val errorData = workDataOf("error_message" to (e.localizedMessage ?: "Erreur réseau inconnue"))
             Result.retry()
         }
     }

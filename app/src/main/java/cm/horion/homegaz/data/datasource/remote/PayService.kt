@@ -164,12 +164,13 @@ class PayService {
             .setInputData(paymentData)
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+            .addTag(paymentId) // 🔥 C'EST ICI ! Tu associes le tag requis par ton ViewModel
             .build()
 
-        // ✅ STRATÉGIE : On utilise 'enqueueUniqueWork' en lui donnant l'ID du paiement comme nom unique
+        // Tu gardes ton fonctionnement UniqueWork pour éviter les doublons de polling
         WorkManager.getInstance(appContext).enqueueUniqueWork(
-            paymentId, // Le nom unique de la tâche
-            ExistingWorkPolicy.KEEP, // Si une tâche existe déjà pour ce paiement, on la garde
+            paymentId,
+            ExistingWorkPolicy.KEEP,
             paymentWorkRequest
         )
     }

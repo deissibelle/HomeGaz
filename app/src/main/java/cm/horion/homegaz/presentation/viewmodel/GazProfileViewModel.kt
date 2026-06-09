@@ -42,27 +42,52 @@ class GazProfileViewModel(
 
     private fun loadExistingProfile() {
         viewModelScope.launch(Dispatchers.IO) {
+            // 1. Chargement et mise à jour immédiate des bouteilles disponibles
             val localBottles = gazBottleLocal.getGazBottles()
-
             if (!localBottles.isNullOrEmpty()) {
                 _uiState.update { it.copy(availableBottles = localBottles) }
             }
 
-            val profile = loadProfile() ?: return@launch
-            val bottle = gazBottleLocal.getGazBottleByUuid(profile.gazBottle)
+            // 2. Récupération de la source de données (Locale ou Distante via UseCase)
+            val profile = loadProfile() ?: try {
+                consumerUseCase.getProfile().profile
+            } catch (e: Exception) {
+                Log.e("PROFILE_LOAD", "Erreur lors de la récupération du profil distant", e)
+                null
+            }
             
+
+            // Si aucun profil n'est trouvé nulle part, on s'arrête là
+            if (profile == null) {
+                return@launch
+            } else {
+                _uiState.update { it.copy(isUpdateOption = true) }
+            }
+
+            Log.d("PROFILE", profile.toString())
+
+            // 3. Récupération de la bouteille associée au profil trouvé
+            val bottle = profile.gazBottle?.let { uuid ->
+                gazBottleLocal.getGazBottleByUuid(uuid)
+            }
+
+            // 4. Mise à jour unique et centralisée de l'état UI
             _uiState.update {
                 it.copy(
                     capacityKg    = bottle?.gazSize?.size?.let { size -> "$size kg" } ?: "",
                     battleUuid    = bottle?.uuid ?: "",
-                    usageLocation = profile.address.city ?: profile.address.quarter ?: "",
                     brand         = bottle?.company?.name ?: "",
-                    region        = profile.address.region        ?: "",
-                    ville         = profile.address.city         ?: "",
-                    quartier      = profile.address.quarter      ?: "",
-                    lieuDit       = profile.address.lieuDit       ?: "",
-                    latitude      = profile.address.location.latitude,
-                    longitude     = profile.address.location.longitude,
+
+                    // Gestion sécurisée des adresses (évite les crashs si l'objet address est null)
+                    region        = profile.address?.region ?: "",
+                    ville         = profile.address?.city ?: "",
+                    quartier      = profile.address?.quarter ?: "",
+                    lieuDit       = profile.address?.lieuDit ?: "",
+                    usageLocation = profile.address?.city ?: profile.address?.quarter ?: "",
+
+                    // Navigation safe avec l'opérateur '?.' partout sur le modèle imbriqué
+                    latitude      = profile.address?.location?.latitude,
+                    longitude     = profile.address?.location?.longitude,
                 )
             }
         }
@@ -87,24 +112,54 @@ class GazProfileViewModel(
                     gazBottle = state.battleUuid
                 )
                 if(response.success) {
-                    loadProfile.save(
-                        latitude = state.latitude ?: 0.0,
-                        longitude = state.longitude ?: 0.0,
-                        paymentMethod = PaymentMethod.OM,
-                        quarter = state.quartier,
-                        city = state.ville,
-                        region = state.region,
-                        lieuDit = state.lieuDit,
-                        gazBottle = state.battleUuid
-                    )
-
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isSavedProfilSuccess = true
                         )
                     }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = response.message
+                        )
+                    }
+                }
 
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isSaving = false, errorMessage = "Erreur lors de la sauvegarde")
+                }
+            }
+        }
+    }
+
+    fun updateProfile() {
+        val state = _uiState.value
+        if (!state.isFormValid) return
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update { it.copy(isLoading = true, isSavedProfilSuccess = false, errorMessage = null) }
+            try {
+
+                val response = consumerUseCase.updateProfile(
+                    latitude = state.latitude ?: 0.0,
+                    longitude = state.longitude ?: 0.0,
+                    paymentMethod = PaymentMethod.OM,
+                    quarter = state.quartier,
+                    city = state.ville,
+                    region = state.region,
+                    lieuDit = state.lieuDit,
+                    gazBottle = state.battleUuid
+                )
+                if(response.success) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isSavedProfilSuccess = true
+                        )
+                    }
                 } else {
                     _uiState.update {
                         it.copy(

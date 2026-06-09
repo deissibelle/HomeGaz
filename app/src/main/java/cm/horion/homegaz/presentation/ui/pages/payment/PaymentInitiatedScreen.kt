@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,11 +20,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
+import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 private val CyanColor = Color(0xFF00D5E1)
@@ -35,8 +39,10 @@ private fun ussdCode(method: PaymentMethod) = when (method) {
 
 @Composable
 fun PaymentInitiatedScreen(
+    uiState      : DistributorDetailUiState,
     paymentMethod: PaymentMethod = PaymentMethod.OM,
-    onDone: () -> Unit = {}
+    onDone: () -> Unit = {},
+    onEchec: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val ussd    = ussdCode(paymentMethod)
@@ -46,6 +52,14 @@ fun PaymentInitiatedScreen(
         stringResource(R.string.payment_step_2),
         stringResource(R.string.payment_step_3, ussd)
     )
+
+    LaunchedEffect(uiState.isPaySuccess) {
+        if(uiState.isPaySuccess == PaymentStatus.SUCCESS) {
+            onDone()
+        } else if(uiState.isPaySuccess == PaymentStatus.FAILED) {
+            onEchec()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -152,6 +166,22 @@ private fun StepRow(number: Int, text: String) {
                 color      = MaterialTheme.colorScheme.primary
             ),
             modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Preview(
+    name = "Light Mode",
+    showBackground = true,
+    backgroundColor = 0xFFFFFFFF
+)
+@Composable
+fun PaymentInitiatedScreenPreview() {
+    // Remplace par le nom exact de ton thème Compose s'il est différent (ex: HomeGazTheme)
+    MaterialTheme {
+        PaymentInitiatedScreen(
+            uiState = DistributorDetailUiState(),
+            onDone = { /* Action simulée pour la preview */ }
         )
     }
 }

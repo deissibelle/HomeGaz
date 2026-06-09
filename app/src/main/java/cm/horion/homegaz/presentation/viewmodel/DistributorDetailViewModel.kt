@@ -2,15 +2,19 @@ package cm.horion.homegaz.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import cm.horion.homegaz.data.datasource.local.GazBottleLocal
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
+import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.domain.usecase.DistributorUseCase
 import cm.horion.homegaz.domain.usecase.GetDistributorDetailUseCase
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState
+import cm.horion.homegaz.util.appContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +24,7 @@ import kotlinx.coroutines.launch
 class DistributorDetailViewModel(
     private val gazBottleLocal: GazBottleLocal,
     private val payUseCase: DistributorUseCase,
+    private val workManager: WorkManager = WorkManager.getInstance(appContext),
     private val getDistributorDetail: GetDistributorDetailUseCase
 ) : ViewModel() {
 
@@ -147,6 +152,9 @@ class DistributorDetailViewModel(
                             isPaymentSuccessLancer = true
                         )
                     }
+
+                    checkPaymentStatus(response.message)
+
                 } else {
                     _uiState.update {
                         it.copy(
@@ -171,34 +179,63 @@ class DistributorDetailViewModel(
         }
     }
 
-//    fun checkPaymentStatus(paymentId: String) {
-//        // 1. On lance le Worker de suivi
-//        startTrackingPayment(paymentId)
-//        uiState = PaymentUiState.Loading
-//
-//        // 2. On observe les changements d'état du Worker en tâche de fond
-//        viewModelScope.launch {
-//            workManager.getWorkInfoByIdFlow(paymentId) // Observe le flux
-//                .collect { workInfo ->
-//                    if (workInfo != null) {
-//                        when (workInfo.state) {
-//                            WorkInfo.State.SUCCEEDED -> {
-//                                // 🎉 Le Worker a renvoyé Result.success() !
-//                                uiState = PaymentUiState.Success
-//                            }
-//                            WorkInfo.State.FAILED -> {
-//                                // ❌ Le Worker a renvoyé Result.failure()
-//                                uiState = PaymentUiState.Error("Le paiement a échoué")
-//                            }
-//                            WorkInfo.State.RUNNING -> {
-//                                uiState = PaymentUiState.Loading
-//                            }
-//                            else -> { /* En attente / En cours de retry */ }
-//                        }
-//                    }
-//                }
-//        }
-//    }
+    fun checkPaymentStatus(paymentId: String) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    isPaySuccess = PaymentStatus.PENDING,
+                    error = null
+                )
+            }
+
+            payUseCase.startTrackingPayment(paymentId)
+
+            // ✅ La bonne méthode : getWorkInfosByTagFlow
+            launch {
+                workManager.getWorkInfosByTagFlow(paymentId)
+                    .collect { workInfoList: List<WorkInfo> -> // 🛠️ On spécifie explicitement le type ici
+                        // Comme ton tag paymentId est unique par session, la liste ne contiendra qu'un seul élément
+                        val workInfo = workInfoList.firstOrNull()
+
+                        if (workInfo != null) {
+                            when (workInfo.state) {
+                                WorkInfo.State.SUCCEEDED -> {
+                                    _uiState.update {
+                                        it.copy(
+                                            isLoading = false,
+                                            isPaySuccess = PaymentStatus.SUCCESS,
+                                        )
+                                    }
+                                }
+
+                                WorkInfo.State.FAILED -> {
+                                    val errorMsg = workInfo.outputData.getString("error_message")
+                                        ?: "Le paiement a échoué."
+
+                                    _uiState.update {
+                                        it.copy(
+                                            isLoading = false,
+                                            error = errorMsg,
+                                            isPaySuccess = PaymentStatus.FAILED,
+                                        )
+                                    }
+                                }
+
+                                WorkInfo.State.RUNNING -> {
+                                    _uiState.update {
+                                        it.copy(isLoading = true)
+                                    }
+                                }
+
+                                else -> { /* EN_QUEUE, BLOCKED, etc. */
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+    }
 
 
     fun onBottleSelected(gazBottle: GazBottle) = _uiState.update { it.copy(gaz = gazBottle) }

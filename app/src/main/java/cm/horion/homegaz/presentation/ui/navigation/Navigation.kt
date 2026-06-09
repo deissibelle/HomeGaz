@@ -221,8 +221,11 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
         // ── PAYMENT INITIATED ─────────────────────────────────────────────────
         composable(Screen.PaymentInitiated.route) {
             PaymentInitiatedScreen(
-                paymentMethod = currentOrderSummary?.paymentMethod ?: PaymentMethod.OM,
-                onDone        = { navController.navigate(Screen.PaymentSuccess.route) }
+                uiState       = sharedUiState,
+                paymentMethod = sharedUiState.selectedMethod ?: PaymentMethod.OM,
+                onDone        = {
+                    navController.navigate(Screen.PaymentSuccess.route)
+                }
             )
         }
 
