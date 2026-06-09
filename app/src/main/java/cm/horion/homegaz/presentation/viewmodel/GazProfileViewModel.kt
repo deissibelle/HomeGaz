@@ -33,7 +33,7 @@ class GazProfileViewModel(
         loadExistingProfile()
     }
 
-    // Chargement
+    //  Chargement
 
     private fun loadExistingProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -47,12 +47,14 @@ class GazProfileViewModel(
                     ville         = profile.ville         ?: "",
                     quartier      = profile.quartier      ?: "",
                     lieuDit       = profile.lieuDit       ?: "",
+                    latitude      = profile.latitude,
+                    longitude     = profile.longitude,
                 )
             }
         }
     }
 
-    //Mise à jour des champs
+    // Mise à jour des champs
 
     fun onCapacityChange(value: String)  = _uiState.update { it.copy(capacityKg    = value) }
     fun onBrandChange(value: String)     = _uiState.update { it.copy(brand         = value) }
@@ -104,7 +106,7 @@ class GazProfileViewModel(
      * Géocode les coordonnées et met à jour l'état avec
      * – usageLocation : adresse lisible complète
      * — region : région du Cameroun correspondante (si trouvée).
-     * Ville : ville correspondante (si trouvée)
+     * - Ville : ville correspondante (si trouvée)
      */
     private fun geocodeAndFill(lat: Double, lng: Double) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -141,6 +143,8 @@ class GazProfileViewModel(
 
                 _uiState.update { current ->
                     current.copy(
+                        latitude      = lat,
+                        longitude     = lng,
                         usageLocation = readableAddress,
                         region        = matchedRegion.ifBlank { current.region },
                         ville         = matchedVille.ifBlank  { current.ville  },
@@ -153,12 +157,17 @@ class GazProfileViewModel(
                     )
                 }
             } catch (e: Exception) {
-                // En cas d'échec du géocodage, on met au moins les coordonnées brutes
-                _uiState.update { it.copy(usageLocation = "$lat, $lng") }
+                // En cas d'échec du géocodage, on stocke quand même les coordonnées brutes
+                _uiState.update { it.copy(
+                    latitude      = lat,
+                    longitude     = lng,
+                    usageLocation = "$lat, $lng"
+                ) }
             }
         }
     }
 
+    /** Essaie de faire correspondre l'adminArea avec une région camerounaise connue */
     private fun matchCameroonRegion(adminArea: String): String {
         if (adminArea.isBlank()) return ""
         val normalized = adminArea.lowercase().trim()
@@ -182,6 +191,7 @@ class GazProfileViewModel(
         }
     }
 
+    /** Essaie de faire correspondre la locality avec une ville connue dans la région */
     private fun matchCameroonCity(locality: String, region: String): String {
         if (locality.isBlank()) return ""
         val cities = CameroonData.getCitiesForRegion(region)
@@ -190,6 +200,7 @@ class GazProfileViewModel(
             ?: ""
     }
 
+    /** Essaie de faire correspondre le subLocality avec un quartier de Yaoundé */
     private fun matchYaoundeQuartier(subLocality: String): String {
         val quarters = CameroonData.YAOUNDE_QUARTERS
         return quarters.firstOrNull { it.equals(subLocality, ignoreCase = true) }
@@ -197,7 +208,7 @@ class GazProfileViewModel(
             ?: ""
     }
 
-    //sauvegarde
+    //Sauvegarde
 
     fun saveProfile(onSuccess: () -> Unit = {}) {
         val state = _uiState.value
@@ -215,6 +226,8 @@ class GazProfileViewModel(
                         ville         = state.ville,
                         quartier      = state.quartier,
                         lieuDit       = state.lieuDit,
+                        latitude      = state.latitude,
+                        longitude     = state.longitude,
                     )
                 )
                 _uiState.update { it.copy(isSaving = false, isSaved = true) }

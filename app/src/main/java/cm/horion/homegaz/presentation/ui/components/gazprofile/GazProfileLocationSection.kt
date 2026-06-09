@@ -48,7 +48,7 @@ fun GazProfileLocationSection(
         // Lieu d'utilisation
         LocationTextField(
             icon          = Icons.Outlined.LocationOn,
-            label         = stringResource(R.string.gaz_profile_location),
+            label         = stringResource(R.string.gaz_profile_position),
             value         = usageLocation,
             onValueChange = onLocationChange,
             placeholder   = stringResource(R.string.gaz_profile_location_hint),

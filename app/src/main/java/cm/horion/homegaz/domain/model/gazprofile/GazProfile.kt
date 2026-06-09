@@ -9,5 +9,7 @@ data class GazProfile(
     val ville         : String = "",
     val quartier      : String = "",
     val lieuDit       : String = "",
+    val latitude      : Double? = null,
+    val longitude     : Double? = null,
 
 )
