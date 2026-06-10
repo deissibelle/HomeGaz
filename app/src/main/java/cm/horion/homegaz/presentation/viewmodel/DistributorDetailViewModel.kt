@@ -265,4 +265,17 @@ class DistributorDetailViewModel(
         }
     }
 
+    fun cleanPayment() {
+        _uiState.update {
+            it.copy(
+                error = null,
+                isOrderSuccess = false,
+                isPaymentSuccessLancer = false,
+                isPaymentSuccess = false,
+                isProcessingPay = false,
+                isPaySuccess = PaymentStatus.PENDING
+            )
+        }
+    }
+
 }

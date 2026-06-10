@@ -37,7 +37,7 @@ class PayService {
 
     suspend fun saveOrder(order : OrderRequest) : Response {
         return try {
-            val response: HttpResponse = client.post("$GAZ_URL${Endpoint.SaveProfile.path}") {
+            val response: HttpResponse = client.post("$GAZ_URL${Endpoint.Order.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 setBody(order)

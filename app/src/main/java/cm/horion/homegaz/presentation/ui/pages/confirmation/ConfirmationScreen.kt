@@ -1,6 +1,7 @@
 package cm.horion.homegaz.presentation.ui.pages.confirmation
 
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -38,8 +39,10 @@ fun ConfirmationScreen(
     LaunchedEffect(uiState.isOrderSuccess, uiState.isPaymentSuccessLancer) {
         if (uiState.isOrderSuccess) {
             onStartPayment()
+            Log.d("PAYEMENT","order reussi")
             if (uiState.isPaymentSuccessLancer) {
                 onConfirmClick()
+                Log.d("PAYEMENT","payement lancer")
             }
         }
     }

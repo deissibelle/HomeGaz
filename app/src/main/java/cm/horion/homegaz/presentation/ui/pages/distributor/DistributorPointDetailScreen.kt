@@ -46,6 +46,7 @@ fun DistributorPointDetailScreen(
     viewModel  : DistributorDetailViewModel = koinViewModel()
 ) {
     LaunchedEffect(battleUuid, point.enterpriseUuid) {
+        viewModel.cleanPayment()
         viewModel.loadPoint(point)
         viewModel.loadAvailableBottles(
             battleUuid = battleUuid,
