@@ -13,6 +13,7 @@ import cm.horion.homegaz.data.security.SecureStorage
 import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.data.security.UserDataStoreImpl
 import cm.horion.homegaz.domain.repository.ConsumerRepository
+import cm.horion.homegaz.domain.repository.DisplayPreferencesRepository
 import cm.horion.homegaz.domain.repository.GazProfileRepository
 import cm.horion.homegaz.domain.repository.PayRepository
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
@@ -50,11 +51,13 @@ fun dataModule() = module {
     // Repository
     single { UserPreferencesRepository(androidContext()) }
     single { GazProfileRepository(androidContext()) }
+    single { DisplayPreferencesRepository(androidContext()) }
     single<ConsumerRepository> { ConsumerRepositoryImpl(get()) }
     single<PayRepository> { PayRepositoryImpl(get()) }
     single<UserDataStore> { UserDataStoreImpl(get(),get()) }
     // Use Cases
     factory { SaveOnboardingExitUseCase(get()) }
+
 
     factory { GetDistributorPointsUseCase() }
     factory { GetDistributorDetailUseCase() }
