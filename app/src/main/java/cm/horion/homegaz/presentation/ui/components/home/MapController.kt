@@ -18,6 +18,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import android.graphics.Bitmap
 import com.yandex.runtime.image.ImageProvider
 
 
@@ -35,9 +36,6 @@ class MapController(private val context: Context) {
     private var routesCollection   : MapObjectCollection? = null
     private var userLocationLayer  : UserLocationLayer?   = null
 
-    // Flag pour éviter de reconfigurer le pin à chaque onObjectAdded
-    private var isUserLocationConfigured = false
-
     private val markerImageProvider : ImageProvider by lazy {
         ImageProvider.fromResource(context, R.drawable.marker)
     }
@@ -54,6 +52,10 @@ class MapController(private val context: Context) {
     private val markersMap = mutableMapOf<String, MarkerEntry>()
 
     private var hasActiveRoute : Boolean = false
+
+    // Flag pour configurer l'icône utilisateur une seule fois
+    // et éviter le clignotement causé par onObjectUpdated répété
+    private var isUserLocationConfigured = false
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
@@ -81,19 +83,45 @@ class MapController(private val context: Context) {
     private val userLocationObjectListener = object : UserLocationObjectListener {
 
         override fun onObjectAdded(userLocationView: UserLocationView) {
-            // Guard : configuration unique, évite le flash lors des recrétions MapKit
-            if (isUserLocationConfigured) return
+            // Configuration initiale, une seule fois
+            configureUserLocationView(userLocationView)
             isUserLocationConfigured = true
+        }
 
-            // 1. Désactiver définitivement le triangle par défaut
-            userLocationView.arrow.isVisible = false
+        override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
+            // Ne reconfigurer que si l'objet a été retiré puis réajouté
+            // Évite le clignotement causé par la reconstruction répétée du CompositeIcon
+            if (!isUserLocationConfigured) {
+                configureUserLocationView(userLocationView)
+                isUserLocationConfigured = true
+            }
+            // Yandex MapKit gère la position automatiquement, rien d'autre à faire ici
+        }
 
-            // 2. Cercle de précision bleu sous le marqueur
-            userLocationView.accuracyCircle.fillColor = 0x222563EB.toInt()
+        override fun onObjectRemoved(userLocationView: UserLocationView) {
+            // L'objet a été retiré, forcer la reconfiguration au prochain onObjectAdded
+            isUserLocationConfigured = false
+        }
 
-            val pinPlacemark = userLocationView.pin
+        private fun configureUserLocationView(view: UserLocationView) {
+            // 1. Remplacer le triangle Yandex par un bitmap transparent 1x1 px
+            // isVisible = false ne suffit pas — Yandex le redessine à chaque heading update
+            val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+            view.arrow.setIcon(
+                ImageProvider.fromBitmap(emptyBitmap),
+                IconStyle().apply {
+                    scale  = 0f
+                    zIndex = -1f
+                }
+            )
+            view.arrow.isVisible = false
 
-            // 3. Label "Moi" avec bordure blanche
+            // 2. Cercle de précision semi-transparent
+            view.accuracyCircle.fillColor = 0x222563EB.toInt()
+
+            val pinPlacemark = view.pin
+
+            // 3. Label "Moi"
             pinPlacemark.setText("Moi", TextStyle().apply {
                 size         = 12f
                 color        = 0xFF003761.toInt()
@@ -103,7 +131,7 @@ class MapController(private val context: Context) {
                 offset       = 7f
             })
 
-            // 4. Icône composite (construite une seule fois)
+            // 4. Icône composite — construite une seule fois
             pinPlacemark.useCompositeIcon().apply {
 
                 // Ombre au sol
@@ -128,27 +156,13 @@ class MapController(private val context: Context) {
                 })
             }
         }
-
-        override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
-            // Cacher la flèche si MapKit tente de la réactiver lors d'un déplacement
-            if (userLocationView.arrow.isVisible) {
-                userLocationView.arrow.isVisible = false
-            }
-        }
-
-        override fun onObjectRemoved(userLocationView: UserLocationView) {
-            // Reset du flag si le layer est vraiment supprimé → permettra une reconfiguration propre
-            isUserLocationConfigured = false
-        }
     }
 
     private var currentSelectedPoint : Distributor? = null
     private var mapStyleJson          : String?      = null
     private var defaultCenter         : Point        = YAOUNDE_FALLBACK
 
-    // -------------------------------------------------------------------------
     // Cycle de vie
-    // -------------------------------------------------------------------------
 
     fun attachMapView(mv: MapView, initialLocation: android.location.Location? = null) {
         if (mapView != null) return
@@ -174,8 +188,6 @@ class MapController(private val context: Context) {
         markersCollection = map.mapObjects.addCollection()
         routesCollection  = map.mapObjects.addCollection()
 
-        // IMPORTANT : isVisible = false dès la création pour empêcher
-        // l'affichage du triangle par défaut avant onObjectAdded
         userLocationLayer = MapKitFactory.getInstance()
             .createUserLocationLayer(mv.mapWindow).apply {
                 isVisible           = false
@@ -215,12 +227,14 @@ class MapController(private val context: Context) {
 
     fun setLocationEnabled(enabled: Boolean) {
         if (enabled) {
-            // Activer proprement la couche
             userLocationLayer?.isVisible           = true
-            userLocationLayer?.isHeadingModeActive = true
-        } else {
-
             userLocationLayer?.isHeadingModeActive = false
+            userLocationLayer?.isAutoZoomEnabled   = false
+        } else {
+            userLocationLayer?.isVisible           = false
+            userLocationLayer?.isHeadingModeActive = false
+            userLocationLayer?.isAutoZoomEnabled   = false
+            isUserLocationConfigured               = false
         }
     }
 
@@ -272,7 +286,6 @@ class MapController(private val context: Context) {
         }
     }
 
-    // Itinéraire
     fun updateRoute(routePoints: List<Point>) {
         val rc = routesCollection ?: return
         val mv = mapView          ?: return
@@ -290,7 +303,6 @@ class MapController(private val context: Context) {
                 setOutlineColor(0xFFFFFFFF.toInt())
             }
 
-            // Marqueur de départ (position GPS)
             rc.addPlacemark().apply {
                 geometry = routePoints.first()
                 setIcon(
@@ -314,8 +326,6 @@ class MapController(private val context: Context) {
             hasActiveRoute = false
         }
     }
-
-
 
     fun syncMarkers(points: List<Distributor>) {
         val mc = markersCollection ?: return
