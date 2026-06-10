@@ -28,7 +28,7 @@ class GazProfileViewModel(
     private val gazBottleLocal: GazBottleLocal,
     private val loadProfile : LoadGazProfileUseCase,
     private val consumerUseCase: ConsumerUseCase,
-    private val context     : Context
+    private val context : Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GazProfileUiState())

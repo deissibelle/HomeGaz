@@ -3,11 +3,17 @@ package cm.horion.homegaz.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.os.Looper
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import cm.horion.homegaz.data.security.JwtHelper
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 
@@ -19,33 +25,50 @@ fun initSettings(context: Context) {
     appContext = context.applicationContext
 }
 
-@RequiresPermission(anyOf = ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"])
-suspend fun getCurrentLocation(): Location? {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(appContext)
+@SuppressLint("MissingPermission")
+suspend fun getCurrentLocation(): Location? =
+    suspendCancellableCoroutine { continuation ->
 
-    return try {
-        // 🚀 STRATÉGIE 1 : On tente le cache d'abord. C'est INSTANTANÉ (0 milliseconde).
-        val cachedLocation = fusedLocationClient.lastLocation.await()
+        val fusedClient =
+            LocationServices.getFusedLocationProviderClient(appContext)
 
-        // Optionnel : Vérifier si la position n'est pas trop vieille (ex: moins de 5 minutes)
-        if (cachedLocation != null && (System.currentTimeMillis() - cachedLocation.time) < 5 * 60 * 1000) {
-            return cachedLocation
-        }
+        fusedClient.lastLocation
+            .addOnSuccessListener { location ->
 
-        // ⏱️ STRATÉGIE 2 : Si pas de cache (ou trop vieux), on demande une position fraîche mais avec un timeout plus court
-        withTimeoutOrNull(2500L) { // 2.5 secondes suffisent généralement pour un fix réseau/Wi-Fi
-            fusedLocationClient.getCurrentLocation(
-                Priority.PRIORITY_HIGH_ACCURACY,
-                null
-            ).await()
-        } ?: cachedLocation // Fallback ultime sur le cache même s'il est vieux, plutôt que de renvoyer null
+                if (location != null) {
+                    continuation.resume(location) {}
+                    return@addOnSuccessListener
+                }
 
-    } catch (e: Exception) {
-        e.printStackTrace()
-        // En cas de crash de l'API Google, tentative de secours finale sur le cache
-        runCatching { fusedLocationClient.lastLocation.await() }.getOrNull()
+                val request = LocationRequest.Builder(
+                    Priority.PRIORITY_HIGH_ACCURACY,
+                    5000L
+                )
+                    .setMaxUpdates(1)
+                    .build()
+
+                val callback = object : LocationCallback() {
+                    override fun onLocationResult(result: LocationResult) {
+                        fusedClient.removeLocationUpdates(this)
+
+                        if (continuation.isActive) {
+                            continuation.resume(result.lastLocation) {}
+                        }
+                    }
+                }
+
+                fusedClient.requestLocationUpdates(
+                    request,
+                    callback,
+                    Looper.getMainLooper()
+                )
+            }
+            .addOnFailureListener {
+                if (continuation.isActive) {
+                    continuation.resume(null) {}
+                }
+            }
     }
-}
 
 enum class OperatorNetwork {
     ORANGE,
