@@ -1,5 +1,6 @@
 package cm.horion.homegaz.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkInfo
@@ -153,8 +154,6 @@ class DistributorDetailViewModel(
                         )
                     }
 
-                    checkPaymentStatus(response.message)
-
                 } else {
                     _uiState.update {
                         it.copy(
@@ -179,7 +178,8 @@ class DistributorDetailViewModel(
         }
     }
 
-    fun checkPaymentStatus(paymentId: String) {
+    fun checkPaymentStatus() {
+        val currentState = _uiState.value
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -188,48 +188,54 @@ class DistributorDetailViewModel(
                     error = null
                 )
             }
-
-            payUseCase.startTrackingPayment(paymentId)
+            Log.d("PAYEMENT", "lancer 1")
+            payUseCase.startTrackingPayment(currentState.sessionsUuid)
 
             // ✅ La bonne méthode : getWorkInfosByTagFlow
             launch {
-                workManager.getWorkInfosByTagFlow(paymentId)
-                    .collect { workInfoList: List<WorkInfo> -> // 🛠️ On spécifie explicitement le type ici
-                        // Comme ton tag paymentId est unique par session, la liste ne contiendra qu'un seul élément
+                // ✅ Dans ton checkPaymentStatus() du ViewModel
+                workManager.getWorkInfosByTagFlow(currentState.sessionsUuid)
+                    .collect { workInfoList: List<WorkInfo> ->
                         val workInfo = workInfoList.firstOrNull()
 
                         if (workInfo != null) {
+                            // Log le statut reçu pour valider la théorie en direct
+                            Log.d("PAYEMENT", "Statut intercepté par le Flow : ${workInfo.state}")
+
                             when (workInfo.state) {
                                 WorkInfo.State.SUCCEEDED -> {
                                     _uiState.update {
-                                        it.copy(
-                                            isLoading = false,
-                                            isPaySuccess = PaymentStatus.SUCCESS,
-                                        )
+                                        it.copy(isLoading = false, isPaySuccess = PaymentStatus.SUCCESS)
                                     }
+                                    // Optionnel : Nettoyer le cache du WorkManager une fois terminé
+                                    workManager.pruneWork()
                                 }
 
                                 WorkInfo.State.FAILED -> {
+                                    // 🚨 IMPORTANT : On vérifie si ce FAILED contient de la data.
+                                    // Si outputData est vide, c'est que c'est un vieux résidu d'historique, on l'IGNORE !
                                     val errorMsg = workInfo.outputData.getString("error_message")
-                                        ?: "Le paiement a échoué."
 
-                                    _uiState.update {
-                                        it.copy(
-                                            isLoading = false,
-                                            error = errorMsg,
-                                            isPaySuccess = PaymentStatus.FAILED,
-                                        )
+                                    if (errorMsg != null) {
+                                        Log.d("PAYEMENT", "Vrai échec intercepté : $errorMsg")
+                                        _uiState.update {
+                                            it.copy(isLoading = false, error = errorMsg, isPaySuccess = PaymentStatus.FAILED)
+                                        }
+                                    } else {
+                                        Log.d("PAYEMENT", "Ancien résidu FAILED ignoré, on attend le lancement réel...")
                                     }
                                 }
 
                                 WorkInfo.State.RUNNING -> {
-                                    _uiState.update {
-                                        it.copy(isLoading = true)
-                                    }
+                                    _uiState.update { it.copy(isLoading = true) }
                                 }
 
-                                else -> { /* EN_QUEUE, BLOCKED, etc. */
+                                WorkInfo.State.ENQUEUED -> {
+                                    // Le nouveau worker est prêt à partir, on maintient le loader
+                                    _uiState.update { it.copy(isLoading = true) }
                                 }
+
+                                else -> { /* BLOCKED, etc. */ }
                             }
                         }
                     }

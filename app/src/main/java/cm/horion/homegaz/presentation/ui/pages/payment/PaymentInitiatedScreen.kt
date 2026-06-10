@@ -53,10 +53,13 @@ fun PaymentInitiatedScreen(
         stringResource(R.string.payment_step_3, ussd)
     )
 
+
     LaunchedEffect(uiState.isPaySuccess) {
         if(uiState.isPaySuccess == PaymentStatus.SUCCESS) {
             onDone()
-        } else if(uiState.isPaySuccess == PaymentStatus.FAILED) {
+        }
+
+        if(uiState.isPaySuccess == PaymentStatus.FAILED) {
             onEchec()
         }
     }

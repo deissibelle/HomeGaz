@@ -23,6 +23,7 @@ import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.Tab
@@ -208,10 +209,12 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                     onStartOrder   = distributorViewModel::initOrder,
                     onStartPayment = distributorViewModel::initPayment,
                     dismissError   = distributorViewModel::dismissError,
+                    viewModel   = distributorViewModel,
                     onModifyClick  = {
                         navController.popBackStack(Screen.DistributorDetail.route, false)
                     },
                     onConfirmClick = {
+                        distributorViewModel.cleanPayment()
                         navController.navigate(Screen.PaymentInitiated.route)
                     }
                 )
@@ -224,21 +227,47 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                 uiState       = sharedUiState,
                 paymentMethod = sharedUiState.selectedMethod ?: PaymentMethod.OM,
                 onDone        = {
-                    navController.navigate(Screen.PaymentSuccess.route)
+                    // Le worker a fini en SUCCEEDED -> Direction l'écran de succès
+                    navController.navigate(Screen.PaymentSuccess.route) {
+                        // On efface l'écran d'attente de la pile pour éviter un retour arrière dessus
+                        popUpTo(Screen.PaymentInitiated.route) { inclusive = true }
+                    }
+                },
+                onEchec = {
+                    // Le worker a fini en FAILED -> Direction le même écran mais configuré en échec
+                    navController.navigate(Screen.PaymentSuccess.route) {
+                        popUpTo(Screen.PaymentInitiated.route) { inclusive = true }
+                    }
                 }
             )
         }
 
-        // ── PAYMENT SUCCESS ───────────────────────────────────────────────────
+        // ── PAYMENT SUCCESS / FAILED (Écran partagé) ───────────────────────────
         composable(Screen.PaymentSuccess.route) {
+            // 🛠️ On lit l'état final directement depuis ton sharedUiState
+            val isPaymentValid = sharedUiState.isPaySuccess == PaymentStatus.SUCCESS
+
             PaymentSuccessScreen(
+                isSuccess = isPaymentValid,
+                errorMsg  = sharedUiState.error, // Transmet la vraie erreur (ex: solde insuffisant) si elle existe
                 onCloseClick = {
+                    distributorViewModel.cleanPayment()
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 },
                 onReservationsClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}")
+                    if (isPaymentValid) {
+                        // Si succès -> On l'envoie voir ses réservations
+                        distributorViewModel.cleanPayment()
+                        navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}") {
+                            popUpTo(Screen.Home.route) { inclusive = true }
+                        }
+                    } else {
+                        // Si échec -> "Réessayer le paiement" : on le renvoie sagement à l'étape du choix de paiement/téléphone
+                        distributorViewModel.cleanPayment()
+                        navController.popBackStack(Screen.Payment.route, false)
+                    }
                 }
             )
         }

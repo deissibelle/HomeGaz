@@ -21,7 +21,7 @@ class PayRepositoryImpl(
         return withContext(Dispatchers.IO) {
             try {
                 val pay = PaymentRequest(
-                    userUuid = "",
+                    userUuid = "123456789",
                     sessionsUuid = sessionsUuid,
                     serviceType = ServiceType.GAZ,
                     amount = amount,

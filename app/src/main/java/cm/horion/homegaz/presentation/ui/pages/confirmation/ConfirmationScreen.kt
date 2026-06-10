@@ -25,6 +25,8 @@ import cm.horion.homegaz.presentation.ui.components.common.WarningNote
 import cm.horion.homegaz.presentation.ui.components.confirmation.OrderRecapCard
 import cm.horion.homegaz.presentation.ui.components.distributor.TotalAmountCard
 import cm.horion.homegaz.presentation.ui.components.payment.PaymentTopBar
+import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ConfirmationScreen(
@@ -34,16 +36,23 @@ fun ConfirmationScreen(
     onConfirmClick : () -> Unit = {},
     onStartOrder   : () -> Unit = {},
     onStartPayment : () -> Unit = {},
-    dismissError   : () -> Unit = {}
+    dismissError   : () -> Unit = {},
+    viewModel      : DistributorDetailViewModel = koinViewModel()
 ) {
-    LaunchedEffect(uiState.isOrderSuccess, uiState.isPaymentSuccessLancer) {
+    // Écoute uniquement le succès de la commande
+    LaunchedEffect(uiState.isOrderSuccess) {
         if (uiState.isOrderSuccess) {
             onStartPayment()
-            Log.d("PAYEMENT","order reussi")
-            if (uiState.isPaymentSuccessLancer) {
-                onConfirmClick()
-                Log.d("PAYEMENT","payement lancer")
-            }
+            Log.d("PAYEMENT", "order reussi")
+        }
+    }
+
+// Écoute uniquement le lancement du paiement
+    LaunchedEffect(uiState.isPaymentSuccessLancer) {
+        if (uiState.isPaymentSuccessLancer) {
+            viewModel.checkPaymentStatus()
+            onConfirmClick()
+            Log.d("PAYEMENT", "payement lancer")
         }
     }
 

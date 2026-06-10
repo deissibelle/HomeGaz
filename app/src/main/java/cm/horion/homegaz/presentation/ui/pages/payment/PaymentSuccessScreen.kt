@@ -28,8 +28,10 @@ import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
 @Composable
 fun PaymentSuccessScreen(
+    isSuccess          : Boolean = true, // 🔥 Ajout pour piloter le mode
     onCloseClick       : () -> Unit = {},
-    onReservationsClick: () -> Unit = {}
+    onReservationsClick: () -> Unit = {},
+    errorMsg           : String? = null // Optionnel : pour afficher le vrai message de l'API en cas d'échec
 ) {
     Box(
         modifier = Modifier
@@ -47,7 +49,8 @@ fun PaymentSuccessScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text     = stringResource(R.string.payment_success_title),
+                // 🛠️ Titre dynamique (ex: "Paiement Réussi" ou "Échec du Paiement")
+                text     = if (isSuccess) stringResource(R.string.payment_success_title) else "Échec du paiement",
                 modifier = Modifier.padding(horizontal = 56.dp),
                 style    = TextStyle(
                     fontFamily = poppinsFontFamily,
@@ -81,20 +84,25 @@ fun PaymentSuccessScreen(
                 .padding(top = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            // 🛠️ Couleur et Icône dynamiques
+            val statusColor = if (isSuccess) SuccessColor else MaterialTheme.colorScheme.error
+            val statusIcon  = if (isSuccess) Icons.Filled.Check else Icons.Filled.Close
+
             Box(
                 modifier         = Modifier
                     .size(58.dp)
                     .border(
                         width = 1.93.dp,
-                        color = SuccessColor,
+                        color = statusColor,
                         shape = CircleShape
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector        = Icons.Filled.Check,
+                    imageVector        = statusIcon,
                     contentDescription = null,
-                    tint               = SuccessColor,
+                    tint               = statusColor,
                     modifier           = Modifier.size(28.dp)
                 )
             }
@@ -102,7 +110,8 @@ fun PaymentSuccessScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = stringResource(R.string.payment_success_message),
+                // 🛠️ Message dynamique
+                text = if (isSuccess) stringResource(R.string.payment_success_message) else (errorMsg ?: "Le paiement a échoué. Veuillez réessayer."),
                 modifier = Modifier.width(294.dp),
                 style    = TextStyle(
                     fontFamily = poppinsFontFamily,
@@ -115,9 +124,10 @@ fun PaymentSuccessScreen(
             )
         }
 
+        // 🛠️ Bouton dynamique : Si échec, on propose de "Réessayer" au lieu d'aller aux réservations
         HomeGazButton(
-            text     = stringResource(R.string.btn_my_reservations),
-            onClick  = onReservationsClick,
+            text     = if (isSuccess) stringResource(R.string.btn_my_reservations) else "Réessayer le paiement",
+            onClick  = onReservationsClick, // Le callback servira à ré-aiguiller
             modifier = Modifier
                 .width(269.dp)
                 .align(Alignment.BottomCenter)

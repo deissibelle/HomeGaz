@@ -4,12 +4,17 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -75,7 +80,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
         setContent {
+            RequestNotificationPermissionHandler()
             HomeGazTheme {
                 HomeGazApp(userPrefs = userPrefs)
             }
@@ -138,5 +145,26 @@ class MainActivity : ComponentActivity() {
                 .show()
         }
     }
+
+    @Composable
+    fun RequestNotificationPermissionHandler() {
+        val notificationPermissionLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                Log.d("PAYEMENT", "Permission de notification accordée par l'utilisateur !")
+            } else {
+                Log.d("PAYEMENT", "Permission de notification refusée.")
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            // La permission POST_NOTIFICATIONS n'existe et n'est requise qu'à partir d'Android 13 (API 33)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
 }
 

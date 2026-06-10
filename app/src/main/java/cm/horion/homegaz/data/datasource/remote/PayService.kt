@@ -1,5 +1,6 @@
 package cm.horion.homegaz.data.datasource.remote
 
+import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -154,23 +155,27 @@ class PayService {
 //    }
 
     fun startTrackingPayment(paymentId: String) {
+        Log.d("PAYEMENT", "lancer 2")
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val paymentData = workDataOf("sessionUuid" to paymentId)
 
+        val uniqueObservationTag = "${paymentId}_${System.currentTimeMillis()}"
+
         val paymentWorkRequest = OneTimeWorkRequestBuilder<PaymentCheckWorker>()
             .setInputData(paymentData)
             .setConstraints(constraints)
+            .addTag(paymentId)
+            .addTag(uniqueObservationTag)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
-            .addTag(paymentId) // 🔥 C'EST ICI ! Tu associes le tag requis par ton ViewModel
             .build()
 
         // Tu gardes ton fonctionnement UniqueWork pour éviter les doublons de polling
         WorkManager.getInstance(appContext).enqueueUniqueWork(
             paymentId,
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             paymentWorkRequest
         )
     }

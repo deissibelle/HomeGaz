@@ -46,7 +46,7 @@ fun dataModule() = module {
     single { GazBottleLocal(get()) }
     single { PayService() }
 
-    worker { PaymentCheckWorker(get(), get(), get()) }
+    worker { PaymentCheckWorker(get(), get()) }
 
     // Repository
     single { UserPreferencesRepository(androidContext()) }
