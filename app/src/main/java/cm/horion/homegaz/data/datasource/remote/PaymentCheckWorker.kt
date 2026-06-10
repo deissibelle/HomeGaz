@@ -61,7 +61,7 @@ class PaymentCheckWorker(
                 }
                 "FAILED" -> {
                     val outputData = workDataOf("error_message" to session.message)
-                    showNotification("Paiement Echoue", outputData.toString())
+                    showNotification("Paiement Echoue", session.message)
                     Result.failure(outputData)
                 }
                 else -> {
