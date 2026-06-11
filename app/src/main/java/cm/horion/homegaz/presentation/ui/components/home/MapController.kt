@@ -55,7 +55,7 @@ class MapController(private val context: Context) {
 
     // Flag pour configurer l'icône utilisateur une seule fois
     // et éviter le clignotement causé par onObjectUpdated répété
-    private var isUserLocationConfigured = false
+    //private var isUserLocationConfigured = false
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
@@ -85,22 +85,22 @@ class MapController(private val context: Context) {
         override fun onObjectAdded(userLocationView: UserLocationView) {
             // Configuration initiale, une seule fois
             configureUserLocationView(userLocationView)
-            isUserLocationConfigured = true
+            //isUserLocationConfigured = true
         }
 
         override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
             // Ne reconfigurer que si l'objet a été retiré puis réajouté
             // Évite le clignotement causé par la reconstruction répétée du CompositeIcon
-            if (!isUserLocationConfigured) {
-                configureUserLocationView(userLocationView)
-                isUserLocationConfigured = true
-            }
+//            if (!isUserLocationConfigured) {
+//                configureUserLocationView(userLocationView)
+//                isUserLocationConfigured = true
+//            }
             // Yandex MapKit gère la position automatiquement, rien d'autre à faire ici
         }
 
         override fun onObjectRemoved(userLocationView: UserLocationView) {
             // L'objet a été retiré, forcer la reconfiguration au prochain onObjectAdded
-            isUserLocationConfigured = false
+            //isUserLocationConfigured = false
         }
 
         private fun configureUserLocationView(view: UserLocationView) {
@@ -224,19 +224,23 @@ class MapController(private val context: Context) {
         routesCollection         = null
         userLocationLayer        = null
         hasActiveRoute           = false
-        isUserLocationConfigured = false  // Reset du flag au destroy
+        //isUserLocationConfigured = false  // Reset du flag au destroy
     }
 
     fun setLocationEnabled(enabled: Boolean) {
         if (enabled) {
+            // 🔥 Crucial : On réinitialise le flag pour forcer onObjectUpdated
+            // à dessiner l'icône composite si la carte est réactivée à chaud
+            //isUserLocationConfigured = false
+
             userLocationLayer?.isVisible           = true
-            userLocationLayer?.isHeadingModeActive = false  // Jamais true — sinon la caméra suit la rotation
-            userLocationLayer?.isAutoZoomEnabled   = false  // Désactive le zoom automatique
+            userLocationLayer?.isHeadingModeActive = false
+            userLocationLayer?.isAutoZoomEnabled   = false
         } else {
             userLocationLayer?.isVisible           = false
             userLocationLayer?.isHeadingModeActive = false
             userLocationLayer?.isAutoZoomEnabled   = false
-            isUserLocationConfigured               = false
+            //isUserLocationConfigured               = false
         }
     }
 

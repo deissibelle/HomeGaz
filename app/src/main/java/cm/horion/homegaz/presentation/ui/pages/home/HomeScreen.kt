@@ -145,6 +145,7 @@ fun HomeScreen(
             routePoints       = uiState.routePolyline,
             routeBoundingBox  = uiState.routeBoundingBox,
             onRecenterClick   = { if (!uiState.locationGranted) onRequestLocation() },
+            fetch   = { consumerViewModel.fetch() },
             onLocationFetched = { lat, lng -> consumerViewModel.onLocationChanged(lat, lng) },
             modifier          = Modifier.fillMaxSize()
         )

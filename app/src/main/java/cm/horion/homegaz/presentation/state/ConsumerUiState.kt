@@ -26,6 +26,7 @@ data class ConsumerUiState(
     val locationGranted: Boolean = false,
     val locationDenied: Boolean = false,
     val isFirstLaunch: Boolean = true,
+    val isLocationFetched: Boolean = false,
 
     // Itinéraire Yandex
     val routePolyline: List<Point> = emptyList(),

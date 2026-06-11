@@ -2,6 +2,7 @@ package cm.horion.homegaz.presentation.viewmodel
 
 import android.app.Application
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -32,6 +33,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,14 +54,85 @@ class ConsumerViewModel(
     var isDataReady by mutableStateOf(false)
         private set
 
+    val isLocationFetched: Boolean
+        get() = _uiState.value.isLocationFetched
+
     private var drivingSession: DrivingSession? = null
 
+    private var fetchJob: Job? = null
+
     init {
-        prepareGazBottles()
-        val granted = hasLocationPermission()
-        _uiState.value = _uiState.value.copy(locationGranted = granted, isFirstLaunch = !granted)
-        fetch()
+        viewModelScope.launch {
+            // 1. Charge les bouteilles de gaz en local ou réseau
+            prepareGazBottles()
+
+            // 2. Vérifie et récupère la localisation initiale si accordée
+            val granted = hasLocationPermission()
+            _uiState.update { it.copy(locationGranted = granted, isFirstLaunch = !granted) }
+
+            if (granted) {
+                // On tente de récupérer le point GPS rapidement (Timeout de 4s max pour sécurité UX)
+                val location = kotlinx.coroutines.withTimeoutOrNull(5000L) {
+                    getCurrentLocation()
+                }
+
+                if (location != null) {
+                    _uiState.update {
+                        it.copy(
+                            userLat = location.latitude,
+                            userLng = location.longitude,
+                            isLocationFetched = true
+                        )
+                    }
+                } else {
+                    // Timeout ou erreur : on débloque quand même pour éviter l'écran blanc infini
+                    _uiState.update { it.copy(isLocationFetched = true) }
+                }
+            } else {
+                // Pas de permission : pas besoin d'attendre de coordonnées pour démarrer
+                _uiState.update { it.copy(isLocationFetched = true) }
+            }
+
+            // 3. Enfin, on récupère les dépôts de gaz avec les meilleures données possibles
+            fetch()
+        }
     }
+
+
+
+    // ── Copie ici ta fonction suspendue getCurrentLocation() ──
+    @SuppressLint("MissingPermission")
+    private suspend fun getCurrentLocation(): android.location.Location? =
+        kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
+            val fusedClient = com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(getApplication<Application>())
+            var locationCallback: com.google.android.gms.location.LocationCallback? = null
+
+            fusedClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    if (continuation.isActive) continuation.resume(location) {}
+                    return@addOnSuccessListener
+                }
+
+                val request = com.google.android.gms.location.LocationRequest.Builder(
+                    com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
+                    3000L
+                ).setMaxUpdates(1).build()
+
+                locationCallback = object : com.google.android.gms.location.LocationCallback() {
+                    override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
+                        locationCallback?.let { fusedClient.removeLocationUpdates(it) }
+                        if (continuation.isActive) continuation.resume(result.lastLocation) {}
+                    }
+                }
+
+                fusedClient.requestLocationUpdates(request, locationCallback!!, android.os.Looper.getMainLooper())
+                    .addOnFailureListener { if (continuation.isActive) continuation.resume(null) {} }
+            }.addOnFailureListener { if (continuation.isActive) continuation.resume(null) {} }
+
+            continuation.invokeOnCancellation {
+                locationCallback?.let { fusedClient.removeLocationUpdates(it) }
+            }
+        }
 
     private fun prepareGazBottles() {
         viewModelScope.launch {
@@ -101,16 +174,34 @@ class ConsumerViewModel(
     }
 
     fun onLocationChanged(latitude: Double, longitude: Double) {
-        Log.d("Location","latitude : $latitude")
-        Log.d("Location","longitude : $longitude")
-        val wasWithoutLocation = _uiState.value.userLat == null
-        _uiState.value = _uiState.value.copy(
-            userLat         = latitude,
-            userLng         = longitude,
-            locationGranted = true,
-            isFirstLaunch   = false
-        )
-        if (wasWithoutLocation) fetch()
+        val oldLat = _uiState.value.userLat
+        val oldLng = _uiState.value.userLng
+
+        if (oldLat != null && oldLng != null) {
+            // 💡 Calcule l'écart réel en mètres entre l'ancienne et la nouvelle position
+            val distanceDeplacement = haversineKm(oldLat, oldLng, latitude, longitude) * 1000
+
+            // Si le déplacement est inférieur à 15 mètres, on ignore la mise à jour !
+            if (distanceDeplacement < 15.0) {
+                Log.d("Location", "Déplacement négligeable (${distanceDeplacement.toInt()}m). Ignoré.")
+                return
+            }
+        }
+
+        Log.d("Location", "Nouvelle position validée : latitude : $latitude, longitude : $longitude")
+
+        _uiState.update {
+            it.copy(
+                userLat = latitude,
+                userLng = longitude,
+                locationGranted = true,
+                isLocationFetched = true,
+                isFirstLaunch = false
+            )
+        }
+
+        // Le fetch ne se lancera désormais que si l'utilisateur a réellement bougé de plus de 15m
+        fetch()
     }
 
     fun onDistanceChange(newDistance: String) {

@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private var isTrackingLocation = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         //installSplashScreen()
@@ -61,25 +63,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // ✅ La Splash Screen attend de manière déterministe le stockage ET la position géographique
         splashScreen.setKeepOnScreenCondition {
-            !homeViewModel.isDataReady
+            !homeViewModel.isDataReady || (homeViewModel.uiState.value.locationGranted && !homeViewModel.isLocationFetched)
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { loc ->
+                    // Met à jour l'UI en continu si l'utilisateur se déplace
                     homeViewModel.onLocationChanged(loc.latitude, loc.longitude)
                 }
             }
         }
 
+        // Démarre l'écouteur de flux uniquement pour suivre les changements à chaud après l'ouverture
         lifecycleScope.launch {
             homeViewModel.uiState.collect { state ->
-                if (state.locationGranted) startLocationUpdates()
+                // On ne démarre les mises à jour que si la permission est acquise ET qu'on ne l'a pas déjà fait
+                if (state.locationGranted && !isTrackingLocation) {
+                    startLocationUpdates()
+                }
             }
         }
-
 
         setContent {
             RequestNotificationPermissionHandler()
@@ -111,24 +118,30 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
-        if (!::fusedLocationClient.isInitialized) return
+        if (!::fusedLocationClient.isInitialized || isTrackingLocation) return
+
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5_000L)
             .setMinUpdateDistanceMeters(10f)
             .build()
+
         fusedLocationClient.requestLocationUpdates(
             request, locationCallback, Looper.getMainLooper()
         )
+        isTrackingLocation = true // ✅ On marque que l'écouteur est branché
     }
 
     override fun onResume() {
         super.onResume()
-        if (homeViewModel.uiState.value.locationGranted) startLocationUpdates()
+        if (homeViewModel.uiState.value.locationGranted && !isTrackingLocation) {
+            startLocationUpdates()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        if (::fusedLocationClient.isInitialized) {
+        if (::fusedLocationClient.isInitialized && isTrackingLocation) {
             fusedLocationClient.removeLocationUpdates(locationCallback)
+            isTrackingLocation = false
         }
     }
 

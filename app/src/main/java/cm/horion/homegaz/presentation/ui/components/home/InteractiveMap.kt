@@ -31,6 +31,7 @@ fun InteractiveMap(
     routePoints            : List<Point>  = emptyList(),
     routeBoundingBox       : BoundingBox? = null,
     onRecenterClick        : () -> Unit   = {},
+    fetch        : () -> Unit   = {},
     onLocationFetched      : (Double, Double) -> Unit = { _, _ -> },
     modifier               : Modifier     = Modifier
 ) {
@@ -66,22 +67,27 @@ fun InteractiveMap(
         }
     }
 
-    // Écoute de la localisation et des filtres au démarrage/changement
-    LaunchedEffect(locationGranted, selectedDistance) {
+    // Remplace le LaunchedEffect actuel par deux effets séparés
+    LaunchedEffect(locationGranted) {
         controller.setLocationEnabled(locationGranted)
+    }
 
-        if (locationGranted) {
-            val location = getCurrentLocation()
-            if (location != null) {
-                controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
-                onLocationFetched(location.latitude, location.longitude)
-            } else {
-                //  Si la localisation échoue, on se rabat sur les anciennes données d'état
-                val fallbackLat = userLat ?: 3.848
-                val fallbackLng = userLng ?: 11.502
-                controller.centerOnRadius(fallbackLat, fallbackLng, currentRadiusMeters)
-            }
+// Centre uniquement au premier fix valide (userLat passe de null à une valeur)
+    val hascentered = remember { mutableStateOf(false) }
+    LaunchedEffect(userLat, userLng) {
+        if (userLat != null && userLng != null && !hascentered.value) {
+            controller.centerOnRadius(userLat, userLng, currentRadiusMeters)
+            hascentered.value = true
+        } else if (userLat == null && userLng == null) {
+            controller.centerOnRadius(3.848, 11.502, currentRadiusMeters)
         }
+    }
+
+// Recentre si la distance sélectionnée change
+    LaunchedEffect(selectedDistance) {
+        val lat = userLat ?: 3.848
+        val lng = userLng ?: 11.502
+        controller.centerOnRadius(lat, lng, currentRadiusMeters)
     }
 
     // Synchronisations vers le contrôleur
@@ -114,17 +120,13 @@ fun InteractiveMap(
                 onRecenterClick() // Gère la demande de permission
 
                 if (locationGranted) {
-                    scope.launch {
-                        val location = getCurrentLocation()
-                        if (location != null) {
-                            controller.centerOnRadius(location.latitude, location.longitude, currentRadiusMeters)
-                            onLocationFetched(location.latitude, location.longitude)
-                        } else if (userLat != null && userLng != null) {
-                            controller.centerOnRadius(userLat, userLng, currentRadiusMeters)
-                        } else {
-                            // Pire des cas : pas de réseau, pas de GPS, pas de cache -> Centre-ville Yaoundé
-                            controller.centerOnRadius(3.848, 11.502, currentRadiusMeters)
-                        }
+                    // 💡 Au lieu de faire un getCurrentLocation() ici,
+                    // force le ViewModel à ré-exécuter sa logique de détection propre
+                    fetch()
+
+                    // Et recentre immédiatement sur les dernières données stables connues
+                    if (userLat != null && userLng != null) {
+                        controller.centerOnRadius(userLat, userLng, currentRadiusMeters)
                     }
                 } else {
                     controller.recenter(null, null)
