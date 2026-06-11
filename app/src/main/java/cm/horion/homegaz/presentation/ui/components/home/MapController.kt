@@ -56,6 +56,36 @@ class MapController(private val context: Context) {
     // Flag pour configurer l'icône utilisateur une seule fois
     // et éviter le clignotement causé par onObjectUpdated répété
     //private var isUserLocationConfigured = false
+    private var lastUserLocationView: UserLocationView? = null
+
+    private fun configureUserLocationView(view: UserLocationView) {
+        val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+        view.arrow.setIcon(
+            ImageProvider.fromBitmap(emptyBitmap),
+            IconStyle().apply { scale = 0f; zIndex = -1f }
+        )
+        view.arrow.isVisible = false
+        view.accuracyCircle.fillColor = 0x222563EB.toInt()
+
+        val pinPlacemark = view.pin
+        pinPlacemark.setText("Moi", TextStyle().apply {
+            size = 12f; color = 0xFF003761.toInt()
+            outlineColor = 0xFFFFFFFF.toInt(); outlineWidth = 3f
+            placement = TextStyle.Placement.RIGHT; offset = 7f
+        })
+
+        pinPlacemark.useCompositeIcon().apply {
+            setIcon("shadow", circleImageProvider, IconStyle().apply {
+                anchor = PointF(0.5f, 0.5f); scale = 0.9f; zIndex = 0f
+            })
+            setIcon("stroke", profileStrokeImageProvider, IconStyle().apply {
+                anchor = PointF(0.5f, 1.0f); scale = 0.9f; zIndex = 1f
+            })
+            setIcon("avatar", userLocationImageProvider, IconStyle().apply {
+                anchor = PointF(0.5f, 1.45f); scale = 0.85f; zIndex = 2f
+            })
+        }
+    }
 
     private val inputListener = object : InputListener {
         override fun onMapTap(map: Map, point: Point) {
@@ -84,6 +114,7 @@ class MapController(private val context: Context) {
 
         override fun onObjectAdded(userLocationView: UserLocationView) {
             // Configuration initiale, une seule fois
+            lastUserLocationView = userLocationView
             configureUserLocationView(userLocationView)
             //isUserLocationConfigured = true
         }
@@ -91,71 +122,71 @@ class MapController(private val context: Context) {
         override fun onObjectUpdated(userLocationView: UserLocationView, objectEvent: ObjectEvent) {
             // Ne reconfigurer que si l'objet a été retiré puis réajouté
             // Évite le clignotement causé par la reconstruction répétée du CompositeIcon
-//            if (!isUserLocationConfigured) {
-//                configureUserLocationView(userLocationView)
-//                isUserLocationConfigured = true
-//            }
+            if (userLocationView != lastUserLocationView) {
+                lastUserLocationView = userLocationView
+                configureUserLocationView(userLocationView)
+            }
             // Yandex MapKit gère la position automatiquement, rien d'autre à faire ici
         }
 
         override fun onObjectRemoved(userLocationView: UserLocationView) {
             // L'objet a été retiré, forcer la reconfiguration au prochain onObjectAdded
-            //isUserLocationConfigured = false
+            lastUserLocationView = null
         }
 
-        private fun configureUserLocationView(view: UserLocationView) {
-            // 1. Remplacer le triangle Yandex par un bitmap transparent 1x1 px
-            // isVisible = false ne suffit pas — Yandex le redessine à chaque heading update
-            val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-            view.arrow.setIcon(
-                ImageProvider.fromBitmap(emptyBitmap),
-                IconStyle().apply {
-                    scale  = 0f
-                    zIndex = -1f
-                }
-            )
-            view.arrow.isVisible = false
-
-            // 2. Cercle de précision semi-transparent
-            view.accuracyCircle.fillColor = 0x222563EB.toInt()
-
-            val pinPlacemark = view.pin
-
-            // 3. Label "Moi"
-            pinPlacemark.setText("Moi", TextStyle().apply {
-                size         = 12f
-                color        = 0xFF003761.toInt()
-                outlineColor = 0xFFFFFFFF.toInt()
-                outlineWidth = 3f
-                placement    = TextStyle.Placement.RIGHT
-                offset       = 7f
-            })
-
-            // 4. Icône composite — construite une seule fois
-            pinPlacemark.useCompositeIcon().apply {
-
-                // Ombre au sol
-                setIcon("shadow", circleImageProvider, IconStyle().apply {
-                    anchor = PointF(0.5f, 0.5f)
-                    scale  = 0.9f
-                    zIndex = 0f
-                })
-
-                // Tige verticale bleue
-                setIcon("stroke", profileStrokeImageProvider, IconStyle().apply {
-                    anchor = PointF(0.5f, 1.0f)
-                    scale  = 0.9f
-                    zIndex = 1f
-                })
-
-                // Photo de profil ronde
-                setIcon("avatar", userLocationImageProvider, IconStyle().apply {
-                    anchor = PointF(0.5f, 1.45f)
-                    scale  = 0.85f
-                    zIndex = 2f
-                })
-            }
-        }
+//        private fun configureUserLocationView(view: UserLocationView) {
+//            // 1. Remplacer le triangle Yandex par un bitmap transparent 1x1 px
+//            // isVisible = false ne suffit pas — Yandex le redessine à chaque heading update
+//            val emptyBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
+//            view.arrow.setIcon(
+//                ImageProvider.fromBitmap(emptyBitmap),
+//                IconStyle().apply {
+//                    scale  = 0f
+//                    zIndex = -1f
+//                }
+//            )
+//            view.arrow.isVisible = false
+//
+//            // 2. Cercle de précision semi-transparent
+//            view.accuracyCircle.fillColor = 0x222563EB.toInt()
+//
+//            val pinPlacemark = view.pin
+//
+//            // 3. Label "Moi"
+//            pinPlacemark.setText("Moi", TextStyle().apply {
+//                size         = 12f
+//                color        = 0xFF003761.toInt()
+//                outlineColor = 0xFFFFFFFF.toInt()
+//                outlineWidth = 3f
+//                placement    = TextStyle.Placement.RIGHT
+//                offset       = 7f
+//            })
+//
+//            // 4. Icône composite — construite une seule fois
+//            pinPlacemark.useCompositeIcon().apply {
+//
+//                // Ombre au sol
+//                setIcon("shadow", circleImageProvider, IconStyle().apply {
+//                    anchor = PointF(0.5f, 0.5f)
+//                    scale  = 0.9f
+//                    zIndex = 0f
+//                })
+//
+//                // Tige verticale bleue
+//                setIcon("stroke", profileStrokeImageProvider, IconStyle().apply {
+//                    anchor = PointF(0.5f, 1.0f)
+//                    scale  = 0.9f
+//                    zIndex = 1f
+//                })
+//
+//                // Photo de profil ronde
+//                setIcon("avatar", userLocationImageProvider, IconStyle().apply {
+//                    anchor = PointF(0.5f, 1.45f)
+//                    scale  = 0.85f
+//                    zIndex = 2f
+//                })
+//            }
+//        }
     }
 
     private var currentSelectedPoint : Distributor? = null
@@ -224,23 +255,22 @@ class MapController(private val context: Context) {
         routesCollection         = null
         userLocationLayer        = null
         hasActiveRoute           = false
-        //isUserLocationConfigured = false  // Reset du flag au destroy
+        lastUserLocationView     = null  // Reset du flag au destroy
     }
 
     fun setLocationEnabled(enabled: Boolean) {
         if (enabled) {
-            // 🔥 Crucial : On réinitialise le flag pour forcer onObjectUpdated
-            // à dessiner l'icône composite si la carte est réactivée à chaud
-            //isUserLocationConfigured = false
-
+            // Si on réactive et qu'on a déjà une vue stockée, reconfigurer directement
             userLocationLayer?.isVisible           = true
             userLocationLayer?.isHeadingModeActive = false
             userLocationLayer?.isAutoZoomEnabled   = false
+
+            // Reconfigurer si la vue existe déjà mais n'a pas été reconfigurée
+            lastUserLocationView?.let { configureUserLocationView(it) }
         } else {
             userLocationLayer?.isVisible           = false
             userLocationLayer?.isHeadingModeActive = false
             userLocationLayer?.isAutoZoomEnabled   = false
-            //isUserLocationConfigured               = false
         }
     }
 

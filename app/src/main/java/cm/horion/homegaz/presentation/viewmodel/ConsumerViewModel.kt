@@ -61,6 +61,8 @@ class ConsumerViewModel(
 
     private var fetchJob: Job? = null
 
+    private var lastFetchTime = 0L
+
     init {
         viewModelScope.launch {
             // 1. Charge les bouteilles de gaz en local ou réseau
@@ -115,8 +117,8 @@ class ConsumerViewModel(
 
                 val request = com.google.android.gms.location.LocationRequest.Builder(
                     com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY,
-                    3000L
-                ).setMaxUpdates(1).build()
+                    10_000L
+                ).setMinUpdateDistanceMeters(50f).build()
 
                 locationCallback = object : com.google.android.gms.location.LocationCallback() {
                     override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
@@ -178,17 +180,20 @@ class ConsumerViewModel(
         val oldLng = _uiState.value.userLng
 
         if (oldLat != null && oldLng != null) {
-            // 💡 Calcule l'écart réel en mètres entre l'ancienne et la nouvelle position
             val distanceDeplacement = haversineKm(oldLat, oldLng, latitude, longitude) * 1000
 
-            // Si le déplacement est inférieur à 15 mètres, on ignore la mise à jour !
-            if (distanceDeplacement < 15.0) {
+            // ✅ Seuil relevé à 50m — absorbe le bruit GPS urbain
+            if (distanceDeplacement < 50.0) {
                 Log.d("Location", "Déplacement négligeable (${distanceDeplacement.toInt()}m). Ignoré.")
                 return
             }
         }
 
-        Log.d("Location", "Nouvelle position validée : latitude : $latitude, longitude : $longitude")
+        // ✅ Anti-spam : pas plus d'un fetch toutes les 30 secondes
+        val now = System.currentTimeMillis()
+        val shouldFetch = (now - lastFetchTime) > 30_000L
+
+        Log.d("Location", "Nouvelle position validée : $latitude, $longitude")
 
         _uiState.update {
             it.copy(
@@ -200,8 +205,10 @@ class ConsumerViewModel(
             )
         }
 
-        // Le fetch ne se lancera désormais que si l'utilisateur a réellement bougé de plus de 15m
-        fetch()
+        if (shouldFetch) {
+            lastFetchTime = now
+            fetch()
+        }
     }
 
     fun onDistanceChange(newDistance: String) {
