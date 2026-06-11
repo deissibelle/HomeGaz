@@ -162,7 +162,9 @@ class MapController(private val context: Context) {
     private var mapStyleJson          : String?      = null
     private var defaultCenter         : Point        = YAOUNDE_FALLBACK
 
+    // -------------------------------------------------------------------------
     // Cycle de vie
+    // -------------------------------------------------------------------------
 
     fun attachMapView(mv: MapView, initialLocation: android.location.Location? = null) {
         if (mapView != null) return
@@ -222,14 +224,14 @@ class MapController(private val context: Context) {
         routesCollection         = null
         userLocationLayer        = null
         hasActiveRoute           = false
-        isUserLocationConfigured = false
+        isUserLocationConfigured = false  // Reset du flag au destroy
     }
 
     fun setLocationEnabled(enabled: Boolean) {
         if (enabled) {
             userLocationLayer?.isVisible           = true
-            userLocationLayer?.isHeadingModeActive = false
-            userLocationLayer?.isAutoZoomEnabled   = false
+            userLocationLayer?.isHeadingModeActive = false  // Jamais true — sinon la caméra suit la rotation
+            userLocationLayer?.isAutoZoomEnabled   = false  // Désactive le zoom automatique
         } else {
             userLocationLayer?.isVisible           = false
             userLocationLayer?.isHeadingModeActive = false
