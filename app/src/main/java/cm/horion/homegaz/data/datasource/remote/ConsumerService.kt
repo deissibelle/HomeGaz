@@ -76,12 +76,12 @@ class ConsumerService(
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetProfile.path}") {
             accept(ContentType.Application.Json)
         }
-
+        Log.d("PROFILE",response.bodyAsText())
         if (response.status == HttpStatusCode.OK) {
             val responseText = response.bodyAsText()
             val profile = Json.decodeFromString<Profile>(responseText)
             loadProfile.save(profile)
-            return Response(true,"profile trouver")
+            return Response(true,"profile trouver",profile)
         } else {
             val responseText = response.bodyAsText()
             return Json.decodeFromString<Response>(responseText)

@@ -50,13 +50,14 @@ class GazProfileViewModel(
 
             // 2. Récupération de la source de données (Locale ou Distante via UseCase)
             val profile = loadProfile() ?: try {
+                Log.d("PROFILE","entrez ici")
                 consumerUseCase.getProfile().profile
             } catch (e: Exception) {
-                Log.e("PROFILE_LOAD", "Erreur lors de la récupération du profil distant", e)
+                Log.e("PROFILE", "Erreur lors de la récupération du profil distant", e)
                 null
             }
-            
 
+            Log.d("PROFILE",profile.toString())
             // Si aucun profil n'est trouvé nulle part, on s'arrête là
             if (profile == null) {
                 return@launch
