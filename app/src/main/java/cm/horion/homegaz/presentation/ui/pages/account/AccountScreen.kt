@@ -38,7 +38,7 @@ fun AccountScreen(navController: NavController) {
 
     var showDisplayPrefs by remember { mutableStateOf(false) }
 
-    if (isLoggedIn) {
+    if (!isLoggedIn) {
         AuthGuardScreen(
             authContext = AuthContext(
                 title       = stringResource(R.string.auth_title_account),

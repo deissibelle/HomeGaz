@@ -37,7 +37,7 @@ fun ReservationsScreen(
     navController : NavController,
     viewModel     : ReservationsViewModel,
 ) {
-    val isLoggedIn by remember { mutableStateOf(true) }
+    val isLoggedIn by remember { mutableStateOf(false) }
 
     val uiState     by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }

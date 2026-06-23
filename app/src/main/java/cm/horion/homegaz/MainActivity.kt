@@ -4,17 +4,25 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -22,8 +30,10 @@ import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
+import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.util.LocationUtils
 import com.google.android.gms.location.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,7 +47,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback   : LocationCallback
 
-    // Déclarer le lanceur de permission
+    // 1. Déclarer le lanceur de permission
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -47,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 checkGpsSettings()
             }
             else -> {
-                // Permission refusée : Gérer le cas
+                // Permission refusée : Gérer le cas (ex: afficher un message)
             }
         }
     }
@@ -59,39 +69,40 @@ class MainActivity : ComponentActivity() {
         //installSplashScreen()
         val splashScreen = installSplashScreen()
 
+        // Ferme le splash immédiatement sans attendre
+        //splashScreen.setKeepOnScreenCondition { false }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // ✅ La Splash Screen attend de manière déterministe le stockage ET la position géographique
         splashScreen.setKeepOnScreenCondition {
-            !homeViewModel.isDataReady || (homeViewModel.uiState.value.locationGranted && !homeViewModel.isLocationFetched)
+            !homeViewModel.isDataReady
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { loc ->
-                    // Met à jour l'UI en continu si l'utilisateur se déplace
                     homeViewModel.onLocationChanged(loc.latitude, loc.longitude)
                 }
             }
         }
 
-        // Démarre l'écouteur de flux uniquement pour suivre les changements à chaud après l'ouverture
         lifecycleScope.launch {
             homeViewModel.uiState.collect { state ->
-                // On ne démarre les mises à jour que si la permission est acquise ET qu'on ne l'a pas déjà fait
-                if (state.locationGranted && !isTrackingLocation) {
-                    startLocationUpdates()
-                }
+                if (state.locationGranted) startLocationUpdates()
             }
         }
 
         setContent {
-            RequestNotificationPermissionHandler()
             HomeGazTheme {
                 HomeGazApp(userPrefs = userPrefs)
+//                var showSplash by remember { mutableStateOf(true) }
+//                if (showSplash) {
+//                    HomeGazSplashScreen(onFinished = { showSplash = false })
+//                } else {
+//                    HomeGazApp(userPrefs = userPrefs)
+//                }
             }
         }
 
@@ -118,30 +129,24 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     fun startLocationUpdates() {
-        if (!::fusedLocationClient.isInitialized || isTrackingLocation) return
-
+        if (!::fusedLocationClient.isInitialized) return
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5_000L)
             .setMinUpdateDistanceMeters(10f)
             .build()
-
         fusedLocationClient.requestLocationUpdates(
             request, locationCallback, Looper.getMainLooper()
         )
-        isTrackingLocation = true // ✅ On marque que l'écouteur est branché
     }
 
     override fun onResume() {
         super.onResume()
-        if (homeViewModel.uiState.value.locationGranted && !isTrackingLocation) {
-            startLocationUpdates()
-        }
+        if (homeViewModel.uiState.value.locationGranted) startLocationUpdates()
     }
 
     override fun onPause() {
         super.onPause()
-        if (::fusedLocationClient.isInitialized && isTrackingLocation) {
+        if (::fusedLocationClient.isInitialized) {
             fusedLocationClient.removeLocationUpdates(locationCallback)
-            isTrackingLocation = false
         }
     }
 
@@ -158,26 +163,79 @@ class MainActivity : ComponentActivity() {
                 .show()
         }
     }
-
-    @Composable
-    fun RequestNotificationPermissionHandler() {
-        val notificationPermissionLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission()
-        ) { isGranted ->
-            if (isGranted) {
-                Log.d("PAYEMENT", "Permission de notification accordée par l'utilisateur !")
-            } else {
-                Log.d("PAYEMENT", "Permission de notification refusée.")
-            }
-        }
-
-        LaunchedEffect(Unit) {
-            // La permission POST_NOTIFICATIONS n'existe et n'est requise qu'à partir d'Android 13 (API 33)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
-    }
-
 }
 
+
+@Composable
+private fun HomeGazSplashScreen(onFinished: () -> Unit) {
+
+    val isDark     = isSystemInDarkTheme()
+    val background = if (isDark) Color(0xFF0D1B2A) else Color.White
+
+    val scale      = remember { Animatable(0.7f) }
+    val alpha      = remember { Animatable(0f) }
+    val orionAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch {
+            scale.animateTo(
+                targetValue   = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness    = Spring.StiffnessMediumLow
+                )
+            )
+        }
+        launch {
+            alpha.animateTo(
+                targetValue   = 1f,
+                animationSpec = tween(durationMillis = 500, easing = EaseOut)
+            )
+        }
+        delay(600L)
+        orionAlpha.animateTo(
+            targetValue   = 1f,
+            animationSpec = tween(durationMillis = 400, easing = EaseOut)
+        )
+        delay(1_400L)
+        launch {
+            alpha.animateTo(
+                targetValue   = 0f,
+                animationSpec = tween(durationMillis = 350, easing = EaseIn)
+            )
+        }
+        orionAlpha.animateTo(
+            targetValue   = 0f,
+            animationSpec = tween(durationMillis = 350, easing = EaseIn)
+        )
+        onFinished()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(background)
+            .systemBarsPadding()
+    ) {
+        Image(
+            painter            = painterResource(id = if(isDark) R.drawable.logoblanc  else R.drawable.logo_splash),
+            contentDescription = "Logo HomeGaz",
+            modifier           = Modifier
+                .align(Alignment.Center)
+                .size(110.dp)
+                .scale(scale.value)
+                .alpha(alpha.value)
+        )
+        Image(
+            painter  = painterResource(
+                id = if (isDark) R.drawable.by_orion_white else R.drawable.by_orion
+            ),
+            contentDescription = "by Orion",
+            modifier           = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 52.dp)
+                .height(18.dp)
+                .alpha(orionAlpha.value)
+        )
+    }
+}
