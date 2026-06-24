@@ -25,7 +25,6 @@ fun LocationPermissionScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()
         .background(MaterialTheme.colorScheme.background)
-
     ) {
         LocationBackground()
 
