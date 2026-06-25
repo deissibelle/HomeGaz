@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,13 +26,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import cm.horion.homegaz.data.security.AuthState
+import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.util.LocationUtils
+import cm.horion.homegaz.util.isExpiredSoon
 import com.google.android.gms.location.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,26 +48,23 @@ class MainActivity : ComponentActivity() {
 
     private val userPrefs : UserPreferencesRepository by inject()
     private val homeViewModel: ConsumerViewModel by viewModel()
+    private val userSettings: UserDataStore by inject()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback   : LocationCallback
+    private lateinit var ssoClient: OrionSsoClient
 
-    // 1. Déclarer le lanceur de permission
+    private var isAuthStoreReady = false
+
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                // Permission accordée, on vérifie maintenant si le GPS est activé
-                checkGpsSettings()
-            }
-            else -> {
-                // Permission refusée : Gérer le cas (ex: afficher un message)
-            }
+        if (permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false)) {
+            checkGpsSettings()
         }
     }
 
-    private var isTrackingLocation = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -89,24 +91,72 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
+            // 1. On charge d'abord le token actuellement stocké localement
+            userSettings.onAppStart()
+
+            // 2. On vérifie s'il a besoin d'être rafraîchi
+            val needsLogin = checkAndRefreshIfNeeded()
+
+            if (needsLogin) {
+                ssoClient.launchAuth()
+            }
+
+            // 3. Tout est prêt, on libère le Splash Screen
+            isAuthStoreReady = true
+
+            // Écoute de la géoloc
             homeViewModel.uiState.collect { state ->
                 if (state.locationGranted) startLocationUpdates()
             }
         }
 
+        ssoClient = OrionSsoClient(
+            activity = this,
+            serviceName = "GAZ",
+            onLoginSuccess = { exchangeToken ->
+                println("HomeGaz SSO Success: Nouveau jeton reçu -> $exchangeToken")
+                lifecycleScope.launch {
+                    userSettings.onLoginSuccess(exchangeToken)
+                }
+            },
+            onLogoutSuccess = {
+                lifecycleScope.launch { userSettings.logout() }
+            },
+            onErrorOrCancel = { message ->
+                println("SSO HomeGaz Info/Erreur: $message")
+            }
+        )
+
         setContent {
+            val token by userSettings.tokenFlow.collectAsStateWithLifecycle()
+            val isLoggedIn = token != null
+
             HomeGazTheme {
-                HomeGazApp(userPrefs = userPrefs)
-//                var showSplash by remember { mutableStateOf(true) }
-//                if (showSplash) {
-//                    HomeGazSplashScreen(onFinished = { showSplash = false })
-//                } else {
-//                    HomeGazApp(userPrefs = userPrefs)
-//                }
+                HomeGazApp(
+                    userPrefs = userPrefs,
+                    isLoggedIn = isLoggedIn,
+                    onSsoLoginCall = { ssoClient.launchAuth() },
+                    onSsoLogoutCall = { ssoClient.startLogout() }
+                )
             }
         }
 
         checkAndRequestLocation()
+    }
+
+
+    private suspend fun checkAndRefreshIfNeeded(): Boolean {
+        val currentToken = userSettings.getExchangeToken() ?: return false
+
+        val expired = currentToken.isExpiredSoon() ?: true
+
+        return if (expired) {
+            println("Le token local est expiré ou va expirer, demande de rafraîchissement...")
+            true // On signale qu'un rafraîchissement via le SSO est requis
+        } else {
+            println("Le token local est encore parfaitement valide.")
+            false // Rien à faire
+        }
     }
 
     private fun checkAndRequestLocation() {

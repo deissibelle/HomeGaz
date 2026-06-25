@@ -208,26 +208,26 @@ fun AuthGuardScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Bouton secondaire
-            OutlinedButton(
-                onClick  = onRegisterClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .graphicsLayer(alpha = btnAlpha, translationY = btnOffsetY),
-                shape    = RoundedCornerShape(16.dp),
-                border   = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)),
-                colors   = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-                    text       = stringResource(R.string.auth_register_btn),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize   = 15.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
+//            OutlinedButton(
+//                onClick  = onRegisterClick,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(54.dp)
+//                    .graphicsLayer(alpha = btnAlpha, translationY = btnOffsetY),
+//                shape    = RoundedCornerShape(16.dp),
+//                border   = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.55f)),
+//                colors   = ButtonDefaults.outlinedButtonColors(
+//                    contentColor = MaterialTheme.colorScheme.primary
+//                )
+//            ) {
+//                Text(
+//                    text       = stringResource(R.string.auth_register_btn),
+//                    fontWeight = FontWeight.SemiBold,
+//                    fontSize   = 15.sp
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.height(20.dp))
 
             //  Séparateur
             Row(
@@ -238,31 +238,31 @@ fun AuthGuardScreen(
                     modifier = Modifier.weight(1f),
                     color    = MaterialTheme.colorScheme.outlineVariant
                 )
-                Text(
-                    text  = "  ${stringResource(R.string.auth_or_separator)}  ",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline,
-                )
+//                Text(
+//                    text  = "  ${stringResource(R.string.auth_or_separator)}  ",
+//                    style = MaterialTheme.typography.labelSmall,
+//                    color = MaterialTheme.colorScheme.outline,
+//                )
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
                     color    = MaterialTheme.colorScheme.outlineVariant
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // Mot de passe oublié
-            TextButton(
-                onClick  = onForgotPasswordClick,
-                modifier = Modifier.graphicsLayer(alpha = btnAlpha)
-            ) {
-                Text(
-                    text       = stringResource(R.string.auth_forgot_password),
-                    color      = MaterialTheme.colorScheme.secondary,
-                    fontSize   = 14.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+//            Spacer(modifier = Modifier.height(4.dp))
+//
+//            // Mot de passe oublié
+//            TextButton(
+//                onClick  = onForgotPasswordClick,
+//                modifier = Modifier.graphicsLayer(alpha = btnAlpha)
+//            ) {
+//                Text(
+//                    text       = stringResource(R.string.auth_forgot_password),
+//                    color      = MaterialTheme.colorScheme.secondary,
+//                    fontSize   = 14.sp,
+//                    fontWeight = FontWeight.Medium
+//                )
+//            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

@@ -1,5 +1,9 @@
 package cm.horion.homegaz.presentation.ui.pages.account
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,28 +32,33 @@ import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
 import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.compose.koinInject
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AccountScreen(navController: NavController) {
-    val isLoggedIn by remember { mutableStateOf(false) }
+fun AccountScreen(
+    navController: NavController,
+    onSsoLogoutCall: () -> Unit
+) {
+    //val isLoggedIn by remember { mutableStateOf(false) }
 
     val themeViewModel : ThemeViewModel = koinInject()
     val prefs by themeViewModel.prefs.collectAsStateWithLifecycle()
 
     var showDisplayPrefs by remember { mutableStateOf(false) }
 
-    if (!isLoggedIn) {
-        AuthGuardScreen(
-            authContext = AuthContext(
-                title       = stringResource(R.string.auth_title_account),
-                description = stringResource(R.string.auth_desc_account),
-                icon        = Icons.Outlined.Person
-            ),
-            onLoginClick          = { },
-            onRegisterClick       = { },
-            onForgotPasswordClick = { }
-        )
-    } else {
+//    if (!isLoggedIn) {
+//        AuthGuardScreen(
+//            authContext = AuthContext(
+//                title       = stringResource(R.string.auth_title_account),
+//                description = stringResource(R.string.auth_desc_account),
+//                icon        = Icons.Outlined.Person
+//            ),
+//            onLoginClick          = { },
+//            onRegisterClick       = { },
+//            onForgotPasswordClick = { }
+//        )
+//    } else {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
             topBar = {
@@ -141,7 +150,9 @@ fun AccountScreen(navController: NavController) {
 
                     // Déconnexion
                     Button(
-                        onClick  = { },
+                        onClick  = {
+                            onSsoLogoutCall()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -172,7 +183,7 @@ fun AccountScreen(navController: NavController) {
                 }
             }
         }
-    }
+
 
     // Dialog préférences d'affichage
     if (showDisplayPrefs) {
@@ -184,3 +195,6 @@ fun AccountScreen(navController: NavController) {
         )
     }
 }
+
+
+

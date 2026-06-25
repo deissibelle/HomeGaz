@@ -70,7 +70,7 @@
     </application>
 
     <queries>
-        <package android:name="cm.daccvo.auth" />
+        <package android:name="io.horion.service_auth_orion" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="authapp" android:host="login" />

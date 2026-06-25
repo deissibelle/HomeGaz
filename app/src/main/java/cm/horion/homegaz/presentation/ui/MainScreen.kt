@@ -13,10 +13,16 @@ import cm.horion.homegaz.presentation.ui.pages.reservations.ReservationsScreen
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.auth.AuthContext
+import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
 import cm.horion.homegaz.presentation.ui.pages.home.HomeScreen
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 
@@ -38,7 +44,11 @@ fun MainScreen(
     consumerViewModel     : ConsumerViewModel,
     onRequestLocation     : () -> Unit,
     onRouteClick          : (lat: Double, lng: Double) -> Unit = { _, _ -> },
-    initialTab            : String = Tab.HOME.label
+    initialTab            : String = Tab.HOME.label,
+
+    isLoggedIn            : Boolean,
+    onSsoLoginCall        : () -> Unit,
+    onSsoLogoutCall       : () -> Unit
 ) {
     var selectedTab by remember(initialTab) { mutableStateOf(Tab.fromLabel(initialTab)) }
 
@@ -84,11 +94,27 @@ fun MainScreen(
 
             // Les autres onglets peuvent être créés/détruits librement
             // car ils ne contiennent pas d'objets JNI natifs à préserver.
+
             if (selectedTab == Tab.RESERVATIONS) {
-                ReservationsScreen(
-                    navController = navController,
-                    viewModel     = reservationsViewModel
-                )
+                if (!isLoggedIn) {
+                    AuthGuardScreen(
+                        authContext = AuthContext(
+                            title       = stringResource(cm.horion.homegaz.R.string.auth_title_reservations),
+                            description = stringResource(R.string.auth_desc_reservations),
+                            icon        = Icons.Default.ReceiptLong,
+                        ),
+                        onLoginClick          = onSsoLoginCall,
+                        onRegisterClick       = onSsoLoginCall,
+                        onForgotPasswordClick = {},
+                    )
+
+                } else {
+                    ReservationsScreen(
+                        navController = navController,
+                        viewModel     = reservationsViewModel
+                    )
+                }
+
             }
 
             if (selectedTab == Tab.ADVICES) {
@@ -96,7 +122,24 @@ fun MainScreen(
             }
 
             if (selectedTab == Tab.ACCOUNT) {
-                AccountScreen(navController = navController)
+                if (!isLoggedIn) {
+                    AuthGuardScreen(
+                        authContext = AuthContext(
+                            title       = stringResource(cm.horion.homegaz.R.string.auth_title_reservations),
+                            description = stringResource(R.string.auth_desc_reservations),
+                            icon        = Icons.Default.ReceiptLong,
+                        ),
+                        onLoginClick          = onSsoLoginCall,
+                        onRegisterClick       = onSsoLoginCall,
+                        onForgotPasswordClick = {},
+                    )
+
+                } else {
+                    AccountScreen(
+                        navController = navController,
+                        onSsoLogoutCall = onSsoLogoutCall
+                    )
+                }
             }
         }
     }

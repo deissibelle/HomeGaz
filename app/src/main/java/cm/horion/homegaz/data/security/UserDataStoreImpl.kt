@@ -42,6 +42,7 @@ class UserDataStoreImpl(
         }
     }
 
+
     override fun onAppStart() {
         scope.launch {
             // Au démarrage, on va lire le stockage sécurisé en tâche de fond
@@ -51,10 +52,8 @@ class UserDataStoreImpl(
         }
     }
 
-    override fun onLoginSuccess(token: String) {
-        scope.launch {
-            setExchangeToken(token)
-        }
+    override suspend fun onLoginSuccess(token: String) {
+        setExchangeToken(token)
     }
 
     override fun logout() {
@@ -77,17 +76,5 @@ class UserDataStoreImpl(
         }
         _tokenFlow.value = null
     }
-
-//    private suspend fun refreshIfNecessary(currentToken: String): Boolean =
-//        withContext(Dispatchers.IO) {
-//            if (!currentToken.isExpiredSoon()) return@withContext true
-//
-//            return@withContext try {
-//                val response = authRepository.refreshToken()
-//                response != null && response.success
-//            } catch (e: Exception) {
-//                false
-//            }
-//        }
 
 }

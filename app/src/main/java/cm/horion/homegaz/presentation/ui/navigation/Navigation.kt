@@ -42,7 +42,13 @@ import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeGazApp(userPrefs: UserPreferencesRepository) {
+fun HomeGazApp(
+    userPrefs: UserPreferencesRepository,
+
+    isLoggedIn            : Boolean,
+    onSsoLoginCall        : () -> Unit,
+    onSsoLogoutCall       : () -> Unit
+) {
 
     val navController = rememberNavController()
 
@@ -130,7 +136,10 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                     navController.navigate(Screen.LocationPermission.route) {
                         launchSingleTop = true
                     }
-                }
+                },
+                isLoggedIn = isLoggedIn,
+                onSsoLoginCall = onSsoLoginCall,
+                onSsoLogoutCall = onSsoLogoutCall
             )
         }
 
@@ -152,7 +161,10 @@ fun HomeGazApp(userPrefs: UserPreferencesRepository) {
                     navController.navigate(Screen.LocationPermission.route) {
                         launchSingleTop = true
                     }
-                }
+                },
+                isLoggedIn = isLoggedIn,
+                onSsoLoginCall = onSsoLoginCall,
+                onSsoLogoutCall = onSsoLogoutCall
             )
         }
 

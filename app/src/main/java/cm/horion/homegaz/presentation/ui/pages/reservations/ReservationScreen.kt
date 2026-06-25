@@ -56,19 +56,19 @@ fun ReservationsScreen(
         }
     }
 
-    if (!isLoggedIn) {
-        AuthGuardScreen(
-            authContext = AuthContext(
-                title       = stringResource(R.string.auth_title_reservations),
-                description = stringResource(R.string.auth_desc_reservations),
-                icon        = Icons.Default.ReceiptLong,
-            ),
-            onLoginClick          = {},
-            onRegisterClick       = {},
-            onForgotPasswordClick = {},
-        )
-        return
-    }
+//    if (!isLoggedIn) {
+//        AuthGuardScreen(
+//            authContext = AuthContext(
+//                title       = stringResource(R.string.auth_title_reservations),
+//                description = stringResource(R.string.auth_desc_reservations),
+//                icon        = Icons.Default.ReceiptLong,
+//            ),
+//            onLoginClick          = {},
+//            onRegisterClick       = {},
+//            onForgotPasswordClick = {},
+//        )
+//        return
+//    }
 
     AnimatedContent(
         targetState   = selectedReservation,
