@@ -40,12 +40,5 @@ class ReservationsViewModel : ViewModel() {
     }
 
 
-    fun addReservationFromOrder(summary: OrderSummary) {
-        val newReservation = summary.toReservation()
-        _uiState.update { current ->
-            current.copy(
-                reservations = listOf(newReservation) + current.reservations
-            )
-        }
+
     }
-}

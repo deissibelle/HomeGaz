@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cm.horion.homegaz.data.datasource.local.GazBottleLocal
+import cm.horion.homegaz.data.datasource.remote.GazBottleLocal
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.consommateur.dto.GazType

@@ -81,8 +81,8 @@ class PaymentViewModel(
         val normalized = normalizePhone(phone)
         if (normalized.length != 9) return false
 
-        val prefix2 = normalized.take(2)   // ex: "69"
-        val prefix3 = normalized.take(3)   // ex: "655"
+        val prefix2 = normalized.take(2)
+        val prefix3 = normalized.take(3)
 
         return when (method) {
             PaymentMethod.OM ->
@@ -94,7 +94,7 @@ class PaymentViewModel(
 
 
     fun phoneErrorMessage(phone: String, method: PaymentMethod): String? {
-        if (phone.isBlank()) return null  // pas d'erreur si champ vide (géré par isFormValid)
+        if (phone.isBlank()) return null
         val normalized = normalizePhone(phone)
         if (normalized.length != 9) return "Numéro invalide (9 chiffres requis)"
         return if (!isPhoneValidForMethod(phone, method)) {
