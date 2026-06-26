@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
             val needsLogin = checkAndRefreshIfNeeded()
 
             if (needsLogin) {
-                ssoClient.launchAuth()
+                ssoClient.startExchange()
             }
 
             // 3. Tout est prêt, on libère le Splash Screen
@@ -129,7 +129,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val token by userSettings.tokenFlow.collectAsStateWithLifecycle()
-            val isLoggedIn = token != null
+            val isLoggedIn = if(token != null && token?.isExpiredSoon() == false){
+                true
+            } else {
+                false
+            }
 
             HomeGazTheme {
                 HomeGazApp(
