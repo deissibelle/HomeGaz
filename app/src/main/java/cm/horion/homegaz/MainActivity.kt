@@ -85,7 +85,11 @@ class MainActivity : ComponentActivity() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { loc ->
-                    homeViewModel.onLocationChanged(loc.latitude, loc.longitude)
+                    homeViewModel.onLocationChanged(
+                        loc.latitude,
+                        loc.longitude,
+                        loc.accuracy   // ✅ passe la précision GPS
+                    )
                 }
             }
         }
