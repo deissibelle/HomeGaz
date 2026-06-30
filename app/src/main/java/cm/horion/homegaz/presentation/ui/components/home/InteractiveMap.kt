@@ -64,6 +64,7 @@ fun InteractiveMap(
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
+            //controller.destroy()
         }
     }
 
@@ -120,8 +121,7 @@ fun InteractiveMap(
                 onRecenterClick() // Gère la demande de permission
 
                 if (locationGranted) {
-                    // 💡 Au lieu de faire un getCurrentLocation() ici,
-                    // force le ViewModel à ré-exécuter sa logique de détection propre
+
                     fetch()
 
                     // Et recentre immédiatement sur les dernières données stables connues

@@ -1,5 +1,8 @@
 package cm.horion.homegaz.presentation.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,9 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.auth.AuthContext
 import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
@@ -65,6 +70,23 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+
+//            val consumerState by consumerViewModel.uiState.collectAsState()
+//            AnimatedVisibility(
+//                visible  = consumerState.isRefiningLocation,
+//                enter    = fadeIn(),
+//                exit     = fadeOut(),
+//                modifier = Modifier.align(Alignment.TopCenter)
+//            ) {
+//                LinearProgressIndicator(
+//                    modifier   = Modifier
+//                        .fillMaxWidth()
+//                        .height(3.dp),
+//                    color      = MaterialTheme.colorScheme.primary,
+//                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+//                )
+//            }
+
             // ─────────────────────────────────────────────────────────────────
             // HOME : toujours dans la composition, jamais détruit.
             // graphicsLayer(alpha=0) le rend invisible sans le retirer du tree.
