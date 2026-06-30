@@ -316,7 +316,7 @@ class MapController(private val context: Context) {
             val isSelected = entry.point.id == point?.id
             entry.composite.setIconStyle("pin", IconStyle().apply {
                 anchor = PointF(0.5f, 1.0f)
-                scale  = if (isSelected) 0.75f else 0.55f
+                scale  = if (isSelected) 1.5f else 1f
                 zIndex = if (isSelected) 100f  else 0f
             })
         }
@@ -409,13 +409,13 @@ class MapController(private val context: Context) {
         val composite = pm.useCompositeIcon().apply {
             setIcon("pin", markerImageProvider, IconStyle().apply {
                 anchor = PointF(0.5f, 1.0f)
-                scale  = 0.55f
+                scale  =1f
                 zIndex = 0f
             })
             setIcon("point", circleImageProvider, IconStyle().apply {
                 anchor = PointF(0.5f, 0.5f)
                 flat   = true
-                scale  = 0.05f
+                scale  = 0.5f
             })
         }
 

@@ -34,7 +34,6 @@
     <!-- Distribution Point Sheet (Détails) -->
     <string name="home_sheet_distance">À %1$s de vous</string>
     <string name="home_sheet_btn_route">Itinéraire</string>
-    <string name="home_sheet_btn_order">Acheter</string>
 
     <!-- Bottom Navigation Bar -->
     <string name="nav_home">Accueil</string>
@@ -145,7 +144,9 @@
     <string name="payment_method_momo" translatable="false">MTN MoMo</string>
     <string name="recenter_btn">Recentrer</string>
     <string name="total_amount">Montant Total</string>
-
+    <string name="home_sheet_btn_order">Commander</string>
+    <string name="home_sheet_point_category">Station-service</string>
+    <string name="home_sheet_image_desc">Photo de la station %s</string>
 
     <!-- Profil Gaz -->
     <string name="gaz_profile_title">Mon Profil Gaz</string>
