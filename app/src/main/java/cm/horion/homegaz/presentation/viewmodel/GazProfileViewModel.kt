@@ -7,7 +7,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cm.horion.homegaz.data.datasource.local.GazBottleLocal
+import cm.horion.homegaz.data.datasource.remote.GazBottleLocal
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.gazprofile.CameroonData
 import cm.horion.homegaz.domain.model.gazprofile.GazProfile

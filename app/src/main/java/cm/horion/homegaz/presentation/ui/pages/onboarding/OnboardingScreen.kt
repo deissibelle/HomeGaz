@@ -194,41 +194,6 @@ fun OnboardingPage(page: Onboarding) {
             )
 
             if (page.image == R.drawable.map) {
-
-                MapLabelRaw(
-                    text = "Algo gaz",
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(start = 75.dp, top = 45.dp)
-                )
-
-                MapLabelRaw(
-                    text = "Globus gaz",
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 40.dp, start = 10.dp)
-                )
-
-                MapLabelRaw(
-                    text = "Comex",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(end = 55.dp, top = 30.dp)
-                )
-
-                MapLabelRaw(
-                    text = "InterCom",
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(end = 20.dp, bottom = 40.dp)
-                )
-                MapLabelRaw(
-                    text = "Total",
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 30.dp, bottom = 90.dp)
-                )
-
                 MapLabelRaw(
                     text = "Moi",
                     modifier = Modifier

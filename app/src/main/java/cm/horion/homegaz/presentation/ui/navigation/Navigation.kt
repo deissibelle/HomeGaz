@@ -1,7 +1,6 @@
 package cm.horion.homegaz.presentation.ui.navigation
 
 import android.Manifest
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
@@ -13,15 +12,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import cm.horion.homegaz.domain.model.common.Screen
-import cm.horion.homegaz.domain.model.distributor.DeliveryOption
-import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
@@ -67,15 +63,9 @@ fun HomeGazApp(
     val consumerViewModel: ConsumerViewModel = koinViewModel()
     val distributorViewModel  : DistributorDetailViewModel = koinViewModel()
     val reservationsViewModel: ReservationsViewModel = koinViewModel()
-    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
     val sharedUiState by distributorViewModel.uiState.collectAsState()
 
-    var currentBrand        by remember { mutableStateOf("") }
-    var currentWeight       by remember { mutableStateOf("") }
-    var currentUnitPrice    by remember { mutableIntStateOf(0) }
-    var currentQuantity     by remember { mutableIntStateOf(1) }
-    var currentDelivery     by remember { mutableStateOf(DeliveryOption.LIVRAISON) }
-    var currentOrderSummary by remember { mutableStateOf<OrderSummary?>(null) }
+
 
     NavHost(
         navController    = navController,
@@ -274,7 +264,6 @@ fun HomeGazApp(
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     } else {
-                        // Si échec -> "Réessayer le paiement" : on le renvoie sagement à l'étape du choix de paiement/téléphone
                         distributorViewModel.cleanPayment()
                         navController.popBackStack(Screen.Payment.route, false)
                     }

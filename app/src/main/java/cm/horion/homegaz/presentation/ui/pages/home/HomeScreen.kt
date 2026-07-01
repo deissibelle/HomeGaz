@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -18,7 +18,6 @@ import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
 import cm.horion.homegaz.domain.model.consommateur.dto.GazType
 import cm.horion.homegaz.presentation.ui.components.home.*
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
-import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 private sealed class PendingAction {
@@ -39,11 +38,6 @@ fun HomeScreen(
     val mapController = remember { MapController(context) }
     var pendingAction by remember { mutableStateOf<PendingAction?>(null) }
 
-    val markerScreenXState = remember { mutableStateOf<Float?>(null) }
-    val markerScreenYState = remember { mutableStateOf<Float?>(null) }
-    val markerScreenX by markerScreenXState
-    val markerScreenY by markerScreenYState
-
     // Extraction dynamique des distributeurs proposant du BUTANE
     val distributorOptions = remember(uiState.availableBottles) {
         val butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
@@ -55,12 +49,10 @@ fun HomeScreen(
         }
     }
 
-// Extraction dynamique des tailles/poids disponibles en BUTANE
+    // Extraction dynamique des tailles/poids disponibles en BUTANE
     val weightOptions = remember(uiState.availableBottles, uiState.selectedDistributor) {
-        // On filtre d'abord par BUTANE
         var butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
-        //  Si un distributeur est déjà sélectionné, on ne montre que ses tailles à lui
         if (uiState.selectedDistributor.isNotEmpty()) {
             butaneBottles = butaneBottles.filter { it.company.name == uiState.selectedDistributor }
         }
@@ -72,15 +64,9 @@ fun HomeScreen(
         }
     }
 
-
-
     SideEffect {
-        mapController.onPointClick           = { point -> consumerViewModel.onPointClick(point) }
-        mapController.onDismissPopup         = { consumerViewModel.onDismissPopup() }
-        mapController.onMarkerScreenPosition = { x, y ->
-            markerScreenXState.value = x
-            markerScreenYState.value = y
-        }
+        mapController.onPointClick   = { point -> consumerViewModel.onPointClick(point) }
+        mapController.onDismissPopup = { consumerViewModel.onDismissPopup() }
     }
 
     LaunchedEffect(uiState.locationGranted) {
@@ -114,117 +100,105 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(uiState.selectedPoint?.id) {
-        if (uiState.selectedPoint == null) {
-            markerScreenXState.value = null
-            markerScreenYState.value = null
-        }
-    }
     val isDark = isSystemInDarkTheme()
+
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Text(
             text = "HomeGaz",
             modifier = Modifier.padding(start = 24.dp, bottom = 8.dp),
             style = MaterialTheme.typography.titleLarge,
             color = if (isDark) Color.White else MaterialTheme.colorScheme.primary,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-        )
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        InteractiveMap(
-            controller        = mapController,
-            points            = uiState.allPoints,
-            selectedPoint     = uiState.selectedPoint,
-            locationGranted   = uiState.locationGranted,
-            selectedDistance  = uiState.selectedDistance,
-            userLat           = uiState.userLat,
-            userLng           = uiState.userLng,
-            routePoints       = uiState.routePolyline,
-            routeBoundingBox  = uiState.routeBoundingBox,
-            onRecenterClick   = { if (!uiState.locationGranted) onRequestLocation() },
-            fetch   = { consumerViewModel.fetch() },
-            onLocationFetched = { lat, lng -> consumerViewModel.onLocationChanged(lat, lng) },
-            modifier          = Modifier.fillMaxSize()
+            fontWeight = FontWeight.Bold
         )
 
-        HomeFilterCard(
-            modifier            = Modifier.align(Alignment.TopCenter),
-            distributor         = uiState.selectedDistributor,
-            onDistributorChange = { brand ->
-                consumerViewModel.onDismissPopup()
-                consumerViewModel.onDistributorChange(brand)
-            },
-            distance            = uiState.selectedDistance,
-            onDistanceChange    = { dist ->
-                consumerViewModel.onDismissPopup()
-                consumerViewModel.onDistanceChange(dist)
-            },
-            weight              = uiState.selectedWeight,
-            onWeightChange      = { weight ->
-                consumerViewModel.onDismissPopup()
-                consumerViewModel.onWeightChange(weight)
+        Box(modifier = Modifier.fillMaxSize()) {
 
-                // Met à jour le battleUuid du ViewModel pour cibler la bonne bouteille sur l'API
-                if (weight == "Tous") {
-                    consumerViewModel.onBattleUuidChange("")
-                } else {
-                    val matchingBottle = uiState.availableBottles.find { "${it.gazSize.size} kg" == weight }
-                    matchingBottle?.let { consumerViewModel.onBattleUuidChange(it.uuid) }
-                }
-            },
-            onRefresh           = { runWithLocation(PendingAction.Refresh) },
-            distributorOptions  = distributorOptions,
-            distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
-            weightOptions       = weightOptions
-        )
+            InteractiveMap(
+                controller        = mapController,
+                points            = uiState.allPoints,
+                selectedPoint     = uiState.selectedPoint,
+                locationGranted   = uiState.locationGranted,
+                selectedDistance  = uiState.selectedDistance,
+                userLat           = uiState.userLat,
+                userLng           = uiState.userLng,
+                routePoints       = uiState.routePolyline,
+                routeBoundingBox  = uiState.routeBoundingBox,
+                onRecenterClick   = { if (!uiState.locationGranted) onRequestLocation() },
+                fetch             = { consumerViewModel.fetch() },
+                onLocationFetched = { lat, lng -> consumerViewModel.onLocationChanged(lat, lng) },
+                modifier          = Modifier.fillMaxSize()
+            )
 
-        val selectedPoint = uiState.selectedPoint
-        val sx = markerScreenX
-        val sy = markerScreenY
+            HomeFilterCard(
+                modifier            = Modifier.align(Alignment.TopCenter),
+                distributor         = uiState.selectedDistributor,
+                onDistributorChange = { brand ->
+                    consumerViewModel.onDismissPopup()
+                    consumerViewModel.onDistributorChange(brand)
+                },
+                distance            = uiState.selectedDistance,
+                onDistanceChange    = { dist ->
+                    consumerViewModel.onDismissPopup()
+                    consumerViewModel.onDistanceChange(dist)
+                },
+                weight              = uiState.selectedWeight,
+                onWeightChange      = { weight ->
+                    consumerViewModel.onDismissPopup()
+                    consumerViewModel.onWeightChange(weight)
 
-        if (selectedPoint != null && sx != null && sy != null) {
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                val density = LocalDensity.current
-                val screenWidthPx  = with(density) { maxWidth.toPx() }
-                val screenHeightPx = with(density) { maxHeight.toPx() }
-                val cardWidthPx    = with(density) { 186.dp.toPx() }
-                val cardHeightPx   = with(density) { 220.dp.toPx() }
-                val marginPx       = with(density) { 16.dp.toPx() }
+                    if (weight == "Tous") {
+                        consumerViewModel.onBattleUuidChange("")
+                    } else {
+                        val matchingBottle = uiState.availableBottles.find { "${it.gazSize.size} kg" == weight }
+                        matchingBottle?.let { consumerViewModel.onBattleUuidChange(it.uuid) }
+                    }
+                },
+                onRefresh           = { runWithLocation(PendingAction.Refresh) },
+                distributorOptions  = distributorOptions,
+                distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
+                weightOptions       = weightOptions
+            )
 
-                val isMarkerOnRight = sx > cardWidthPx + marginPx * 2
-                val offsetXPx = if (isMarkerOnRight) sx - cardWidthPx - marginPx else if (sx + cardWidthPx + marginPx * 2 < screenWidthPx) sx + marginPx else (screenWidthPx - cardWidthPx) / 2f
-                val offsetYPx = (sy - cardHeightPx / 2f).coerceAtLeast(marginPx).coerceAtMost(screenHeightPx - cardHeightPx - marginPx)
 
-                Box(modifier = Modifier.offset(x = with(density) { offsetXPx.toDp() }, y = with(density) { offsetYPx.toDp() })) {
-                    DistributionPointSheet(
-                        point = selectedPoint,
-                        isMarkerOnRight = isMarkerOnRight,
-                        onBuyClick = {
-                            consumerViewModel.onDismissPopup()
-                            navController.navigate(Screen.DistributorDetail.createRoute(selectedPoint.enterpriseUuid!!))
-                        },
-                        onRouteClick = {
-                            if (uiState.locationGranted) {
-                                consumerViewModel.calculateRouteToPoint(selectedPoint.address.location.latitude, selectedPoint.address.location.longitude)
-                            } else {
-                                pendingAction = PendingAction.ClickPoint(selectedPoint.id)
-                                onRequestLocation()
-                            }
+            uiState.selectedPoint?.let { selectedPoint ->
+                DistributionPointBottomSheet(
+                    point = selectedPoint,
+                    onDismissRequest = {
+                        consumerViewModel.onDismissPopup()
+                    },
+                    onBuyClick = {
+                        consumerViewModel.onDismissPopup()
+                        navController.navigate(Screen.DistributorDetail.createRoute(selectedPoint.enterpriseUuid!!))
+                    },
+                    onRouteClick = {
+                        if (uiState.locationGranted) {
+                            consumerViewModel.calculateRouteToPoint(
+                                selectedPoint.address.location.latitude,
+                                selectedPoint.address.location.longitude
+                            )
+                        } else {
+                            pendingAction = PendingAction.ClickPoint(selectedPoint.id)
+                            onRequestLocation()
                         }
-                    )
+                    }
+                )
+            }
+
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+
+            uiState.error?.let { errorMsg ->
+                Snackbar(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                ) {
+                    Text(errorMsg)
                 }
             }
         }
-
-        if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-
-        uiState.error?.let { errorMsg ->
-            Snackbar(modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp)) { Text(errorMsg) }
-        }
     }
-}}
+}

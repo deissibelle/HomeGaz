@@ -3,7 +3,7 @@ package cm.horion.homegaz.di
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.WorkManager
-import cm.horion.homegaz.data.datasource.local.GazBottleLocal
+import cm.horion.homegaz.data.datasource.remote.GazBottleLocal
 import cm.horion.homegaz.data.datasource.remote.ConsumerService
 import cm.horion.homegaz.data.datasource.remote.PayService
 import cm.horion.homegaz.data.datasource.remote.PaymentCheckWorker

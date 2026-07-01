@@ -11,7 +11,7 @@
         <item name="windowSplashScreenBackground">@color/background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_splash_icon</item>
         <item name="windowSplashScreenIconBackgroundColor">@color/background</item>
-        <item name="android:windowSplashScreenBrandingImage" tools:targetApi="31">@drawable/by_orion_small_white</item>
+<!--        <item name="android:windowSplashScreenBrandingImage" tools:targetApi="31">@drawable/branding_black</item>-->
         <item name="postSplashScreenTheme">@style/Theme.App</item>
     </style>
 
