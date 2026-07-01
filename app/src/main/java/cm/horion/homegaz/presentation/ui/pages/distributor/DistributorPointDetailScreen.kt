@@ -7,17 +7,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Scale
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
@@ -80,25 +83,14 @@ private fun DistributorDetailContent(
     onDeliveryOptionChange : (DeliveryOption) -> Unit,
     onBottleSelected       : (GazBottle) -> Unit
 ) {
-//    if (uiState.isLoading || uiState.product == null) {
-//        Box(
-//            modifier         = Modifier.fillMaxSize(),
-//            contentAlignment = Alignment.Center
-//        ) { CircularProgressIndicator() }
-//        return
-//    }
-
-    //val product = uiState.product
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
-            .verticalScroll(rememberScrollState())
     ) {
-
+        // Le Header reste toujours visible pour permettre le retour en arrière
         DistributorHeader(
             title       = product.name,
             logoRes     = null,
@@ -107,85 +99,130 @@ private fun DistributorDetailContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (battleUuid.isEmpty()){
-            // 🌟 SECTION : Choix de la bouteille disponible dans ce dépôt
-            Text(
-                text = "Sélectionnez votre format de bouteille :",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Une liste horizontale de boutons (Chips)
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+        // ── 🛡️ SÉCURITÉ : GESTION DU CAS "AUCUN GAZ DISPONIBLE" ──
+        if (!uiState.isLoading && uiState.availableBottles.isEmpty() && uiState.gaz == null) {
+            Box(
+                modifier = Modifier
+                    //.fill someMaxSize()
+                    .weight(1f)
+                    .padding(horizontal = 32.dp),
+                contentAlignment = Alignment.Center
             ) {
-                items(uiState.availableBottles) { bottle ->
-                    val isSelected = bottle.uuid == uiState.gaz?.uuid
-
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = { onBottleSelected(bottle) },
-                        label = {
-                            Text(text = "${bottle.company.name} (${bottle.gazSize.size} kg)")
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info, // Tu peux mettre un icône de bouteille barrée si tu as
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Aucun gaz disponible",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Ce dépôt n'a actuellement aucune bouteille en stock correspondant à votre recherche.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
+            return@Column // On s'arrête ici, le reste du formulaire ne s'affiche pas
         }
 
-
-        ProductInfoRow(
-            label = "Marque sélectionnée",
-            value = uiState.gaz?.company?.name ?: "Chargement...",
-            icon = Icons.Outlined.Settings
-        )
-
-        ProductInfoRow(
-            label = "Type de Gaz / Poids",
-            value = uiState.gaz?.let { "${it.gazType} - ${it.gazSize.size} kg" } ?: "--",
-            icon = Icons.Outlined.Scale
-        )
-
-        QuantitySelector(
-            quantity         = uiState.quantity,
-            onQuantityChange = onQuantityChange
-        )
-
-        DeliveryOptionRow(
-            selectedOption   = uiState.selectedOption,
-            onOptionSelected = onDeliveryOptionChange
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        TotalAmountCard(total = uiState.total)
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        WarningNote(
-            message = stringResource(R.string.delivery_warning_note)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        HomeGazButton(
-            text     = stringResource(R.string.next),
-            onClick  = { onNextClick(uiState.quantity, uiState.selectedOption) },
+        // ── FLUX NORMAL (S'affiche uniquement si du gaz est présent) ──
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 32.dp)
-        )
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+        ) {
+            if (battleUuid.isEmpty()) {
+                Text(
+                    text = "Sélectionnez votre format de bouteille :",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    items(uiState.availableBottles) { bottle ->
+                        val isSelected = bottle.uuid == uiState.gaz?.uuid
+
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { onBottleSelected(bottle) },
+                            label = {
+                                Text(text = "${bottle.company.name} (${bottle.gazSize.size} kg)")
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            ProductInfoRow(
+                label = "Marque sélectionnée",
+                value = uiState.gaz?.company?.name ?: "Aucun gaz trouvé",
+                icon = Icons.Outlined.Settings
+            )
+
+            ProductInfoRow(
+                label = "Type de Gaz / Poids",
+                value = uiState.gaz?.let { "${it.gazType} - ${it.gazSize.size} kg" } ?: "--",
+                icon = Icons.Outlined.Scale
+            )
+
+            QuantitySelector(
+                quantity         = uiState.quantity,
+                onQuantityChange = onQuantityChange
+            )
+
+            DeliveryOptionRow(
+                selectedOption   = uiState.selectedOption,
+                onOptionSelected = onDeliveryOptionChange
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            TotalAmountCard(total = uiState.total)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            WarningNote(
+                message = stringResource(R.string.delivery_warning_note)
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Le bouton s'affiche uniquement si la validation de commande est possible
+            if (uiState.gaz != null) {
+                HomeGazButton(
+                    text     = stringResource(R.string.next),
+                    onClick  = { onNextClick(uiState.quantity, uiState.selectedOption) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 32.dp)
+                )
+            }
+        }
     }
 }

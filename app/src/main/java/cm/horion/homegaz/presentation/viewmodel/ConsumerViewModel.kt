@@ -23,6 +23,7 @@ import cm.horion.homegaz.util.Constants.GAZ_URL
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
+import cm.horion.homegaz.domain.usecase.LoadGazProfileUseCase
 import com.yandex.mapkit.RequestPoint
 import com.yandex.mapkit.RequestPointType
 import com.yandex.mapkit.directions.DirectionsFactory
@@ -47,6 +48,7 @@ import kotlin.math.*
 
 class ConsumerViewModel(
     application: Application,
+    private val loadProfile : LoadGazProfileUseCase,
     private val gazBottleLocal: GazBottleLocal,
     private val consumerUseCase: ConsumerUseCase
 ) : AndroidViewModel(application) {
@@ -68,7 +70,27 @@ class ConsumerViewModel(
 
     init {
         viewModelScope.launch {
-            prepareGazBottles()
+            val bottles = fetchAndGetGazBottles()
+            _uiState.update { it.copy(availableBottles = bottles) }
+            isDataReady = true
+
+            // 2. On charge le profil
+            val profile = loadProfile.invoke()
+            if (profile != null) {
+                // On cherche la bouteille correspondante à celle du profil de l'utilisateur
+                val userBottle = bottles.find { it.id == profile.gazBottle || it.uuid == profile.gazBottle }
+
+                if (userBottle != null) {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            selectedDistributor = userBottle.company.name, // ex: "Total", "Tradex"...
+                            selectedWeight = "${userBottle.gazSize.size} kg",   // Utilise la propriété de taille de votre enum GazSize
+                            battleUuid = userBottle.uuid            // Met aussi à jour l'UUID pour filtrer
+                        )
+                    }
+                }
+            }
+            //prepareGazBottles()
 
             val granted = hasLocationPermission()
             _uiState.update { it.copy(locationGranted = granted, isFirstLaunch = !granted) }
@@ -180,76 +202,6 @@ class ConsumerViewModel(
             }
         }
 
-//    @SuppressLint("MissingPermission")
-//    private suspend fun getCurrentLocation(): android.location.Location? =
-//        kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
-//            val fusedClient = LocationServices.getFusedLocationProviderClient(getApplication<Application>())
-//
-//            // ✅ getCurrentLocation() directement — recommandé par la doc Google
-//            val cts = CancellationTokenSource()
-//
-//            fusedClient.getCurrentLocation(
-//                Priority.PRIORITY_HIGH_ACCURACY,
-//                cts.token
-//            ).addOnSuccessListener { location ->
-//                if (continuation.isActive) continuation.resume(location) {}
-//            }.addOnFailureListener {
-//                if (continuation.isActive) continuation.resume(null) {}
-//            }
-//
-//            continuation.invokeOnCancellation {
-//                cts.cancel() // ✅ Annule proprement la demande GPS
-//            }
-//        }
-
-//    @SuppressLint("MissingPermission")
-//    private suspend fun getCurrentLocation(): android.location.Location? =
-//        kotlinx.coroutines.suspendCancellableCoroutine { continuation ->
-//            val fusedClient = LocationServices.getFusedLocationProviderClient(getApplication<Application>())
-//
-//            // 1. On configure une demande GPS agressive (Haute précision, mise à jour toutes les secondes)
-//            val locationRequest = com.google.android.gms.location.LocationRequest.Builder(
-//                Priority.PRIORITY_HIGH_ACCURACY,
-//                1000L // Demande une position toutes les 1 seconde
-//            ).apply {
-//                setMinUpdateIntervalMillis(500L)
-//                setWaitForAccurateLocation(true) // 🔥 Indique à Google d'attendre une position précise !
-//            }.build()
-//
-//            // 2. On crée le callback qui va analyser les positions à la chaîne
-//            val locationCallback = object : com.google.android.gms.location.LocationCallback() {
-//                override fun onLocationResult(result: com.google.android.gms.location.LocationResult) {
-//                    val bestLocation = result.lastLocation
-//
-//                    if (bestLocation != null) {
-//                        // Si la position reçue est excellente (ex: < 50 mètres), on la valide direct !
-//                        if (bestLocation.accuracy <= 50f) {
-//                            fusedClient.removeLocationUpdates(this)
-//                            if (continuation.isActive) continuation.resume(bestLocation) {}
-//                        }
-//                        // Sinon, si elle est correcte (< 100m), on la garde de côté mais on attend de voir si le GPS fait mieux
-//                        else if (bestLocation.accuracy <= 100f) {
-//                            fusedClient.removeLocationUpdates(this)
-//                            if (continuation.isActive) continuation.resume(bestLocation) {}
-//                        }
-//                    }
-//                }
-//            }
-//
-//            // 3. On lance la demande de flux
-//            fusedClient.requestLocationUpdates(
-//                locationRequest,
-//                locationCallback,
-//                android.os.Looper.getMainLooper()
-//            ).addOnFailureListener {
-//                if (continuation.isActive) continuation.resume(null) {}
-//            }
-//
-//            // 4. Si la coroutine est annulée (ex: timeout de 10s dépassé), on nettoie proprement
-//            continuation.invokeOnCancellation {
-//                fusedClient.removeLocationUpdates(locationCallback)
-//            }
-//        }
 
     private fun prepareGazBottles() {
         viewModelScope.launch {
@@ -271,6 +223,29 @@ class ConsumerViewModel(
                 } finally {
                     isDataReady = true
                 }
+            }
+        }
+    }
+
+    private suspend fun fetchAndGetGazBottles(): List<GazBottle> {
+        val localBottles = gazBottleLocal.getGazBottles()
+        if (!localBottles.isNullOrEmpty()) {
+            return localBottles
+        } else {
+            return try {
+                val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetGaz.path}") {
+                    accept(ContentType.Application.Json)
+                }
+                if (response.status == HttpStatusCode.OK) {
+                    val gaz = Json.decodeFromString<List<GazBottle>>(response.bodyAsText())
+                    gazBottleLocal.saveGazBottles(gaz)
+                    gaz
+                } else {
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
         }
     }
@@ -330,41 +305,6 @@ class ConsumerViewModel(
         }
     }
 
-//    fun onLocationChanged(latitude: Double, longitude: Double) {
-//        val oldLat = _uiState.value.userLat
-//        val oldLng = _uiState.value.userLng
-//
-//        if (oldLat != null && oldLng != null) {
-//            val distanceDeplacement = haversineKm(oldLat, oldLng, latitude, longitude) * 1000
-//
-//            // ✅ Seuil relevé à 50m — absorbe le bruit GPS urbain
-//            if (distanceDeplacement < 50.0) {
-//                Log.d("Location", "Déplacement négligeable (${distanceDeplacement.toInt()}m). Ignoré.")
-//                return
-//            }
-//        }
-//
-//        // ✅ Anti-spam : pas plus d'un fetch toutes les 30 secondes
-//        val now = System.currentTimeMillis()
-//        val shouldFetch = (now - lastFetchTime) > 30_000L
-//
-//        Log.d("Location", "Nouvelle position validée : $latitude, $longitude")
-//
-//        _uiState.update {
-//            it.copy(
-//                userLat = latitude,
-//                userLng = longitude,
-//                locationGranted = true,
-//                isLocationFetched = true,
-//                isFirstLaunch = false
-//            )
-//        }
-//
-//        if (shouldFetch) {
-//            lastFetchTime = now
-//            fetch()
-//        }
-//    }
 
     fun onDistanceChange(newDistance: String) {
         _uiState.value = _uiState.value.copy(selectedDistance = newDistance)

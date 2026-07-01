@@ -18,6 +18,4 @@ sealed class Endpoint( val path : String) {
 
     //route payment
     data object Payment: Endpoint(path = "/payment")
-
-
 }

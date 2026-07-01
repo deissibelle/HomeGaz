@@ -22,21 +22,33 @@ data class DistributorDetailUiState(
 
     // ── Configuration de la Commande (Détail) ──
     val quantity         : Int             = 1,
-    val selectedOption   : DeliveryOption  = DeliveryOption.LIVRAISON,
+    val priceLivraison   : Int             = 500,
+    val selectedOption   : DeliveryOption  = DeliveryOption.RETRAIT,
 
     // ── Informations de Paiement (Payment) ──
-    val selectedMethod   : PaymentMethod = PaymentMethod.OM,
+    val selectedMethod   : PaymentMethod   = PaymentMethod.OM,
     val isOrderSuccess   : Boolean         = false,
-    val isPaymentSuccessLancer   : Boolean         = false,
-    val isPaymentSuccess   : Boolean         = false,
+    val isPaymentSuccessLancer: Boolean    = false,
+    val isPaymentSuccess : Boolean         = false,
     val phoneNumber      : String          = "",
-    val sessionsUuid      : String          = "",
+    val sessionsUuid     : String          = "",
     val isProcessingPay  : Boolean         = false,
     val isPaySuccess     : PaymentStatus   = PaymentStatus.PENDING
 ) {
-    val unitPrice   : Int get() = gaz?.gazSize?.price ?: 6500
-    val total       : Int get() = unitPrice * quantity
-    val isFormValid : Boolean get() {
+    // Prix unitaire de la bouteille (fallback à 6500)
+    val unitPrice: Int get() = gaz?.gazSize?.price ?: 6500
+
+    // ✅ Calcul dynamique : Prix des bouteilles + Frais si livraison activée
+    val total: Int get() {
+        val basePrice = unitPrice * quantity
+        return if (selectedOption == DeliveryOption.LIVRAISON) {
+            basePrice + priceLivraison
+        } else {
+            basePrice
+        }
+    }
+
+    val isFormValid: Boolean get() {
         return phoneNumber.isNotBlank() && isPaymentMethodValid(phoneNumber, selectedMethod)
     }
 }

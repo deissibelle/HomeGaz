@@ -144,7 +144,7 @@ fun MainScreen(
             }
 
             if (selectedTab == Tab.ACCOUNT) {
-                if (!isLoggedIn) {
+                if (isLoggedIn) {
                     AuthGuardScreen(
                         authContext = AuthContext(
                             title       = stringResource(cm.horion.homegaz.R.string.auth_title_reservations),

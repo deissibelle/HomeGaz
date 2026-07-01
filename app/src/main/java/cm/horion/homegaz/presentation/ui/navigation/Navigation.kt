@@ -44,7 +44,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeGazApp(
     userPrefs: UserPreferencesRepository,
-
     isLoggedIn            : Boolean,
     onSsoLoginCall        : () -> Unit,
     onSsoLogoutCall       : () -> Unit
@@ -230,7 +229,6 @@ fun HomeGazApp(
                         navController.navigate(Screen.PaymentInitiated.route)
                     }
                 )
-
         }
 
         // ── PAYMENT INITIATED ─────────────────────────────────────────────────

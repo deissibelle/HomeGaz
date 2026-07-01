@@ -25,5 +25,5 @@ fun viewModelModule() = module {
     viewModel { ReservationsViewModel() }
     single { ThemeViewModel(get()) }
     viewModel { HomeViewModel(androidApplication(), get()) }
-    viewModel { ConsumerViewModel(androidApplication(),get(),get()) }
+    viewModel { ConsumerViewModel(androidApplication(),get(),get(),get()) }
 }

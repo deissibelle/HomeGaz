@@ -47,6 +47,7 @@ class ConsumerService(
                 setBody(request)
             }
             val responseText = response.bodyAsText()
+            Log.d("PROFILE",responseText)
             val profil = Json.decodeFromString<Response>(responseText)
             if (profil.profile != null) {
                 loadProfile.save(profil.profile)

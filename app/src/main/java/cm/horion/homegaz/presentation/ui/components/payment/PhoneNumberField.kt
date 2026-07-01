@@ -22,6 +22,8 @@ fun PhoneNumberField(
     errorMessage: String?,
     modifier: Modifier = Modifier
 ) {
+    val isError = errorMessage != null
+
     Column(
         modifier = modifier
             .padding(horizontal = 20.dp)
@@ -52,9 +54,19 @@ fun PhoneNumberField(
                     )
                 )
             },
+            isError = isError,
+
+            // Affiche le message d'erreur en rouge sous la barre
+            supportingText = {
+                if (isError) {
+                    Text(
+                        text = errorMessage.orEmpty(),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(8.dp),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
             singleLine = true,
@@ -64,7 +76,7 @@ fun PhoneNumberField(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
             ),
             textStyle = TextStyle(
                 fontFamily = poppinsFontFamily,
