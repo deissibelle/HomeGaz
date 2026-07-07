@@ -4,6 +4,8 @@ package cm.horion.homegaz.presentation.ui.pages.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -40,6 +42,7 @@ fun OnboardingScreen(
     onFinish: () -> Unit,
     viewModel: OnboardingViewModel = koinViewModel()
 ) {
+
     val onboardingPages = listOf(
         Onboarding(
             title = stringResource(R.string.onboarding_title_1),
@@ -162,6 +165,13 @@ fun OnboardingScreen(
 }
 @Composable
 fun OnboardingPage(page: Onboarding) {
+
+    val isDarkTheme = isSystemInDarkTheme()
+    val logoResource = if (isDarkTheme) {
+        R.drawable.logo_h_dark  // Logo pour le mode clair
+    } else {
+        R.drawable.logo_h_white   // Remplacer par le nom de votre logo pour mode sombre
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -172,7 +182,7 @@ fun OnboardingPage(page: Onboarding) {
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id=logoResource),
             contentDescription = "logo",
             modifier = Modifier
                 .padding(bottom = 24.dp)
@@ -220,7 +230,7 @@ fun OnboardingPage(page: Onboarding) {
             text = page.description,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+//            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 24.sp
         )
 
@@ -245,6 +255,6 @@ fun MapLabelRaw(
             )
         ),
         fontWeight = FontWeight.ExtraBold,
-        color = if (isUser) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+        color = Color(0xFF003761)
     )
 }

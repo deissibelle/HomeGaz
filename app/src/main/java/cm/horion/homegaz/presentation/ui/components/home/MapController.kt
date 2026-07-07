@@ -415,7 +415,7 @@ class MapController(private val context: Context) {
             setIcon("point", circleImageProvider, IconStyle().apply {
                 anchor = PointF(0.5f, 0.5f)
                 flat   = true
-                scale  = 0.5f
+                scale  = 0.0f
             })
         }
 

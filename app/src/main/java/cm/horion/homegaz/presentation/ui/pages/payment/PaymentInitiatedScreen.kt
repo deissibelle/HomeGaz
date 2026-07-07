@@ -30,7 +30,6 @@ import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.theme.poppinsFontFamily
 
-private val CyanColor = Color(0xFF00D5E1)
 
 private fun ussdCode(method: PaymentMethod) = when (method) {
     PaymentMethod.OM    -> "*150*50#"   // sans le # initial qui cause des soucis d'encodage
@@ -144,7 +143,7 @@ private fun StepRow(number: Int, text: String) {
         Box(
             modifier         = Modifier
                 .size(44.dp)
-                .background(CyanColor, CircleShape),
+                .background(MaterialTheme.colorScheme.primary, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -153,7 +152,6 @@ private fun StepRow(number: Int, text: String) {
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 20.sp,
-                    color      = MaterialTheme.colorScheme.primary,
                     textAlign  = TextAlign.Center
                 )
             )

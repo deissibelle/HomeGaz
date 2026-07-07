@@ -33,7 +33,7 @@ internal val OutlineVariantLight = Color(0xFFC0C9BE)
 // ─────────────────────────────────────────────
 // Dark Palette (Material 3)
 // ─────────────────────────────────────────────
-internal val PrimaryDark = Color(0xFF477EEB)
+internal val PrimaryDark = Color(0xFF055DA1)
 internal val OnPrimaryDark = Color(0xFF183153)
 internal val PrimaryContainerDark = Color(0xFF30476A)
 internal val OnPrimaryContainerDark = Color(0xFFD5E3FF)

@@ -49,7 +49,7 @@ fun PaymentSuccessScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                // 🛠️ Titre dynamique (ex: "Paiement Réussi" ou "Échec du Paiement")
+                // 🛠️ Titre dynamique (ex : "Paiement Réussi" ou "Échec du Paiement")
                 text     = if (isSuccess) stringResource(R.string.payment_success_title) else "Échec du paiement",
                 modifier = Modifier.padding(horizontal = 56.dp),
                 style    = TextStyle(
@@ -86,7 +86,7 @@ fun PaymentSuccessScreen(
         ) {
 
             // 🛠️ Couleur et Icône dynamiques
-            val statusColor = if (isSuccess) SuccessColor else MaterialTheme.colorScheme.error
+            val statusColor = if (isSuccess) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
             val statusIcon  = if (isSuccess) Icons.Filled.Check else Icons.Filled.Close
 
             Box(
