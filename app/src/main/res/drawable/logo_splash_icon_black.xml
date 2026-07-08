@@ -5,5 +5,5 @@
         android:right="30dp"
         android:top="30dp"
         android:bottom="30dp"
-        android:drawable="@drawable/logo_homegaz_svg_icone_blanc"/>
+        android:drawable="@drawable/logo_homegaz_svg_icone"/>
 </layer-list>
