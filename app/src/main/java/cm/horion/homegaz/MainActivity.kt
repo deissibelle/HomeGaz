@@ -3,7 +3,9 @@ package cm.horion.homegaz
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -30,13 +32,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import cm.horion.homegaz.data.security.AuthState
 import cm.horion.homegaz.data.security.UserDataStore
+import cm.horion.homegaz.domain.repository.AuthRepository
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
+import cm.horion.homegaz.presentation.ui.components.account.SsoLoadingDialog
 import cm.horion.homegaz.presentation.ui.navigation.HomeGazApp
 import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.util.LocationUtils
-import cm.horion.homegaz.util.isExpiredSoon
 import com.google.android.gms.location.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,6 +50,7 @@ import kotlin.getValue
 class MainActivity : ComponentActivity() {
 
     private val userPrefs : UserPreferencesRepository by inject()
+    private val authRepository : AuthRepository by inject()
     private val homeViewModel: ConsumerViewModel by viewModel()
     private val userSettings: UserDataStore by inject()
 
@@ -55,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var ssoClient: OrionSsoClient
 
     private var isAuthStoreReady = false
+    private var isLoading by mutableStateOf(false)
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -65,7 +70,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         //installSplashScreen()
@@ -73,13 +77,12 @@ class MainActivity : ComponentActivity() {
 
         // Ferme le splash immédiatement sans attendre
         //splashScreen.setKeepOnScreenCondition { false }
+        splashScreen.setKeepOnScreenCondition {
+            !homeViewModel.isDataReady || isLoading
+        }
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        splashScreen.setKeepOnScreenCondition {
-            !homeViewModel.isDataReady
-        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {
@@ -95,18 +98,17 @@ class MainActivity : ComponentActivity() {
         }
 
         lifecycleScope.launch {
+            //isLoading = true
             // 1. On charge d'abord le token actuellement stocké localement
             userSettings.onAppStart()
 
             // 2. On vérifie s'il a besoin d'être rafraîchi
-            val needsLogin = checkAndRefreshIfNeeded()
-
-            if (needsLogin) {
-                ssoClient.startExchange()
+            userSettings.authState.collect { state ->
+                if (state != AuthState.Checking) {
+                    isLoading = false // On libère le chargement dès qu'on a un verdict (Authenticated ou Unauthenticated)
+                }
             }
 
-            // 3. Tout est prêt, on libère le Splash Screen
-            isAuthStoreReady = true
 
             // Écoute de la géoloc
             homeViewModel.uiState.collect { state ->
@@ -114,37 +116,27 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        ssoClient = OrionSsoClient(
-            activity = this,
-            serviceName = "GAZ",
-            onLoginSuccess = { exchangeToken ->
-                println("HomeGaz SSO Success: Nouveau jeton reçu -> $exchangeToken")
-                lifecycleScope.launch {
-                    userSettings.onLoginSuccess(exchangeToken)
-                }
-            },
-            onLogoutSuccess = {
-                lifecycleScope.launch { userSettings.logout() }
-            },
-            onErrorOrCancel = { message ->
-                println("SSO HomeGaz Info/Erreur: $message")
-            }
-        )
+        handleAuthRedirect(intent)
 
         setContent {
-            val token by userSettings.tokenFlow.collectAsStateWithLifecycle()
-            val isLoggedIn = if(token != null && token?.isExpiredSoon() == false){
-                true
-            } else {
-                false
+            val authState by userSettings.authState.collectAsStateWithLifecycle()
+
+            val isLoggedIn = when (authState) {
+                is AuthState.Authenticated -> true
+                else -> false // Si c'est Checking ou Unauthenticated, on considère déconnecté
             }
 
             HomeGazTheme {
+                if (isLoading) {
+                    SsoLoadingDialog()
+                }
                 HomeGazApp(
                     userPrefs = userPrefs,
                     isLoggedIn = isLoggedIn,
-                    onSsoLoginCall = { ssoClient.launchAuth() },
-                    onSsoLogoutCall = { ssoClient.startLogout() }
+                    onSsoLoginCall = { launchCustomTabsLogin() },
+                    onSsoLogoutCall = {
+                        lifecycleScope.launch { userSettings.logout() }
+                    }
                 )
             }
         }
@@ -152,20 +144,89 @@ class MainActivity : ComponentActivity() {
         checkAndRequestLocation()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Intercepter si le navigateur nous renvoie le code alors que l'app était en arrière-plan
+        handleAuthRedirect(intent)
+    }
 
-    private suspend fun checkAndRefreshIfNeeded(): Boolean {
-        val currentToken = userSettings.getExchangeToken() ?: return false
 
-        val expired = currentToken.isExpiredSoon() ?: true
+    private fun launchCustomTabsLogin() {
+        val mobileCallback = "orion-homegaz://callback"
+        val encodedCallback = Uri.encode(mobileCallback)
+        val authUrl = "https://auth.horion.io/?redirect=$encodedCallback"
 
-        return if (expired) {
-            println("Le token local est expiré ou va expirer, demande de rafraîchissement...")
-            true // On signale qu'un rafraîchissement via le SSO est requis
-        } else {
-            println("Le token local est encore parfaitement valide.")
-            false // Rien à faire
+        val customTabsIntent = androidx.browser.customtabs.CustomTabsIntent.Builder()
+            .setShowTitle(true)
+            .build()
+
+        // 🎯 Forcer l'intention à s'ouvrir uniquement dans un navigateur Web
+        val intent = customTabsIntent.intent
+        intent.data = Uri.parse(authUrl)
+
+        // On cherche s'il y a un navigateur compatible (ex: Chrome) pour casser l'interception automatique des autres apps
+        val packageNavigator = androidx.browser.customtabs.CustomTabsClient.getPackageName(this, listOf("com.android.chrome"))
+        if (packageNavigator != null) {
+            intent.setPackage(packageNavigator)
+        }
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            // Fallback si aucun package Custom Tabs n'est résolu
+            try {
+                val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(authUrl))
+                startActivity(fallbackIntent)
+            } catch (ex: Exception) {
+                android.util.Log.e("AUTH", "Aucun navigateur disponible sur l'appareil : ${ex.message}")
+            }
         }
     }
+
+
+    private fun handleAuthRedirect(intent: Intent?) {
+        val data = intent?.data
+        // 💡 Correction : Doit écouter "orion-homegaz" mis dans launchCustomTabsLogin !
+        if (data != null && data.scheme == "orion-homegaz" && data.host == "callback") {
+            val code = data.getQueryParameter("code")
+            val item = data.getQueryParameter("item")
+
+            if (!code.isNullOrBlank() && !item.isNullOrBlank()) {
+                lifecycleScope.launch {
+                    try {
+                        isLoading = true // 🎯 On active le SsoLoadingDialog pendant l'échange réseau
+                        val response = authRepository.getToken(code, item)
+
+                        if (response.success) {
+                            isLoading = false
+                        } else {
+                            android.util.Log.e("AUTH", "L'échange de jeton a échoué côté API")
+                            isLoading = false
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("AUTH", "Erreur réseau lors de la récupération du token : ${e.message}")
+                    } finally {
+                        isLoading = false // 🎯 On désactive le chargement dans tous les cas
+                    }
+                }
+            }
+        }
+    }
+
+
+//    private suspend fun checkAndRefreshIfNeeded(): Boolean {
+//        val currentToken = userSettings.getExchangeToken() ?: return false
+//
+//        val expired = currentToken.isExpiredSoon() ?: true
+//
+//        return if (expired) {
+//            println("Le token local est expiré ou va expirer, demande de rafraîchissement...")
+//            true // On signale qu'un rafraîchissement via le SSO est requis
+//        } else {
+//            println("Le token local est encore parfaitement valide.")
+//            false // Rien à faire
+//        }
+//    }
 
     private fun checkAndRequestLocation() {
         val fineLocationPermission = Manifest.permission.ACCESS_FINE_LOCATION

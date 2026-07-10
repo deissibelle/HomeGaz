@@ -118,7 +118,7 @@ fun MainScreen(
             // car ils ne contiennent pas d'objets JNI natifs à préserver.
 
             if (selectedTab == Tab.RESERVATIONS) {
-                if (isLoggedIn) {
+                if (!isLoggedIn) {
                     AuthGuardScreen(
                         authContext = AuthContext(
                             title       = stringResource(cm.horion.homegaz.R.string.auth_title_reservations),
@@ -144,7 +144,7 @@ fun MainScreen(
             }
 
             if (selectedTab == Tab.ACCOUNT) {
-                if (isLoggedIn) {
+                if (!isLoggedIn) {
                     AuthGuardScreen(
                         authContext = AuthContext(
                             title       = stringResource(cm.horion.homegaz.R.string.auth_title_reservations),

@@ -3,15 +3,18 @@ package cm.horion.homegaz.di
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.WorkManager
+import cm.horion.homegaz.data.datasource.remote.AuthService
 import cm.horion.homegaz.data.datasource.remote.GazBottleLocal
 import cm.horion.homegaz.data.datasource.remote.ConsumerService
 import cm.horion.homegaz.data.datasource.remote.PayService
 import cm.horion.homegaz.data.datasource.remote.PaymentCheckWorker
+import cm.horion.homegaz.data.repository.AuthRepositoryImpl
 import cm.horion.homegaz.data.repository.ConsumerRepositoryImpl
 import cm.horion.homegaz.data.repository.PayRepositoryImpl
 import cm.horion.homegaz.data.security.SecureStorage
 import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.data.security.UserDataStoreImpl
+import cm.horion.homegaz.domain.repository.AuthRepository
 import cm.horion.homegaz.domain.repository.ConsumerRepository
 import cm.horion.homegaz.domain.repository.DisplayPreferencesRepository
 import cm.horion.homegaz.domain.repository.GazProfileRepository
@@ -45,6 +48,7 @@ fun dataModule() = module {
     single { ConsumerService(get()) }
     single { GazBottleLocal(get()) }
     single { PayService() }
+    single { AuthService(get()) }
 
     worker { PaymentCheckWorker(get(), get()) }
 
@@ -55,6 +59,7 @@ fun dataModule() = module {
     single<ConsumerRepository> { ConsumerRepositoryImpl(get()) }
     single<PayRepository> { PayRepositoryImpl(get()) }
     single<UserDataStore> { UserDataStoreImpl(get(),get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
     // Use Cases
     factory { SaveOnboardingExitUseCase(get()) }
 

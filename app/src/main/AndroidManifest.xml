@@ -10,6 +10,17 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <queries>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
     <application
         android:name=".HomeGazApplication"
         android:allowBackup="true"
@@ -32,20 +43,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:host="auth-callback" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="homegaz-app" />
-                <data android:host="auth-callback" />
+
+                <data android:scheme="orion-homegaz" android:host="callback" />
             </intent-filter>
 
         </activity>
@@ -69,12 +72,6 @@
 
     </application>
 
-    <queries>
-        <package android:name="io.horion.service_auth_orion" />
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="authapp" android:host="login" />
-        </intent>
-    </queries>
+
 
 </manifest>

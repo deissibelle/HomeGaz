@@ -122,6 +122,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation("androidx.core:core-splashscreen:1.1.0-rc01")
 
+    implementation("androidx.browser:browser:1.8.0")
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -170,14 +170,16 @@ fun phoneErrorMessage(phone: String, method: PaymentMethod): String? {
     }
 }
 
-fun String.isExpiredSoon(): Boolean {
+
+fun String.isExchangeExpiredSoon(): Boolean {
     val expirationTime = JwtHelper.getExpirationDate(this) ?: return true
-
-    // Marge de sécurité de 5 minutes (300 000 ms)
-    val bufferTime = 5 * 60 * 1000
-
-    // Si (Maintenant + 5min) est plus grand que la date d'expiration, on rafraîchit
+    val bufferTime = 5 * 60 * 1000 // 5 minutes
     return (System.currentTimeMillis() + bufferTime) >= expirationTime
+}
+
+fun String.isRefreshTokenTotallyExpired(): Boolean {
+    val expirationTime = JwtHelper.getExpirationDate(this) ?: return true
+    return System.currentTimeMillis() >= expirationTime
 }
 
 

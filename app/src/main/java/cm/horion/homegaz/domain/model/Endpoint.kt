@@ -2,6 +2,10 @@ package cm.horion.homegaz.domain.model
 
 sealed class Endpoint( val path : String) {
 
+    data object RefreshToken: Endpoint(path = "/refresh")
+    data object Token: Endpoint(path = "/token")
+    data object Exchange : Endpoint(path = "/token/exchange")
+
     data object SaveProfile : Endpoint(path = "/profil")
     data object UpdateProfile : Endpoint(path = "/profil")
     data object DeleteProfile : Endpoint(path = "/profil")
