@@ -2,13 +2,9 @@ package cm.horion.homegaz.presentation.ui.pages.reservations
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,15 +16,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.auth.AuthContext
 import cm.horion.homegaz.domain.model.reservation.Reservation
 import cm.horion.homegaz.presentation.state.ReservationsUiState
 import cm.horion.homegaz.presentation.ui.components.reservations.ReservationEmptyState
 import cm.horion.homegaz.presentation.ui.components.reservations.ReservationListItem
-import cm.horion.homegaz.presentation.ui.components.reservations.ReservationSearchBar
-import cm.horion.homegaz.presentation.ui.components.reservations.StatusHeader
-import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
-import cm.horion.homegaz.presentation.ui.theme.HG_Background_Light
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 
 
@@ -55,20 +46,6 @@ fun ReservationsScreen(
             }
         }
     }
-
-//    if (!isLoggedIn) {
-//        AuthGuardScreen(
-//            authContext = AuthContext(
-//                title       = stringResource(R.string.auth_title_reservations),
-//                description = stringResource(R.string.auth_desc_reservations),
-//                icon        = Icons.Default.ReceiptLong,
-//            ),
-//            onLoginClick          = {},
-//            onRegisterClick       = {},
-//            onForgotPasswordClick = {},
-//        )
-//        return
-//    }
 
     AnimatedContent(
         targetState   = selectedReservation,
@@ -138,19 +115,6 @@ private fun ReservationListContent(
                     )
                 }
 
-                // StatusHeader + SearchBar
-                if (uiState.reservations.isNotEmpty()) {
-                    StatusHeader(
-                        active    = uiState.activeCount,
-                        completed = uiState.completedCount,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    ReservationSearchBar(
-                        query         = searchQuery,
-                        onQueryChange = onSearchQueryChange,
-                    )
-                    Spacer(Modifier.height(8.dp))
-                }
             }
         },
     ) { padding ->
