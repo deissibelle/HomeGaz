@@ -10,6 +10,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.Profile
+import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.order.dto.OrderRequest
 import cm.horion.homegaz.domain.model.payment.dto.PaymentRequest
 import cm.horion.homegaz.domain.model.payment.dto.SessionsResponse
@@ -58,6 +59,23 @@ class PayService {
                 success = false,
                 message = e.message ?: "Erreur réseau"
             )
+        }
+    }
+
+    suspend fun getOrder() : List<Order> {
+        return try {
+            val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetDepotGaz.path}") {
+                contentType(ContentType.Application.Json)
+                accept(ContentType.Application.Json)
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer token")
+                }
+            }
+
+            return response.body<List<Order>>()
+
+        } catch (e: Exception) {
+            return emptyList<Order>()
         }
     }
 

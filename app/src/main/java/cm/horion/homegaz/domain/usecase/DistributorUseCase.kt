@@ -4,6 +4,7 @@ import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
+import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.payment.dto.SessionsResponse
 import cm.horion.homegaz.domain.model.response.Response
 import cm.horion.homegaz.domain.repository.PayRepository
@@ -34,6 +35,10 @@ class DistributorUseCase(
 
     suspend fun payement(sessionsUuid: String, amount: Double, phoneNumber: String, method: PaymentMethod) : Response {
         return payRepository.payement(sessionsUuid,amount,phoneNumber,method)
+    }
+
+    suspend fun getAllOrder() : List<Order> {
+        return payRepository.getAllOrders()
     }
 
     suspend fun getCvStatus(sessionUuid: String): SessionsResponse {

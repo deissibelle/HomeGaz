@@ -17,8 +17,9 @@ sealed class Endpoint( val path : String) {
 
     //route order
     data object Order : Endpoint(path = "/order")
-    data object UpdateOrder : Endpoint(path = "/order/status")
     data object GetOrder : Endpoint(path = "/order")
+    data object GetListOrder : Endpoint(path = "/orders")
+
 
     //route payment
     data object Payment: Endpoint(path = "/payment")

@@ -4,6 +4,7 @@ import cm.horion.homegaz.data.datasource.remote.PayService
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
 import cm.horion.homegaz.domain.model.order.dto.GazItem
+import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.order.dto.OrderRequest
 import cm.horion.homegaz.domain.model.payment.dto.PaymentRequest
 import cm.horion.homegaz.domain.model.payment.dto.ServiceType
@@ -50,6 +51,16 @@ class PayRepositoryImpl(
                 payService.saveOrder(order)
             } catch (e: Exception){
                 Response(false, e.message.toString())
+            }
+        }
+    }
+
+    override suspend fun getAllOrders(): List<Order> {
+        return withContext(Dispatchers.IO) {
+            try {
+                payService.getOrder()
+            } catch (e : Exception) {
+                emptyList()
             }
         }
     }
