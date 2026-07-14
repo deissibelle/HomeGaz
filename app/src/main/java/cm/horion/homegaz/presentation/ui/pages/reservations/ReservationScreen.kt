@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.reservation.Reservation
 import cm.horion.homegaz.presentation.state.ReservationsUiState
 import cm.horion.homegaz.presentation.ui.components.reservations.ReservationEmptyState
@@ -28,21 +29,23 @@ fun ReservationsScreen(
     navController : NavController,
     viewModel     : ReservationsViewModel,
 ) {
-    val isLoggedIn by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        viewModel.loadReservations()
+    }
 
     val uiState     by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
 
     // Réservation sélectionnée
-    var selectedReservation by remember { mutableStateOf<Reservation?>(null) }
+    var selectedReservation by remember { mutableStateOf<Order?>(null) }
 
-    val filteredReservations = remember(uiState.reservations, searchQuery) {
+    val filteredReservations = remember(uiState.orders, searchQuery) {
         if (searchQuery.isBlank()) {
-            uiState.reservations
+            uiState.orders
         } else {
-            uiState.reservations.filter { res ->
-                res.id.contains(searchQuery, ignoreCase = true) ||
-                        res.brand.contains(searchQuery, ignoreCase = true)
+            uiState.orders.filter { res ->
+                res.uuid.contains(searchQuery, ignoreCase = true)
+
             }
         }
     }
@@ -63,13 +66,15 @@ fun ReservationsScreen(
         label = "res_list_detail_nav",
     ) { selected ->
         if (selected != null) {
+            viewModel.detailGaz(selected.gaz[0].bottleUuid)
             ReservationDetailScreen(
                 reservation = selected,
+                gaz = uiState.gaz,
                 onBackClick = { selectedReservation = null },
             )
         } else {
             ReservationListContent(
-                navController        = navController,
+                viewModel        = viewModel,
                 uiState              = uiState,
                 searchQuery          = searchQuery,
                 onSearchQueryChange  = { searchQuery = it },
@@ -84,12 +89,12 @@ fun ReservationsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ReservationListContent(
-    navController        : NavController,
+    viewModel     : ReservationsViewModel,
     uiState              : ReservationsUiState,
     searchQuery          : String,
     onSearchQueryChange  : (String) -> Unit,
-    filteredReservations : List<Reservation>,
-    onReservationClick   : (Reservation) -> Unit,
+    filteredReservations : List<Order>,
+    onReservationClick   : (Order) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -144,7 +149,7 @@ private fun ReservationListContent(
                 }
 
                 // Aucune réservation → état vide
-                uiState.reservations.isEmpty() -> {
+                uiState.orders.isEmpty() -> {
                     ReservationEmptyState()
                 }
 
@@ -167,8 +172,9 @@ private fun ReservationListContent(
                     ) {
                         items(
                             items = filteredReservations,
-                            key   = { "${it.id}_${it.date}_${it.time}" },
+                            key   = { it.uuid },
                         ) { reservation ->
+                            val company = viewModel.getCompany(reservation.gaz[0].bottleUuid)
                             AnimatedVisibility(
                                 visible = true,
                                 enter   = fadeIn(tween(300)) + slideInVertically(
@@ -178,6 +184,7 @@ private fun ReservationListContent(
                             ) {
                                 ReservationListItem(
                                     res     = reservation,
+                                    company = company,
                                     onClick = { onReservationClick(reservation) },
                                 )
                             }

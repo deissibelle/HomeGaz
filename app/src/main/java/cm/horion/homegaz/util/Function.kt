@@ -17,6 +17,9 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 lateinit var appContext: Context
@@ -180,6 +183,35 @@ fun String.isExchangeExpiredSoon(): Boolean {
 fun String.isRefreshTokenTotallyExpired(): Boolean {
     val expirationTime = JwtHelper.getExpirationDate(this) ?: return true
     return System.currentTimeMillis() >= expirationTime
+}
+
+fun String.getDateOnly(
+    pattern: String = "yyyy-MM-dd",
+    zoneId: ZoneId = ZoneId.systemDefault()
+): String {
+    return try {
+        val instant = Instant.parse(this)
+        val localDateTime = instant.atZone(zoneId)
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        localDateTime.format(formatter)
+    } catch (e: Exception) {
+        "" // Retourne une chaîne vide en cas de format invalide
+    }
+}
+
+
+fun String.getTimeOnly(
+    pattern: String = "HH:mm:ss",
+    zoneId: ZoneId = ZoneId.systemDefault()
+): String {
+    return try {
+        val instant = Instant.parse(this)
+        val localDateTime = instant.atZone(zoneId)
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        localDateTime.format(formatter)
+    } catch (e: Exception) {
+        ""
+    }
 }
 
 

@@ -22,7 +22,7 @@ fun viewModelModule() = module {
         get(), get(), get(),
         context = androidApplication()
     ) }
-    viewModel { ReservationsViewModel() }
+    viewModel { ReservationsViewModel(get(),get()) }
     single { ThemeViewModel(get()) }
     viewModel { HomeViewModel(androidApplication(), get()) }
     viewModel { ConsumerViewModel(androidApplication(),get(),get(),get()) }

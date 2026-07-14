@@ -8,6 +8,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.Profile
 import cm.horion.homegaz.domain.model.order.dto.Order
@@ -35,13 +36,19 @@ import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
 
-class PayService {
+class PayService(
+    private val settingStore : UserDataStore
+) {
 
     suspend fun saveOrder(order : OrderRequest) : Response {
+        val token = settingStore.getExchangeToken()
         return try {
             val response: HttpResponse = client.post("$GAZ_URL${Endpoint.Order.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer $token")
+                }
                 setBody(order)
             }
 
@@ -63,15 +70,15 @@ class PayService {
     }
 
     suspend fun getOrder() : List<Order> {
+        val token = settingStore.getExchangeToken()
         return try {
             val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetDepotGaz.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 headers {
-                    append(HttpHeaders.Authorization, "Bearer token")
+                    append(HttpHeaders.Authorization, "Bearer $token")
                 }
             }
-
             return response.body<List<Order>>()
 
         } catch (e: Exception) {
@@ -109,12 +116,13 @@ class PayService {
     }
 
     suspend fun getCvStatus(sessionUuid: String): SessionsResponse {
+        val token = settingStore.getExchangeToken()
         return try {
             val response: HttpResponse = client.get("$GAZ_URL${Endpoint.Status.path}?sessionUuid=$sessionUuid") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 headers {
-                    append(HttpHeaders.Authorization, "Bearer token")
+                    append(HttpHeaders.Authorization, "Bearer $token")
                 }
 
             }

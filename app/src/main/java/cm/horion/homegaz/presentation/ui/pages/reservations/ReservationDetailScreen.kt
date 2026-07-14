@@ -23,36 +23,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
+import cm.horion.homegaz.domain.model.order.dto.Order
+import cm.horion.homegaz.domain.model.order.dto.OrderState
 import cm.horion.homegaz.domain.model.reservation.Reservation
 import cm.horion.homegaz.domain.model.reservation.ReservationStatus
 import cm.horion.homegaz.presentation.ui.theme.HG_Background_Light
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
+import cm.horion.homegaz.util.getDateOnly
+import cm.horion.homegaz.util.getTimeOnly
 
 
 @Composable
 fun ReservationDetailScreen(
-    reservation : Reservation,
+    reservation : Order,
+    gaz : GazBottle? = null,
     onBackClick : () -> Unit,
 ) {
     val colors = MaterialTheme.homeGazColors
 
-    val (statusBg, statusLabel) = when (reservation.status) {
-        ReservationStatus.DELIVERING ->
+    val (statusBg, statusLabel) = when (reservation.orderState) {
+        OrderState.LOADING ->
             colors.deliveringBg to stringResource(R.string.res_detail_status_delivering)
-        ReservationStatus.PENDING    ->
+        OrderState.SENDING    ->
             colors.pendingBg    to stringResource(R.string.res_detail_status_pending)
-        ReservationStatus.COMPLETED  ->
+        OrderState.ENDING  ->
             colors.completedBg  to stringResource(R.string.res_detail_status_completed)
+        else -> colors.deliveringBg  to stringResource(R.string.res_status_delivering_label)
     }
 
-    val headerTitle = stringResource(
-        R.string.res_list_title_format,
-        reservation.id,
-        reservation.brand,
-    )
+    val headerTitle = gaz?.company?.name ?: ""
     val headerSubtitle = buildString {
-        append(reservation.date)
-        reservation.time?.let { append("  $it") }
+        append(reservation.createdAt.getDateOnly())
+        reservation.createdAt.getTimeOnly()?.let { append("  $it") }
     }
 
     Column(
@@ -123,35 +126,35 @@ fun ReservationDetailScreen(
             DetailRow(
                 icon  = Icons.Outlined.Settings,
                 label = stringResource(R.string.res_detail_label_marque),
-                value = reservation.brand,
+                value = gaz?.company?.name ?: "",
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
                 icon  = Icons.Outlined.Scale,
                 label = stringResource(R.string.res_detail_label_poids),
-                value = reservation.weight,
+                value = "${gaz?.gazSize?.size} kg",
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
                 icon  = Icons.Outlined.Inventory2,
                 label = stringResource(R.string.res_detail_label_quantite),
-                value = reservation.quantity.toString(),
+                value = reservation.gaz[0].quantity.toString(),
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
                 icon  = Icons.Outlined.LocalShipping,
                 label = stringResource(R.string.res_detail_label_option),
-                value = reservation.deliveryOption,
+                value = reservation.deliveryMode.name,
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
                 icon  = Icons.Outlined.Timer,
                 label = stringResource(R.string.res_detail_label_delais),
-                value = reservation.estimatedTime
+                value = "1h30"
                     ?: stringResource(R.string.res_detail_no_delay),
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
@@ -213,18 +216,18 @@ fun ReservationDetailScreen(
                 )
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text  = stringResource(R.string.res_detail_price_format, reservation.price),
+                        text  = stringResource(R.string.res_detail_price_format, reservation.amount),
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize   = 15.sp,
                         ),
                         color = MaterialTheme.colorScheme.primary,
                     )
-                    Text(
-                        text  = reservation.paymentMethod,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+//                    Text(
+//                        text  = reservation.p,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    )
                 }
             }
         }

@@ -60,6 +60,7 @@ class MainActivity : ComponentActivity() {
 
     private var isAuthStoreReady = false
     private var isLoading by mutableStateOf(false)
+    private var isAuthCheckCompleted by mutableStateOf(false)
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -78,7 +79,7 @@ class MainActivity : ComponentActivity() {
         // Ferme le splash immédiatement sans attendre
         //splashScreen.setKeepOnScreenCondition { false }
         splashScreen.setKeepOnScreenCondition {
-            !homeViewModel.isDataReady || isLoading
+            !isAuthCheckCompleted || !homeViewModel.isDataReady
         }
 
         super.onCreate(savedInstanceState)
@@ -102,10 +103,12 @@ class MainActivity : ComponentActivity() {
             // 1. On charge d'abord le token actuellement stocké localement
             userSettings.onAppStart()
 
-            // 2. On vérifie s'il a besoin d'être rafraîchi
+            // 2. On écoute le verdict réel
             userSettings.authState.collect { state ->
                 if (state != AuthState.Checking) {
-                    isLoading = false // On libère le chargement dès qu'on a un verdict (Authenticated ou Unauthenticated)
+                    // 🎯 Dès qu'on est Authenticated ou Unauthenticated, on valide la fin de la vérification
+                    isAuthCheckCompleted = true
+                    isLoading = false
                 }
             }
 
@@ -121,10 +124,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val authState by userSettings.authState.collectAsStateWithLifecycle()
 
-            val isLoggedIn = when (authState) {
-                is AuthState.Authenticated -> true
-                else -> false // Si c'est Checking ou Unauthenticated, on considère déconnecté
-            }
+            // 🎯 Les pros gèrent explicitement l'état "En cours de vérification" au niveau de l'UI globale
+            val isChecking = authState is AuthState.Checking
+            val isLoggedIn = authState is AuthState.Authenticated
 
             HomeGazTheme {
                 if (isLoading) {

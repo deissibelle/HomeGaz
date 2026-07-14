@@ -65,6 +65,7 @@ class AuthService(
             }
         }
         val responseText = response.bodyAsText()
+        Log.e("AUTH", "Exchange $responseText")
         return if (response.status == HttpStatusCode.OK) {
             val res = Json.decodeFromString<ExchangeTokenResponse>(responseText)
             settingStore.setExchangeToken(res.accessToken)
@@ -86,6 +87,7 @@ class AuthService(
             setBody(RefreshTokenRequest(token))
         }
         val responseText = response.bodyAsText()
+        Log.e("AUTH", "Refresh: $responseText")
         return try {
             when (response.status) {
                 HttpStatusCode.OK -> {

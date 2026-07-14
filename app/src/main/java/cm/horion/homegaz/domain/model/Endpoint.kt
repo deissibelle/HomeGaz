@@ -10,7 +10,7 @@ sealed class Endpoint( val path : String) {
     data object UpdateProfile : Endpoint(path = "/profil")
     data object DeleteProfile : Endpoint(path = "/profil")
     data object GetProfile : Endpoint(path = "/profil")
-    data object GetDepotGaz : Endpoint(path = "/search/gaz")
+    data object GetDepotGaz : Endpoint(path = "/orders")
     data object Status: Endpoint(path = "/status")
 
     data object GetGaz : Endpoint(path = "/stock/gaz")

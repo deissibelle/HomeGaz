@@ -18,28 +18,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.domain.model.order.dto.Order
+import cm.horion.homegaz.domain.model.order.dto.OrderState
 import cm.horion.homegaz.domain.model.reservation.Reservation
 import cm.horion.homegaz.domain.model.reservation.ReservationStatus
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
-
+import cm.horion.homegaz.util.getDateOnly
 
 
 @Composable
 fun ReservationListItem(
-    res     : Reservation,
+    res     : Order,
+    company : String = "",
     onClick : () -> Unit,
 ) {
     val colors = MaterialTheme.homeGazColors
 
-    val (statusBg, statusLabel) = when (res.status) {
-        ReservationStatus.DELIVERING -> colors.deliveringBg  to stringResource(R.string.res_status_delivering_label)
-        ReservationStatus.PENDING    -> colors.pendingBg     to stringResource(R.string.res_status_pending_label)
-        ReservationStatus.COMPLETED  -> colors.completedBg   to stringResource(R.string.res_status_completed_label)
+    val (statusBg, statusLabel) = when (res.orderState) {
+        OrderState.LOADING -> colors.deliveringBg  to stringResource(R.string.res_status_delivering_label)
+        OrderState.SENDING    -> colors.pendingBg     to stringResource(R.string.res_status_pending_label)
+        OrderState.ENDING  -> colors.completedBg   to stringResource(R.string.res_status_completed_label)
+        else -> colors.deliveringBg  to stringResource(R.string.res_status_delivering_label)
     }
 
-    val delayText = res.estimatedTime
-        ?.let  { stringResource(R.string.res_list_delay_label, it) }
-        ?: stringResource(R.string.res_list_no_delay)
+    val delayText = "faut retirer sa"
 
     Card(
         modifier  = Modifier
@@ -63,7 +65,8 @@ fun ReservationListItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text       = stringResource(R.string.res_list_title_format, res.id, res.brand),
+                    //text       = stringResource(R.string.res_list_title_format, res.id, res.brand),
+                    text       = company,
                     style      = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize   = 15.sp,
@@ -72,7 +75,7 @@ fun ReservationListItem(
                     modifier = Modifier.weight(1f),
                 )
                 Text(
-                    text  = "[${res.deliveryOption}]  ${res.date}",
+                    text  = "[${res.deliveryMode}]  ${res.createdAt.getDateOnly()}",
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontWeight = FontWeight.Normal,
                         fontSize   = 11.sp,
