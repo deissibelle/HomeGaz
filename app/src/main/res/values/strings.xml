@@ -249,8 +249,7 @@
 
 
     <string name="account_title">Mon Profile</string>
-    <string name="account_user_default_name">Utilisateur HomeGaz</string>
-    <string name="account_user_default_email">utilisateur@homegaz.cm</string>
+    <string name="account_user_default_name">Sibelle Djumeghe</string>
     <string name="account_btn_edit_profile">Modifier le profil</string>
 
     <!-- Sections -->

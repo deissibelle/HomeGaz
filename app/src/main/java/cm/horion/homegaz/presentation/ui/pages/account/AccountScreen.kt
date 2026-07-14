@@ -40,7 +40,6 @@ fun AccountScreen(
     navController: NavController,
     onSsoLogoutCall: () -> Unit
 ) {
-    //val isLoggedIn by remember { mutableStateOf(false) }
 
     val themeViewModel : ThemeViewModel = koinInject()
     val prefs by themeViewModel.prefs.collectAsStateWithLifecycle()
@@ -49,25 +48,7 @@ fun AccountScreen(
 
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
-            topBar = {
-                Surface(
-                    color          = MaterialTheme.colorScheme.background,
-                    tonalElevation = 0.dp
-                ) {
-                    CenterAlignedTopAppBar(
-                        windowInsets = WindowInsets(0, 0, 0, 0),
-                        title = {
-                            Text(
-                                text  = stringResource(R.string.account_title),
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize   = 24.sp
-                                )
-                            )
-                        }
-                    )
-                }
-            }
+
         ) { paddingValues ->
             Column(
                 modifier = Modifier
