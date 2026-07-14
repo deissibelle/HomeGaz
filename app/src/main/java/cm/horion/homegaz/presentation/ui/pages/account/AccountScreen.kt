@@ -47,18 +47,6 @@ fun AccountScreen(
 
     var showDisplayPrefs by remember { mutableStateOf(false) }
 
-//    if (!isLoggedIn) {
-//        AuthGuardScreen(
-//            authContext = AuthContext(
-//                title       = stringResource(R.string.auth_title_account),
-//                description = stringResource(R.string.auth_desc_account),
-//                icon        = Icons.Outlined.Person
-//            ),
-//            onLoginClick          = { },
-//            onRegisterClick       = { },
-//            onForgotPasswordClick = { }
-//        )
-//    } else {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
             topBar = {

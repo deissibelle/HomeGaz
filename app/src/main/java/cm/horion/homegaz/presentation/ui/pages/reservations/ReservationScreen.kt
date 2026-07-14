@@ -97,31 +97,31 @@ private fun ReservationListContent(
     onReservationClick   : (Order) -> Unit,
 ) {
     Scaffold(
-        topBar = {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp),
-            ) {
-
-                Row(
-                    modifier          = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-
-                    Text(
-                        text  = stringResource(R.string.res_screen_title),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize   = 20.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-
-            }
-        },
+//        topBar = {
+//            Column(
+//                modifier = Modifier
+//                    .padding(horizontal = 8.dp),
+//            ) {
+//
+//                Row(
+//                    modifier          = Modifier
+//                        .fillMaxWidth()
+//                        .height(56.dp),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                ) {
+//
+//                    Text(
+//                        text  = stringResource(R.string.res_screen_title),
+//                        style = MaterialTheme.typography.titleLarge.copy(
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize   = 20.sp,
+//                        ),
+//                        color = MaterialTheme.colorScheme.primary,
+//                    )
+//                }
+//
+//            }
+//        },
     ) { padding ->
         Box(
             modifier = Modifier

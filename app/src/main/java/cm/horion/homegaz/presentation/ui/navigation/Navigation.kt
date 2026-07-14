@@ -31,6 +31,7 @@ import cm.horion.homegaz.presentation.ui.pages.onboarding.OnboardingScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentInitiatedScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentScreen
 import cm.horion.homegaz.presentation.ui.pages.payment.PaymentSuccessScreen
+import cm.horion.homegaz.presentation.ui.theme.HomeGazTheme
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
@@ -43,7 +44,7 @@ fun HomeGazApp(
     isLoggedIn            : Boolean,
     onSsoLoginCall        : () -> Unit,
     onSsoLogoutCall       : () -> Unit
-) {
+) = HomeGazTheme {
 
     val navController = rememberNavController()
 
@@ -51,7 +52,7 @@ fun HomeGazApp(
         .isOnboardingCompleted
         .collectAsState(initial = null)
 
-    if (onboardingCompleted == null) return
+    if (onboardingCompleted == null) return@HomeGazTheme
 
     val startDestination = if (onboardingCompleted == true) {
         Screen.Home.route
@@ -287,4 +288,6 @@ fun HomeGazApp(
             )
         }
     }
+
+
 }

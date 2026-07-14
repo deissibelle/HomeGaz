@@ -3,7 +3,7 @@ package cm.horion.homegaz.presentation.ui.theme
 import androidx.compose.ui.graphics.Color
 
 // ─────────────────────────────────────────────
-// Light Palette (Material 3)
+// Light Palette (Material 3) - Propre
 // ─────────────────────────────────────────────
 internal val PrimaryLight = Color(0xFF003761)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
@@ -25,13 +25,13 @@ internal val BackgroundLight = Color(0xFFF9F9F9)
 internal val OnBackgroundLight = Color(0xFF1A1C1C)
 internal val SurfaceLight = Color(0xFFFFFFFF)
 internal val OnSurfaceLight = Color(0xFF1A1C1C)
-internal val SurfaceVariantLight = Color(0xFFDCE5D9)
-internal val OnSurfaceVariantLight = Color(0xFF404941)
-internal val OutlineLight = Color(0xFF717970)
-internal val OutlineVariantLight = Color(0xFFC0C9BE)
+internal val SurfaceVariantLight = Color(0xFFE1E2EC) // Remplacé le vert clair par un gris neutre bleuté
+internal val OnSurfaceVariantLight = Color(0xFF43474E)
+internal val OutlineLight = Color(0xFF73777F)
+internal val OutlineVariantLight = Color(0xFFC3C7D0)
 
 // ─────────────────────────────────────────────
-// Dark Palette (Material 3)
+// Dark Palette (Material 3) - CORRIGÉE (Zéro Vert)
 // ─────────────────────────────────────────────
 internal val PrimaryDark = Color(0xFF055DA1)
 internal val OnPrimaryDark = Color(0xFF183153)
@@ -49,21 +49,25 @@ internal val ErrorDark = Color(0xFFFFB3B1)
 internal val OnErrorDark = Color(0xFF680011)
 internal val ErrorContainerDark = Color(0xFF92001C)
 internal val OnErrorContainerDark = Color(0xFFFFDAD8)
-internal val BackgroundDark = Color(0xFF121414)
-internal val OnBackgroundDark = Color(0xFFE2E2E2)
-internal val SurfaceDark = Color(0xFF000000)
-internal val OnSurfaceDark = Color(0xFFE2E2E2)
-internal val SurfaceVariantDark = Color(0xFF404941)
-internal val OnSurfaceVariantDark = Color(0xFFC0C9BE)
-internal val OutlineDark = Color(0xFF8A9389)
-internal val OutlineVariantDark = Color(0xFF404941)
+
+// 🖤 Gris profonds et noirs neutres
+internal val BackgroundDark = Color(0xFF0E1012)          // Noir de fond très propre
+internal val OnBackgroundDark = Color(0xFFE2E2E5)
+internal val SurfaceDark = Color(0xFF090A0B)             // Noir pur
+internal val OnSurfaceDark = Color(0xFFE2E2E5)
+
+// 🎯 Ici se cachait le bug : remplacé par des gris anthracite premium
+internal val SurfaceVariantDark = Color(0xFF1D2024)      // Fond des cartes (Gris carbone très classe)
+internal val OnSurfaceVariantDark = Color(0xFFC3C7D0)    // Texte de soutien
+internal val OutlineDark = Color(0xFF8D9199)             // Bordure par défaut
+internal val OutlineVariantDark = Color(0xFF2E3135)      // Bordure fine des cartes (liseré sombre discret)
 
 // ─────────────────────────────────────────────
 // Couleurs sémantiques globales
 // ─────────────────────────────────────────────
 internal val SuccessColor = Color(0xFF10B981)
 internal val WarningOrange = Color(0xFFF59E0B)
-internal val NeutralGray = Color(0xFF717970)
+internal val NeutralGray = Color(0xFF7F8C8D)
 internal val DividerGray = Color(0xFFE8E8E8)
 internal val DarkGray = Color(0xFFB5B5B5)
 

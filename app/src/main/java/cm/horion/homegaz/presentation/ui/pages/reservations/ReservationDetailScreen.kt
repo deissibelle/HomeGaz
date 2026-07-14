@@ -1,7 +1,6 @@
 package cm.horion.homegaz.presentation.ui.pages.reservations
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -26,33 +28,64 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.order.dto.OrderState
-import cm.horion.homegaz.domain.model.reservation.Reservation
-import cm.horion.homegaz.domain.model.reservation.ReservationStatus
-import cm.horion.homegaz.presentation.ui.theme.HG_Background_Light
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
 import cm.horion.homegaz.util.getDateOnly
 import cm.horion.homegaz.util.getTimeOnly
 
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+private fun Modifier.dashedBorder(
+    color: Color,
+    strokeWidth: Dp = 1.dp,
+    cornerRadius: Dp = 16.dp,
+    dashLength: Dp = 6.dp,
+    gapLength: Dp = 4.dp,
+): Modifier = this.drawWithContent {
+    drawContent()
+    val strokeWidthPx = strokeWidth.toPx()
+    drawRoundRect(
+        color = color,
+        cornerRadius = CornerRadius(cornerRadius.toPx(), cornerRadius.toPx()),
+        style = Stroke(
+            width = strokeWidthPx,
+            pathEffect = PathEffect.dashPathEffect(
+                floatArrayOf(dashLength.toPx(), gapLength.toPx()), 0f
+            )
+        ),
+        topLeft = androidx.compose.ui.geometry.Offset(strokeWidthPx / 2, strokeWidthPx / 2),
+        size = androidx.compose.ui.geometry.Size(
+            size.width - strokeWidthPx,
+            size.height - strokeWidthPx
+        ),
+    )
+}
 
 @Composable
 fun ReservationDetailScreen(
-    reservation : Order,
-    gaz : GazBottle? = null,
-    onBackClick : () -> Unit,
+    reservation: Order,
+    gaz: GazBottle? = null,
+    onBackClick: () -> Unit,
 ) {
     val colors = MaterialTheme.homeGazColors
 
     val (statusBg, statusLabel) = when (reservation.orderState) {
         OrderState.LOADING ->
             colors.deliveringBg to stringResource(R.string.res_detail_status_delivering)
-        OrderState.SENDING    ->
-            colors.pendingBg    to stringResource(R.string.res_detail_status_pending)
-        OrderState.ENDING  ->
-            colors.completedBg  to stringResource(R.string.res_detail_status_completed)
-        else -> colors.deliveringBg  to stringResource(R.string.res_status_delivering_label)
+        OrderState.SENDING ->
+            colors.pendingBg to stringResource(R.string.res_detail_status_pending)
+        OrderState.ENDING ->
+            colors.completedBg to stringResource(R.string.res_detail_status_completed)
+        else -> colors.deliveringBg to stringResource(R.string.res_status_delivering_label)
     }
 
-    val headerTitle = gaz?.company?.name ?: ""
+    val brandName = gaz?.company?.name ?: ""
+    val quantity = reservation.gaz.getOrNull(0)?.quantity ?: 0
+
+    //val headerTitle = "${quantity.toString().padStart(2, '0')} bt $brandName"
+    val headerTitle = "$brandName"
+
     val headerSubtitle = buildString {
         append(reservation.createdAt.getDateOnly())
         reservation.createdAt.getTimeOnly()?.let { append("  $it") }
@@ -61,10 +94,10 @@ fun ReservationDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .background(MaterialTheme.colorScheme.background),
     ) {
 
+        // Header / TopBar
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,18 +105,16 @@ fun ReservationDetailScreen(
                 .height(56.dp),
         ) {
             IconButton(
-                onClick  = onBackClick,
+                onClick = onBackClick,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .semantics {
-                        contentDescription = "Retour"
-                    },
+                    .semantics { contentDescription = "Retour" },
             ) {
                 Icon(
-                    imageVector        = Icons.Default.ArrowBackIosNew,
+                    imageVector = Icons.Default.ArrowBackIosNew,
                     contentDescription = null,
-                    tint               = MaterialTheme.colorScheme.primary,
-                    modifier           = Modifier.size(30.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp),
                 )
             }
 
@@ -92,139 +123,147 @@ fun ReservationDetailScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text  = headerTitle,
+                    text = headerTitle,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize   = 24.sp,
+                        fontSize = 20.sp,
                     ),
                     color = MaterialTheme.colorScheme.primary,
                 )
                 if (headerSubtitle.isNotBlank()) {
                     Text(
-                        text  = headerSubtitle,
+                        text = headerSubtitle,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
         }
 
+        // Boîte d'informations — bordure pointillée bleue
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant,
-                    shape = RoundedCornerShape(12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background)
+                .dashedBorder(
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 1.dp,
+                    cornerRadius = 16.dp,
                 )
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surface)
                 .verticalScroll(rememberScrollState()),
         ) {
 
             DetailRow(
-                icon  = Icons.Outlined.Settings,
+                icon = Icons.Outlined.Verified,
                 label = stringResource(R.string.res_detail_label_marque),
-                value = gaz?.company?.name ?: "",
+                value = brandName,
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
-                icon  = Icons.Outlined.Scale,
+                icon = Icons.Outlined.PropaneTank,
                 label = stringResource(R.string.res_detail_label_poids),
                 value = "${gaz?.gazSize?.size} kg",
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
-                icon  = Icons.Outlined.Inventory2,
+                icon = Icons.Outlined.PropaneTank,
                 label = stringResource(R.string.res_detail_label_quantite),
-                value = reservation.gaz[0].quantity.toString(),
+                value = quantity.toString(),
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
-                icon  = Icons.Outlined.LocalShipping,
+                icon = Icons.Outlined.SwapHoriz,
                 label = stringResource(R.string.res_detail_label_option),
                 value = reservation.deliveryMode.name,
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
             DetailRow(
-                icon  = Icons.Outlined.Timer,
+                icon = Icons.Outlined.Timer,
                 label = stringResource(R.string.res_detail_label_delais),
-                value = "1h30"
-                    ?: stringResource(R.string.res_detail_no_delay),
+                value = "1h30",
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
-            Row(
-                modifier          = Modifier
+            // Ligne de statut
+            Column(
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector        = Icons.Outlined.Info,
-                    contentDescription = null,
-                    modifier           = Modifier.size(20.dp),
-                    tint               = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.width(12.dp))
                 Text(
-                    text     = stringResource(R.string.res_detail_label_statut),
-                    style    = MaterialTheme.typography.bodyMedium,
-                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.res_detail_label_statut),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
                 )
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                    color = statusBg,
-                ) {
-                    Text(
-                        text     = statusLabel,
-                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
-                        style    = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize   = 13.sp,
-                        ),
-                        color = Color.White,
+                Spacer(Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.Autorenew,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
                     )
+                    Spacer(Modifier.width(10.dp))
+                    Surface(
+                        shape = RoundedCornerShape(24.dp),
+                        color = Color(0xFF4CD964),
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(
+                            text = statusLabel,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                            ),
+                            color = Color.White,
+                        )
+                    }
                 }
             }
+
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
-            Row(
-                modifier          = Modifier
+            // Ligne de prix + mode de paiement
+            Column(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
             ) {
-                Icon(
-                    imageVector        = Icons.Outlined.Payment,
-                    contentDescription = null,
-                    modifier           = Modifier.size(20.dp),
-                    tint               = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.width(12.dp))
                 Text(
-                    text     = stringResource(R.string.res_detail_label_montant),
-                    style    = MaterialTheme.typography.bodyMedium,
-                    color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.res_detail_label_montant),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
                 )
-                Column(horizontalAlignment = Alignment.End) {
+                Spacer(Modifier.height(6.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Outlined.AccountBalanceWallet,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(Modifier.width(10.dp))
                     Text(
-                        text  = stringResource(R.string.res_detail_price_format, reservation.amount),
-                        style = MaterialTheme.typography.bodyMedium.copy(
+                        text = stringResource(R.string.res_detail_price_format, reservation.amount),
+                        style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize   = 15.sp,
+                            fontSize = 16.sp,
                         ),
                         color = MaterialTheme.colorScheme.primary,
                     )
+//                    Spacer(Modifier.width(6.dp))
 //                    Text(
-//                        text  = reservation.p,
+//                        text = "| ${reservation.paymentMethod} - ${reservation.paymentPhoneNumber}",
 //                        style = MaterialTheme.typography.bodySmall,
 //                        color = MaterialTheme.colorScheme.onSurfaceVariant,
 //                    )
@@ -236,36 +275,37 @@ fun ReservationDetailScreen(
 
 @Composable
 private fun DetailRow(
-    icon  : ImageVector,
-    label : String,
-    value : String,
+    icon: ImageVector,
+    label: String,
+    value: String,
 ) {
-    Row(
-        modifier          = Modifier
+    Column(
+        modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector        = icon,
-            contentDescription = null,
-            modifier           = Modifier.size(20.dp),
-            tint               = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(Modifier.width(12.dp))
         Text(
-            text     = label,
-            style    = MaterialTheme.typography.bodyMedium,
-            color    = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f),
-        )
-        Text(
-            text  = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize   = 15.sp,
-            ),
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
         )
+        Spacer(Modifier.height(6.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.width(10.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                ),
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
     }
 }

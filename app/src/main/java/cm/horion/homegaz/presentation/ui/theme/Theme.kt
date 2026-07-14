@@ -210,7 +210,7 @@ fun HomeGazTheme(
         MaterialTheme(
             colorScheme = colorScheme,
             typography  = AppTypography,
-            content     = content,
+            content     = { Surface(content = content) },
         )
     }
 }
