@@ -131,6 +131,4 @@ val mockReservations: List<Reservation> = listOf(
         date           = "08-11-2025",
         time           = "09:15"
     ),
-
-
 )
