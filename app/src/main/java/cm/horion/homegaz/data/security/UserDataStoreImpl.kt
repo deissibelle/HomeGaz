@@ -8,7 +8,6 @@ import cm.horion.homegaz.domain.model.auth.Token
 import cm.horion.homegaz.domain.model.auth.isExpiredSoon
 import cm.horion.homegaz.domain.model.auth.isTotallyExpired
 import cm.horion.homegaz.domain.repository.AuthRepository
-import cm.horion.homegaz.util.Constants.TOKEN_KEY
 import cm.horion.homegaz.util.isExchangeExpiredSoon
 import cm.horion.homegaz.util.isRefreshTokenTotallyExpired
 import kotlinx.coroutines.CoroutineScope
@@ -20,13 +19,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.koin.java.KoinJavaComponent.inject
 import kotlin.getValue
 
 class UserDataStoreImpl(
     private val secureStorage: SecureStorage,
     private val dataStore: DataStore<Preferences>
-) : UserDataStore , KoinComponent {
+) : UserDataStore, KoinComponent {
 
     private val _tokenFlow = MutableStateFlow<String?>(null)
     override val tokenFlow: StateFlow<String?> = _tokenFlow
@@ -42,29 +40,28 @@ class UserDataStoreImpl(
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private val authRepository: AuthRepository by inject()
+
     companion object {
-        private val TOKEN_EXCHANGE_KEY = stringPreferencesKey("secure_token")
-        private const val TOKEN_KEY = "auth_session_tokens"
-        private const val EXCHANGE_TOKEN_KEY = "auth_token"
+        // 🎯 Clés uniques et locales bien définies pour éviter les conflits d'importations
+        private val TOKEN_EXCHANGE_DATASTORE_KEY = stringPreferencesKey("secure_token_status")
+        private const val LOCAL_TOKEN_KEY = "auth_session_tokens"
+        private const val LOCAL_EXCHANGE_TOKEN_KEY = "auth_token_exchange"
     }
 
     override suspend fun getExchangeToken(): String? = withContext(Dispatchers.IO) {
-        return@withContext secureStorage.read(EXCHANGE_TOKEN_KEY)
+        return@withContext secureStorage.read(LOCAL_EXCHANGE_TOKEN_KEY)
     }
 
     override suspend fun setExchangeToken(newToken: String?) = withContext(Dispatchers.IO) {
         if (newToken != null) {
-            secureStorage.save(EXCHANGE_TOKEN_KEY, newToken)
-            dataStore.edit { preferences -> preferences[TOKEN_EXCHANGE_KEY] = "PRESENT" }
+            secureStorage.save(LOCAL_EXCHANGE_TOKEN_KEY, newToken)
+            dataStore.edit { preferences -> preferences[TOKEN_EXCHANGE_DATASTORE_KEY] = "PRESENT" }
             _tokenExchangeFlow.value = newToken
         } else {
             clearAllData()
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // 💡 LOGIQUE ON_APP_START CORRIGÉE ET MISE À JOUR
-    // ─────────────────────────────────────────────────────────────────
     override fun onAppStart() {
         scope.launch(Dispatchers.IO) {
             val token = getTokenSettings()
@@ -95,20 +92,19 @@ class UserDataStoreImpl(
                 if (isAccessExpired) {
                     val refreshed = authRepository.refreshToken()
                     if (refreshed != null && refreshed.success) {
-                        // 💡 TRÈS IMPORTANT : Ici, sauvegarde le nouveau Token d'API renvoyé par ton serveur
-                        // ex: saveTokenSettings(refreshed.token)
+                        // 🎯 Sauvegarde effective du nouveau Token d'API
+                        //saveTokenSettings(refreshed.token)
                     } else {
                         refreshSuccess = false
                     }
                 }
 
-                // Si l'Exchange Token (15 min) est expiré, on demande un nouveau au serveur
-                // Note : On ne le fait que si le refresh précédent (si applicable) a fonctionné
+                // Si l'Exchange Token (15 min) est expiré, on en demande un nouveau au serveur
                 if (refreshSuccess && isExchangeExpired) {
                     val newExchangeResponse = authRepository.getExchangeToken()
-                    if (newExchangeResponse != null && newExchangeResponse.success) {
-                        // 💡 TRÈS IMPORTANT : Sauvegarde le nouvel exchange token reçu en base locale !
-                        // ex: newExchangeResponse.exchangeToken?.let { setExchangeToken(it) }
+                    if (newExchangeResponse != null && newExchangeResponse.success ) {
+                        // 🎯 Sauvegarde effective du nouvel exchange token
+                        setExchangeToken(newExchangeResponse.message)
                     } else {
                         refreshSuccess = false
                     }
@@ -121,18 +117,14 @@ class UserDataStoreImpl(
                 }
 
             } catch (e: java.io.IOException) {
-                // ⚠️ Panne réseau : Gestion de la tolérance hors-ligne
                 android.util.Log.e("AUTH", "Pas d'internet pour le refresh asynchrone : ${e.message}")
 
-                // On vérifie la date de mort absolue (sans la marge des 5 min)
-                val isAccessTotallyDead = token.isTotallyExpired() // Implémente cette extension sur ton objet Token
-                val isExchangeTotallyDead = exchangeToken.isRefreshTokenTotallyExpired() // Vérifie si le JWT string est expiré à 100%
+                val isAccessTotallyDead = token.isTotallyExpired()
+                val isExchangeTotallyDead = exchangeToken.isRefreshTokenTotallyExpired()
 
                 if (isAccessTotallyDead || isExchangeTotallyDead) {
-                    // Si l'un des deux est complètement expiré et qu'on n'a pas de réseau -> Déconnexion
                     _authState.value = AuthState.Unauthenticated
                 } else {
-                    // Mode hors-ligne toléré : ils entrent dans leur fenêtre de fin mais le réseau est absent
                     _tokenFlow.value = token.refreshToken
                     _tokenExchangeFlow.value = exchangeToken
                     _authState.value = AuthState.Authenticated
@@ -144,21 +136,35 @@ class UserDataStoreImpl(
         }
     }
 
+    // 🎯 Sauvegarde les DEUX jetons lors du login réussi
     override suspend fun onLoginSuccess(token: Token) {
         saveTokenSettings(token)
-        _authState.value = AuthState.Authenticated
+
+        // On récupère l'exchange token initial suite au login (depuis ton repository d'authentification)
+        try {
+            val exchangeResponse = authRepository.getExchangeToken()
+            if (exchangeResponse != null && exchangeResponse.success ) {
+                setExchangeToken(exchangeResponse.message)
+                _authState.value = AuthState.Authenticated
+            } else {
+                _authState.value = AuthState.Unauthenticated
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("AUTH", "Échec récupération exchangeToken suite au login : ${e.message}")
+            _authState.value = AuthState.Unauthenticated
+        }
     }
 
     override fun saveTokenSettings(token: Token?) {
         if (token == null) return
         val json = Json.encodeToString(token)
-        secureStorage.save(TOKEN_KEY, json)
+        secureStorage.save(LOCAL_TOKEN_KEY, json)
         _tokenFlow.value = token.refreshToken
     }
 
     override suspend fun getTokenSettings(): Token? =
         withContext(Dispatchers.IO) {
-            secureStorage.read(TOKEN_KEY)?.let {
+            secureStorage.read(LOCAL_TOKEN_KEY)?.let {
                 runCatching { Json.decodeFromString<Token>(it) }.getOrNull()
             }
         }
@@ -186,10 +192,10 @@ class UserDataStoreImpl(
     }
 
     private suspend fun clearAllData() {
-        secureStorage.remove(TOKEN_KEY)
-        secureStorage.remove(EXCHANGE_TOKEN_KEY)
+        secureStorage.remove(LOCAL_TOKEN_KEY)
+        secureStorage.remove(LOCAL_EXCHANGE_TOKEN_KEY)
         dataStore.edit { preferences ->
-            preferences.remove(TOKEN_EXCHANGE_KEY)
+            preferences.remove(TOKEN_EXCHANGE_DATASTORE_KEY)
         }
         _tokenFlow.value = null
         _tokenExchangeFlow.value = null
