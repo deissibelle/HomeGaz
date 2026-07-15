@@ -17,9 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.domain.model.advices.AdviceTip
-import cm.horion.homegaz.presentation.ui.theme.AdvicesBodyColor
 import cm.horion.homegaz.presentation.ui.theme.AdvicesDivider
-import cm.horion.homegaz.presentation.ui.theme.PrimaryLight
 
 
 @Composable
