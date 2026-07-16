@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.components.advices
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,11 +9,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cm.horion.homegaz.presentation.ui.theme.AdvicesBodyColor
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderQuotidien
 
 
@@ -40,7 +37,6 @@ fun DailyPracticesBlock(title: String, practices: List<String>) {
                         bottomEnd   = 12.dp
                     )
                 )
-                .background(MaterialTheme.colorScheme.surface)
                 .padding(horizontal = 12.dp, vertical = 10.dp)
         ) {
             practices.forEachIndexed { index, practice ->

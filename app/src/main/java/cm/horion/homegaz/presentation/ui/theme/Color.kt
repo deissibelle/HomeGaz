@@ -2,9 +2,6 @@ package cm.horion.homegaz.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// ─────────────────────────────────────────────
-// Light Palette (Material 3) - Propre
-// ─────────────────────────────────────────────
 internal val PrimaryLight = Color(0xFF003761)
 internal val OnPrimaryLight = Color(0xFFFFFFFF)
 internal val PrimaryContainerLight = Color(0xFFD5E3FF)
@@ -25,7 +22,7 @@ internal val BackgroundLight = Color(0xFFF9F9F9)
 internal val OnBackgroundLight = Color(0xFF1A1C1C)
 internal val SurfaceLight = Color(0xFFFFFFFF)
 internal val OnSurfaceLight = Color(0xFF1A1C1C)
-internal val SurfaceVariantLight = Color(0xFFE1E2EC) // Remplacé le vert clair par un gris neutre bleuté
+internal val SurfaceVariantLight = Color(0xFFE1E2EC)
 internal val OnSurfaceVariantLight = Color(0xFF43474E)
 internal val OutlineLight = Color(0xFF73777F)
 internal val OutlineVariantLight = Color(0xFFC3C7D0)

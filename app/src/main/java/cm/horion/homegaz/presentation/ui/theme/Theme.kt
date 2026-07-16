@@ -8,6 +8,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cm.horion.homegaz.presentation.viewmodel.AppTheme
 import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.compose.koinInject
+import android.app.Activity
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 
 data class HomeGazColors(
@@ -182,18 +186,14 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant         = OutlineVariantDark,
 )
 
-// THEME FUNCTION
-
 @Composable
 fun HomeGazTheme(
     content: @Composable () -> Unit
 ) {
-    // Récupère le singleton ThemeViewModel via Koin
     val themeViewModel : ThemeViewModel = koinInject()
     val prefs          by themeViewModel.prefs.collectAsStateWithLifecycle()
     val isSystemDark    = isSystemInDarkTheme()
 
-    // Résout le booléen isDark depuis l'enum AppTheme
     val isDark = when (prefs.theme) {
         AppTheme.LIGHT  -> false
         AppTheme.DARK   -> true
@@ -202,6 +202,15 @@ fun HomeGazTheme(
 
     val colorScheme   = if (isDark) DarkColorScheme   else LightColorScheme
     val homeGazColors = if (isDark) DarkHomeGazColors  else LightHomeGazColors
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.surface.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDark
+        }
+    }
 
     CompositionLocalProvider(
         LocalThemeIsDark   provides isDark,

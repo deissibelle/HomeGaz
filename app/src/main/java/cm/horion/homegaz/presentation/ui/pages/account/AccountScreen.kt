@@ -18,17 +18,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.auth.AuthContext
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.account.AccountMenuItem
 import cm.horion.homegaz.presentation.ui.components.account.DisplayPreferencesDialog
 import cm.horion.homegaz.presentation.ui.components.account.ProfileHeaderSection
 import cm.horion.homegaz.presentation.ui.components.account.SectionContainer
-import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
 import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.compose.koinInject
 
