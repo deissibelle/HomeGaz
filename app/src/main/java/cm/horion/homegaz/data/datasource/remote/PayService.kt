@@ -72,7 +72,7 @@ class PayService(
     suspend fun getOrder() : List<Order> {
         val token = settingStore.getExchangeToken()
         return try {
-            val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetDepotGaz.path}") {
+            val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetListOrder.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
                 headers {
