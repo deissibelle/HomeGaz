@@ -15,34 +15,26 @@ import androidx.core.view.WindowCompat
 
 
 data class HomeGazColors(
-    // Header réservations
     val headerBg: Color,
     val headerIndicator: Color,
     val headerTextDark: Color,
     val surface: Color,
-
-    // Background général
     val backgroundLight: Color,
 
-    // Statut EN LIVRAISON
+    // Statuts de livraison
     val deliveringBg: Color,
     val deliveringOnBg: Color,
     val deliveringBorder: Color,
 
-    // Statut EN ATTENTE
     val pendingBg: Color,
     val pendingOnBg: Color,
     val pendingBorder: Color,
 
-    // Statut TERMINÉ
     val completedBg: Color,
     val completedOnBg: Color,
     val completedBorder: Color,
 
-    // Mini-carte
     val mapBg: Color,
-
-    // Paiement
     val orangeMoney: Color,
 
     // Conseils
@@ -53,72 +45,92 @@ data class HomeGazColors(
     val advicesDivider: Color,
     val advicesBackground: Color,
 
-    // Divers
     val success: Color,
     val warning: Color,
     val divider: Color,
     val neutralGray: Color,
 )
 
-
+// ─────────────────────────────────────────────
+// PALETTES SPECIFIQUES HOMEGAZ (Clair / Sombre)
+// ─────────────────────────────────────────────
 private val LightHomeGazColors = HomeGazColors(
-    headerBg              = HG_Blue_Header_Bg,
-    headerIndicator       = HG_Blue_Indicator,
-    headerTextDark        = HG_Text_Dark_Header,
-    backgroundLight       = HG_Background_Light,
-    surface               = SurfaceLight,
-    deliveringBg          = StatusDeliveringBg,
-    deliveringOnBg        = StatusDeliveringOnBg,
-    deliveringBorder      = StatusDeliveringBorder,
-    pendingBg             = StatusPendingBg,
-    pendingOnBg           = StatusPendingOnBg,
-    pendingBorder         = StatusPendingBorder,
-    completedBg           = StatusCompletedBg,
-    completedOnBg         = StatusCompletedOnBg,
-    completedBorder       = StatusCompletedBorder,
-    mapBg                 = HG_Map_Bg,
-    orangeMoney           = OrangeMoneyColor,
-    advicesHeaderEconomiser = AdvicesHeaderEconomiser,
-    advicesHeaderIncendies  = AdvicesHeaderIncendies,
-    advicesHeaderQuotidien  = AdvicesHeaderQuotidien,
-    advicesBodyColor        = AdvicesBodyColor,
-    advicesDivider          = AdvicesDivider,
-    advicesBackground       = AdvicesBackground,
-    success               = SuccessColor,
-    warning               = WarningOrange,
-    divider               = DividerGray,
-    neutralGray           = NeutralGray,
+    headerBg                = PrimaryContainerLight, // Aligné sur le container bleu clair du thème
+    headerIndicator         = PrimaryLight,          // Aligné sur le bleu primaire de marque
+    headerTextDark          = OnPrimaryContainerLight, // Aligné sur le texte lisible du container
+    backgroundLight         = BackgroundLight,       // Strictement identique à la couleur de fond
+    surface                 = SurfaceLight,           // Strictement identique à la couleur de surface
+
+    // Statut EN LIVRAISON (Vert)
+    deliveringBg            = SuccessColor.copy(alpha = 0.15f), // Fond vert translucide doux
+    deliveringOnBg          = SuccessColor,                     // Texte vert vif
+    deliveringBorder        = SuccessColor.copy(alpha = 0.4f),  // Bordure verte discrète
+
+    // Statut EN ATTENTE (Orange/Alerte)
+    pendingBg               = WarningOrange.copy(alpha = 0.15f), // Fond orange translucide doux
+    pendingOnBg             = WarningOrange,                     // Texte orange
+    pendingBorder           = WarningOrange.copy(alpha = 0.4f),  // Bordure orange discrète
+
+    // Statut TERMINÉ (Gris)
+    completedBg             = NeutralGray.copy(alpha = 0.15f),   // Fond gris translucide doux
+    completedOnBg           = NeutralGray,                       // Texte gris
+    completedBorder         = NeutralGray.copy(alpha = 0.4f),    // Bordure grise discrète
+
+    mapBg                   = SurfaceVariantLight,   // Aligné sur le gris de second plan
+    orangeMoney             = OrangeMoneyColor,      // Couleur sémantique du paiement
+
+    // Conseils (Harmonisation douce)
+    advicesHeaderEconomiser = Color(0xFFD9FFE3),
+    advicesHeaderIncendies  = Color(0xFFFFE9D9),
+    advicesHeaderQuotidien  = Color(0xFFD9F4FF),
+    advicesBodyColor        = PrimaryLight,          // Aligné sur le bleu de texte de marque
+    advicesDivider          = OutlineVariantLight,   // Aligné sur le diviseur discret du thème
+    advicesBackground       = SurfaceVariantLight,   // Aligné sur le gris de fond de carte du thème
+
+    success                 = SuccessColor,
+    warning                 = WarningOrange,
+    divider                 = OutlineVariantLight,   // Strictement identique au diviseur du ColorScheme
+    neutralGray             = OutlineLight,          // Strictement identique au gris système
 )
 
 private val DarkHomeGazColors = HomeGazColors(
-    headerBg              = Color(0xFF1A2F4A),
-    headerIndicator       = PrimaryDark,
-    headerTextDark        = Color(0xFFD5E3FF),
-    backgroundLight       = Color(0xFF1E2126),
-    surface               = SurfaceDark,
-    deliveringBg          = Color(0xFF1B7A45),
-    deliveringOnBg        = Color(0xFFFFFFFF),
-    deliveringBorder      = Color(0xFF27AE60),
-    pendingBg             = Color(0xFF1A5C8A),
-    pendingOnBg           = Color(0xFFFFFFFF),
-    pendingBorder         = Color(0xFF2980B9),
-    completedBg           = Color(0xFF555C5E),
-    completedOnBg         = Color(0xFFFFFFFF),
-    completedBorder       = Color(0xFF6B7475),
-    mapBg                 = Color(0xFF2C3340),
-    orangeMoney           = Color(0xFFFF8C38),
+    headerBg                = PrimaryContainerDark,  // Aligné sur le container sombre du thème
+    headerIndicator         = PrimaryDark,           // Aligné sur le bleu primaire du mode sombre
+    headerTextDark          = OnPrimaryContainerDark, // Aligné sur le texte lisible du container sombre
+    backgroundLight         = BackgroundDark,        // Strictement identique au fond noir de l'appli
+    surface                 = SurfaceDark,           // Strictement identique à la surface noire pure
+
+    // Statut EN LIVRAISON (Vert optimisé Dark)
+    deliveringBg            = SuccessColor.copy(alpha = 0.2f),
+    deliveringOnBg          = SuccessColor,
+    deliveringBorder        = SuccessColor.copy(alpha = 0.4f),
+
+    // Statut EN ATTENTE (Orange optimisé Dark)
+    pendingBg               = WarningOrange.copy(alpha = 0.2f),
+    pendingOnBg             = WarningOrange,
+    pendingBorder           = WarningOrange.copy(alpha = 0.4f),
+
+    // Statut TERMINÉ (Gris optimisé Dark)
+    completedBg             = NeutralGray.copy(alpha = 0.2f),
+    completedOnBg           = NeutralGray,
+    completedBorder         = NeutralGray.copy(alpha = 0.4f),
+
+    mapBg                   = SurfaceVariantDark,    // Aligné sur le gris carbone des cartes
+    orangeMoney             = OrangeMoneyColor,      // Couleur sémantique du paiement
+
+    // Conseils (Adaptés pour l'obscurité pour éviter de fatiguer les yeux)
     advicesHeaderEconomiser = Color(0xFF1B3A22),
     advicesHeaderIncendies  = Color(0xFF3A2210),
     advicesHeaderQuotidien  = Color(0xFF0E2E3A),
-    advicesBodyColor        = Color(0xFF98CDF2),
-    advicesDivider          = Color(0xFF2E3A45),
-    advicesBackground       = Color(0xFF1A2128),
-    success               = Color(0xFF34D399),
-    warning               = Color(0xFFFBBF24),
-    divider               = Color(0xFF2E3030),
-    neutralGray           = Color(0xFF8A9389),
-)
+    advicesBodyColor        = SecondaryDark,         // Texte lisible sur fond sombre
+    advicesDivider          = OutlineVariantDark,    // Aligné sur le diviseur discret du thème sombre
+    advicesBackground       = SurfaceVariantDark,    // Aligné sur le gris de fond de carte du thème sombre
 
+    success                 = SuccessColor,
+    warning                 = WarningOrange,
+    divider                 = OutlineVariantDark,    // Strictement identique au diviseur du ColorScheme sombre
+    neutralGray             = OutlineDark,           // Strictement identique au gris système sombre
+)
 // COMPOSITION LOCALS
 
 val LocalHomeGazColors = staticCompositionLocalOf { LightHomeGazColors }
@@ -201,6 +213,7 @@ fun HomeGazTheme(
     }
 
     val colorScheme   = if (isDark) DarkColorScheme   else LightColorScheme
+    //val homeGazColors = if (isDark) DarkColorScheme  else LightColorScheme
     val homeGazColors = if (isDark) DarkHomeGazColors  else LightHomeGazColors
 
     val view = LocalView.current
@@ -208,12 +221,16 @@ fun HomeGazTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.surface.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDark
+
+//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDark
+            val insetsController = WindowCompat.getInsetsController(window, view)
+            insetsController.isAppearanceLightStatusBars = !isDark
+            insetsController.isAppearanceLightNavigationBars = !isDark
         }
     }
 
     CompositionLocalProvider(
-        LocalThemeIsDark   provides isDark,
+        LocalThemeIsDark  provides isDark,
         LocalHomeGazColors provides homeGazColors,
     ) {
         MaterialTheme(

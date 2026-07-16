@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.TipsAndUpdates
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,8 +73,7 @@ fun BottomNavBar(
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val itemWidth = screenWidth / navItems.size
-    val selectedIndex =
-        navItems.indexOfFirst { it.id == selectedTab }.coerceAtLeast(0)
+    val selectedIndex = navItems.indexOfFirst { it.id == selectedTab }.coerceAtLeast(0)
 
     val animatedXOffset by animateDpAsState(
         targetValue = (itemWidth * selectedIndex) + (itemWidth / 2),
@@ -84,18 +84,26 @@ fun BottomNavBar(
         label = "BumpAnimation"
     )
 
+    // 🎯 Couleurs issues directement du MaterialTheme (s'adaptent dynamiquement)
     val primaryColor = MaterialTheme.colorScheme.primary
-
-    val isDark = isSystemInDarkTheme()
-    val unselectedBaseColor = if (isDark) Color.White else MaterialTheme.colorScheme.primary
+    val unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant // Gris neutre et doux
+    val dividerColor = MaterialTheme.colorScheme.outlineVariant // Bordure subtile de séparation
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.homeGazColors.surface)
+            .background(MaterialTheme.colorScheme.surface) // Gris carbone en Dark, Blanc en Light
             .navigationBarsPadding()
     ) {
 
+        // 🎯 Ajout d'une fine bordure au-dessus pour décoller la barre en mode sombre
+        HorizontalDivider(
+            color = dividerColor,
+            thickness = 0.5.dp,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
+        // Indicateur animé au-dessus de l'icône sélectionnée
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,6 +133,7 @@ fun BottomNavBar(
                 style = Stroke(width = 2.dp.toPx())
             )
 
+            // La petite ligne indicatrice active
             drawLine(
                 color = primaryColor,
                 start = androidx.compose.ui.geometry.Offset(
@@ -161,21 +170,16 @@ fun BottomNavBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(64.dp), // Hauteur légèrement augmentée pour un confort de clic accru
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
             navItems.forEach { item ->
-
                 val isSelected = selectedTab == item.id
 
                 val contentColor by animateColorAsState(
-                    targetValue = if (isSelected) {
-                        primaryColor
-                    } else {
-                        unselectedBaseColor
-                    },
-                    animationSpec = tween(300),
+                    targetValue = if (isSelected) primaryColor else unselectedColor,
+                    animationSpec = tween(250),
                     label = "IconColorAnimation"
                 )
 
@@ -184,34 +188,28 @@ fun BottomNavBar(
                         .weight(1f)
                         .fillMaxHeight()
                         .clickable(
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            },
-                            indication = null,
-                            onClick = {
-                                onTabSelected(item.id)
-                            }
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null, // Pas de ripple rectangle moche
+                            onClick = { onTabSelected(item.id) }
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-
                     Icon(
-                        imageVector = if (isSelected) {
-                            item.iconFilled
-                        } else {
-                            item.iconOutlined
-                        },
+                        imageVector = if (isSelected) item.iconFilled else item.iconOutlined,
                         contentDescription = item.label,
-                        modifier = Modifier.size(26.dp),
+                        modifier = Modifier.size(24.dp),
                         tint = contentColor
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
                         text = item.label,
                         style = MaterialTheme.typography.labelSmall,
                         color = contentColor,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Bold
+                        // Uniquement gras quand c'est sélectionné pour donner du poids visuel
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )
                 }
             }
