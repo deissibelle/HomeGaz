@@ -8,6 +8,7 @@ import cm.horion.homegaz.domain.model.auth.Token
 import cm.horion.homegaz.domain.model.response.Response
 import cm.horion.homegaz.util.ApiClient.client
 import cm.horion.homegaz.util.Constants.AUTH_API_URL
+import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -105,6 +106,77 @@ class AuthService(
             }
         } catch (e: Exception) {
             Response(success = false, message = "erreur serveur")
+        }
+    }
+
+    suspend fun logout() : Boolean? {
+        return try {
+            val response = client.get("$AUTH_API_URL${Endpoint.Logout.path}") {
+                contentType(ContentType.Application.Json)
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    true
+                }
+
+                HttpStatusCode.BadRequest -> {
+                    val body = try {
+                        response.body<Error>()
+                    } catch (e: Exception) {
+                        false
+                    }
+                    false
+                }
+
+                HttpStatusCode.InternalServerError -> {
+                    val body = try {
+                        response.body<Error>()
+                    } catch (e: Exception) {
+                        Response(false,"Échec de la déconnexion")
+                    }
+                    false
+                }
+
+                else -> {
+                    Response(false,"Erreur serveur: ${response.status.value}")
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            Response(false,"Erreur de connexion: ${e.message}")
+            false
+        }
+    }
+
+    suspend fun logoutLocal(service: String): Boolean {
+        return try {
+
+            val response = client.get("$AUTH_API_URL${Endpoint.LogoutLocal.path}") {
+                url { parameters.append("service", service) }
+                accept(ContentType.Application.Json)
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    true
+                }
+
+                HttpStatusCode.BadRequest -> {
+                    false
+                }
+
+                HttpStatusCode.Unauthorized -> {
+                    false
+                }
+
+                else -> {
+                    false
+                }
+            }
+
+        } catch (e: Exception) {
+            false
         }
     }
 

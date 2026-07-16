@@ -5,6 +5,8 @@ sealed class Endpoint( val path : String) {
     data object RefreshToken: Endpoint(path = "/refresh")
     data object Token: Endpoint(path = "/token")
     data object Exchange : Endpoint(path = "/token/exchange")
+    data object Logout: Endpoint(path = "/logout")
+    data object LogoutLocal: Endpoint(path = "/logout-local")
 
     data object SaveProfile : Endpoint(path = "/profil")
     data object UpdateProfile : Endpoint(path = "/profil")

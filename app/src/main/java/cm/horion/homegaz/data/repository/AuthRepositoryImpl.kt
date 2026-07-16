@@ -43,4 +43,41 @@ class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun logout(): Response? {
+        return try {
+            val result = authService.logout()
+            try {
+
+                if (result == true){
+                    Response(true,"logout reussi")
+                } else {
+                    Response(false,"Erreur ")
+                }
+
+            } catch (e: Exception) {
+                Response(false,e.message.toString())
+            }
+        } catch (e: Exception) {
+            Response(false,"Erreur de déconnexion: ${e.message}")
+        }
+    }
+
+    override suspend fun logoutLocal(service : String): Response? {
+        return try {
+            val result = authService.logoutLocal(service)
+            try {
+                if (result){
+                    Response(true,"logout reussi")
+                } else {
+                    Response(false,"Erreur ")
+                }
+
+            } catch (e: Exception) {
+                Response(false,e.message.toString())
+            }
+        } catch (e: Exception) {
+            Response(false,"Erreur de déconnexion: ${e.message}")
+        }
+    }
+
 }

@@ -64,99 +64,6 @@ class UserDataStoreImpl(
         }
     }
 
-//    override fun onAppStart() {
-//        scope.launch(Dispatchers.IO) {
-//            val token = getTokenSettings()
-//            val exchangeToken = getExchangeToken()
-//
-//            // 1. Aucun jeton trouvé -> Non authentifié d'office
-//            if (token == null || exchangeToken == null) {
-//                _authState.value = AuthState.Unauthenticated
-//                return@launch
-//            }
-//
-//            // 2. Les deux sont encore valides -> Authentifié directement
-//            val isAccessExpired = token.isExpiredSoon()
-//            val isExchangeExpired = exchangeToken.isExchangeExpiredSoon()
-//
-//            if (!isAccessExpired && !isExchangeExpired) {
-//                _tokenFlow.value = token.refreshToken
-//                _tokenExchangeFlow.value = exchangeToken
-//                _authState.value = AuthState.Authenticated
-//                return@launch
-//            }
-//
-//            // 3. Au moins un des deux jetons a expiré -> Tentative de rafraîchissement
-//            try {
-//                var refreshSuccess = true
-//                var isNetworkError = false
-//
-//                // Si l'Access Token (30 min) est expiré, on rafraîchit
-//                if (isAccessExpired) {
-//                    try {
-//                        val refreshed = authRepository.refreshToken()
-//                        if (refreshed != null && refreshed.success ) {
-//                            //saveTokenSettings(refreshed.token)
-//                        } else {
-//                            // Le serveur a répondu mais a explicitement refusé le rafraîchissement (Token banni/invalide)
-//                            refreshSuccess = false
-//                        }
-//                    } catch (e: Exception) {
-//                        if (e.isNetworkException()) {
-//                            isNetworkError = true
-//                        } else {
-//                            refreshSuccess = false
-//                        }
-//                    }
-//                }
-//
-//                // Si l'Exchange Token (15 min) est expiré, on rafraîchit
-//                if (refreshSuccess && !isNetworkError && isExchangeExpired) {
-//                    try {
-//                        val newExchangeResponse = authRepository.getExchangeToken()
-//                        if (newExchangeResponse != null && newExchangeResponse.success && newExchangeResponse.message != null) {
-//                            setExchangeToken(newExchangeResponse.message)
-//                        } else {
-//                            refreshSuccess = false
-//                        }
-//                    } catch (e: Exception) {
-//                        if (e.isNetworkException()) {
-//                            isNetworkError = true
-//                        } else {
-//                            refreshSuccess = false
-//                        }
-//                    }
-//                }
-//
-//                // 🎯 GESTION DU VERDICT FINAL
-//                if (isNetworkError) {
-//                    // ⚠️ Panne réseau : On applique la tolérance hors-ligne
-//                    android.util.Log.w("AUTH", "Mode hors-ligne détecté pendant le démarrage.")
-//
-//                    val isAccessTotallyDead = token.isTotallyExpired()
-//                    val isExchangeTotallyDead = exchangeToken.isRefreshTokenTotallyExpired()
-//
-//                    if (isAccessTotallyDead || isExchangeTotallyDead) {
-//                        // Si la date limite absolue du token est dépassée, même sans réseau on déconnecte
-//                        _authState.value = AuthState.Unauthenticated
-//                    } else {
-//                        // Sinon, on le laisse entrer avec ses anciennes données en cache !
-//                        _tokenFlow.value = token.refreshToken
-//                        _tokenExchangeFlow.value = exchangeToken
-//                        _authState.value = AuthState.Authenticated
-//                    }
-//                } else if (refreshSuccess) {
-//                    _authState.value = AuthState.Authenticated
-//                } else {
-//                    _authState.value = AuthState.Unauthenticated
-//                }
-//
-//            } catch (e: Exception) {
-//                android.util.Log.e("AUTH", "Erreur critique d'initialisation : ${e.message}")
-//                _authState.value = AuthState.Unauthenticated
-//            }
-//        }
-//    }
 
     override fun onAppStart() {
         scope.launch(Dispatchers.IO) {
@@ -337,7 +244,10 @@ class UserDataStoreImpl(
     }
 
     override fun logout() {
-        scope.launch { clearAllData() }
+        scope.launch {
+            authRepository.logoutLocal("GAZ")
+            clearAllData()
+        }
     }
 
     override fun clear() {
