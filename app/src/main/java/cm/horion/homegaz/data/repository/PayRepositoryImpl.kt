@@ -31,7 +31,7 @@ class PayRepositoryImpl(
                 )
                 payService.payement(pay)
             } catch (e: Exception ) {
-                Response(false, e.message.toString())
+                Response(false, "le payement na pas pu etre initialiser veiller ressayer plus tard")
             }
         }
     }
@@ -50,7 +50,7 @@ class PayRepositoryImpl(
             try {
                 payService.saveOrder(order)
             } catch (e: Exception){
-                Response(false, e.message.toString())
+                Response(false, "La reservation na pas pu etre lancer veiller ressayer plus tard")
             }
         }
     }

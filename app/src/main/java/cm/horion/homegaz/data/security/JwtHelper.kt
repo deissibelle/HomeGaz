@@ -19,4 +19,27 @@ object JwtHelper {
             null
         }
     }
+
+    fun getUuid(token: String): String? {
+        return try {
+            val parts = token.split(".")
+            if (parts.size < 2) return null
+
+            // Décodage de la partie centrale (Payload)
+            val payload = String(Base64.decode(parts[1], Base64.DEFAULT))
+            val jsonObject = JSONObject(payload)
+
+            // 💡 Tente d'abord de lire "uuid", et s'il n'existe pas, tente "sub" (standard JWT)
+            if (jsonObject.has("uuid")) {
+                jsonObject.getString("uuid")
+            } else if (jsonObject.has("sub")) {
+                jsonObject.getString("sub")
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 }

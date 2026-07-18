@@ -36,26 +36,48 @@ fun ReservationListItem(
     val colors = MaterialTheme.homeGazColors
 
     // 🎯 Choix dynamique des couleurs de statut selon le thème actif
+// Extraction propre des styles visuels selon l'état de la commande
     val (statusBg, statusContentColor, statusLabel) = when (res.orderState) {
+        OrderState.STARTING -> Triple(
+            colors.pendingBg,
+            colors.pendingOnBg,
+            stringResource(R.string.res_status_starting_label)
+        )
+
         OrderState.LOADING -> Triple(
             colors.deliveringBg,
-            Color.White,
-            stringResource(R.string.res_status_delivering_label)
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_loading_label)
         )
+
         OrderState.SENDING -> Triple(
-            colors.pendingBg,
-            Color.White,
-            stringResource(R.string.res_status_pending_label)
+            colors.deliveringBg,
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_sending_label)
         )
+
+        OrderState.SHIPPING -> Triple(
+            colors.deliveringBg,
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_shipping_label)
+        )
+
+        OrderState.DELIVERED -> Triple(
+            colors.success,
+            Color.White,
+            stringResource(R.string.res_status_delivered_label)
+        )
+
         OrderState.ENDING -> Triple(
             colors.completedBg,
-            Color.White,
+            colors.completedOnBg,
             stringResource(R.string.res_status_completed_label)
         )
-        else -> Triple(
-            colors.deliveringBg,
-            Color.White,
-            stringResource(R.string.res_status_delivering_label)
+
+        OrderState.CANCELLED -> Triple(
+            colors.completedBg,
+            colors.completedOnBg,
+            stringResource(R.string.res_status_cancelled_label)
         )
     }
 

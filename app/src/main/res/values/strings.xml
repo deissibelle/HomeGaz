@@ -223,6 +223,12 @@
     <string name="res_status_delivering_label">En cours</string>
     <string name="res_status_pending_label">En attente</string>
     <string name="res_status_completed_label">Terminée</string>
+    <string name="res_status_starting_label">Initié</string>
+    <string name="res_status_loading_label">Chargement</string>
+    <string name="res_status_sending_label">Envoi en cours</string>
+    <string name="res_status_shipping_label">En cours de livraison</string>
+    <string name="res_status_delivered_label">Livré</string>
+    <string name="res_status_cancelled_label">Annulé</string>
 
     <!-- Réservations — détail -->
     <string name="res_detail_label_marque">Marque</string>

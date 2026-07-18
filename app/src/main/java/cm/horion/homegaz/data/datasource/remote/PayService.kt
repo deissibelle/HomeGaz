@@ -20,6 +20,7 @@ import cm.horion.homegaz.util.ApiClient.client
 import cm.horion.homegaz.util.Constants.GAZ_URL
 import cm.horion.homegaz.util.Constants.PAY_URL
 import cm.horion.homegaz.util.appContext
+import cm.horion.homegaz.util.getUuidFromToken
 import io.ktor.client.call.body
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
@@ -64,7 +65,7 @@ class PayService(
         } catch (e : Exception) {
             Response(
                 success = false,
-                message = e.message ?: "Erreur réseau"
+                message = "Erreur réseau veiller essayer plus tard"
             )
         }
     }
@@ -87,11 +88,12 @@ class PayService(
     }
 
     suspend fun payement(pay: PaymentRequest): Response {
+        val token = settingStore.getExchangeToken()
         return try {
             val response: HttpResponse = client.post("$PAY_URL${Endpoint.Payment.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
-                setBody(pay)
+                setBody(pay.copy(userUuid = token?.getUuidFromToken() ?: "123456789"))
             }
 
             return when (response.status) {
@@ -104,13 +106,13 @@ class PayService(
                 else ->
                     Response(
                         success = false,
-                        message = "Erreur serveur (${response.status})"
+                        message = "Erreur serveur veiller essayer plus tard"
                     )
             }
         } catch (e: Exception) {
             Response(
                 success = false,
-                message = e.message ?: "Erreur réseau"
+                message = "Erreur réseau veiller essayer plus tard"
             )
         }
     }
@@ -150,7 +152,7 @@ class PayService(
         } catch (e: Exception) {
             SessionsResponse(
                 success = false,
-                message = e.message ?: "Erreur réseau"
+                message = "Erreur réseau veiller essayer plus tard"
             )
         }
     }

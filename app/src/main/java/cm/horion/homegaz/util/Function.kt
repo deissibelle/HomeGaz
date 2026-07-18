@@ -173,6 +173,9 @@ fun phoneErrorMessage(phone: String, method: PaymentMethod): String? {
     }
 }
 
+fun String.getUuidFromToken(): String? {
+    return JwtHelper.getUuid(this)
+}
 
 fun String.isExchangeExpiredSoon(): Boolean {
     val expirationTime = JwtHelper.getExpirationDate(this) ?: return true

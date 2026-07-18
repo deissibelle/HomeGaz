@@ -70,14 +70,58 @@ fun ReservationDetailScreen(
 ) {
     val colors = MaterialTheme.homeGazColors
 
-    val (statusBg, statusLabel) = when (reservation.orderState) {
-        OrderState.LOADING ->
-            colors.deliveringBg to stringResource(R.string.res_detail_status_delivering)
-        OrderState.SENDING ->
-            colors.pendingBg to stringResource(R.string.res_detail_status_pending)
-        OrderState.ENDING ->
-            colors.completedBg to stringResource(R.string.res_detail_status_completed)
-        else -> colors.deliveringBg to stringResource(R.string.res_status_delivering_label)
+//    val (statusBg, statusLabel) = when (reservation.orderState) {
+//        OrderState.LOADING ->
+//            colors.deliveringBg to stringResource(R.string.res_detail_status_delivering)
+//        OrderState.SENDING ->
+//            colors.pendingBg to stringResource(R.string.res_detail_status_pending)
+//        OrderState.ENDING ->
+//            colors.completedBg to stringResource(R.string.res_detail_status_completed)
+//        else -> colors.deliveringBg to stringResource(R.string.res_status_delivering_label)
+//    }
+
+    val (statusBg, statusContentColor, statusLabel) = when (reservation.orderState) {
+        OrderState.STARTING -> Triple(
+            colors.pendingBg,
+            colors.pendingOnBg,
+            stringResource(R.string.res_status_starting_label)
+        )
+
+        OrderState.LOADING -> Triple(
+            colors.deliveringBg,
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_loading_label)
+        )
+
+        OrderState.SENDING -> Triple(
+            colors.deliveringBg,
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_sending_label)
+        )
+
+        OrderState.SHIPPING -> Triple(
+            colors.deliveringBg,
+            colors.deliveringOnBg,
+            stringResource(R.string.res_status_shipping_label)
+        )
+
+        OrderState.DELIVERED -> Triple(
+            colors.success,
+            Color.White,
+            stringResource(R.string.res_status_delivered_label)
+        )
+
+        OrderState.ENDING -> Triple(
+            colors.completedBg,
+            colors.completedOnBg,
+            stringResource(R.string.res_status_completed_label)
+        )
+
+        OrderState.CANCELLED -> Triple(
+            colors.completedBg,
+            colors.completedOnBg,
+            stringResource(R.string.res_status_cancelled_label)
+        )
     }
 
     val brandName = gaz?.company?.name ?: ""

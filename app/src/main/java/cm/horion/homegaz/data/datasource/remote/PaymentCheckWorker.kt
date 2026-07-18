@@ -26,55 +26,77 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import cm.horion.homegaz.R
 import cm.horion.homegaz.util.appContext
+import kotlinx.coroutines.delay
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
 class PaymentCheckWorker(
     appContext: Context,
     workerParams: WorkerParameters,
     //private val authRepository : UserDataStore
-) : CoroutineWorker(appContext, workerParams) {
+) : CoroutineWorker(appContext, workerParams), KoinComponent {
+
+    private val authRepository : UserDataStore by inject()
 
     override suspend fun doWork(): Result {
-        Log.d("PAYEMENT", "lancer 3")
-        // 🛠️ Note : Assure-toi que la clé lue correspond à celle injectée (ex: "sessionUuid")
+        // 🎯 Étape 1 : Log immédiat dès l'entrée pour valider que le Worker tourne !
+        Log.d("PAYEMENT", "=== [WORKER] doWork() démarré à la milliseconde ===")
+
         val paymentId = inputData.getString("sessionUuid") ?: return Result.failure()
-        //val token = authRepository.getExchangeToken()
+        Log.d("PAYEMENT", "[WORKER] Suivi du paymentId : $paymentId")
 
-        Log.d("PAYEMENT", paymentId)
+        // Récupération du token depuis le DataStore
+        val token = authRepository.getExchangeToken()
+        Log.d("PAYEMENT", "[WORKER] Token récupéré avec succès")
 
-        return try {
-            val response: HttpResponse = client.get("$GAZ_URL${Endpoint.Status.path}?sessionUuid=$paymentId") {
-                accept(ContentType.Application.Json)
-//                headers {
-//                    append(HttpHeaders.Authorization, "Bearer $token")
-//                }
+        var maxAttempts = 15 // Exemple : 15 tentatives max
+        var currentAttempt = 0
+
+        // 🎯 Boucle de polling interne pour éviter de détruire/recréer le Worker à chaque seconde
+        while (currentAttempt < maxAttempts) {
+            try {
+                currentAttempt++
+                Log.d("PAYEMENT", "[WORKER] Tentative d'appel API #$currentAttempt...")
+
+                val response: HttpResponse = client.get("$GAZ_URL${Endpoint.Status.path}?sessionUuid=$paymentId") {
+                    accept(ContentType.Application.Json)
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer $token")
+                    }
+                }
+
+                val responseText = response.bodyAsText()
+                Log.d("PAYEMENT", "[WORKER] Réponse brute API: $responseText")
+
+                val session = Json.decodeFromString<SessionsResponse>(responseText)
+
+                when (session.status.name) {
+                    "SUCCESS" -> {
+                        showNotification("Paiement Réussi", "Votre commande a été validée.")
+                        return Result.success()
+                    }
+                    "FAILED" -> {
+                        val outputData = workDataOf("error_message" to session.message)
+                        showNotification("Paiement Échoué", session.message)
+                        return Result.failure(outputData)
+                    }
+                    else -> {
+                        Log.d("PAYEMENT", "[WORKER] Statut toujours en traitement (${session.status.name}).")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("PAYEMENT", "[WORKER] Erreur lors de la tentative #$currentAttempt", e)
+                // Si c'est un crash réseau pur lors d'un appel, on ne lâche pas l'affaire tout de suite, on attend la prochaine boucle
             }
 
-            val responseText = response.bodyAsText()
-            Log.d("PAYEMENT", "Réponse brute API: $responseText") // 👈 Ajoute ce log
-            val session = Json.decodeFromString<SessionsResponse>(responseText)
-
-            when (session.status.name) {
-                "SUCCESS" -> {
-                    showNotification("Paiement Réussi", "Votre commande a été validée.")
-                    Result.success()
-                }
-                "FAILED" -> {
-                    val outputData = workDataOf("error_message" to session.message)
-                    showNotification("Paiement Echoue", session.message)
-                    Result.failure(outputData)
-                }
-                else -> {
-                    Log.d("PAYEMENT", "Statut en attente (${session.status.name}), retry...")
-                    Result.retry()
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("PAYEMENT", "Le Worker a crashé !", e) // 👈 Vois le vrai crash ici !
-            // On passe en failure explicite avec l'erreur pour que ton ViewModel l'affiche sur l'UI
-            val errorData = workDataOf("error_message" to (e.localizedMessage ?: "Erreur réseau inconnue"))
-            Result.failure(errorData)
+            // Attendre 4 secondes avant la prochaine vérification de statut
+            delay(4000)
         }
+
+        // Si on arrive ici, c'est que le paiement a expiré ou a pris trop de temps (Timeout)
+        Log.w("PAYEMENT", "[WORKER] Fin du tracking : Temps d'attente dépassé (Timeout).")
+        return Result.failure(workDataOf("error_message" to "Temps d'attente dépassé"))
     }
 
 
