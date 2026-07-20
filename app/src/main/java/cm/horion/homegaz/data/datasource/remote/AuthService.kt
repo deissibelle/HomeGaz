@@ -150,11 +150,15 @@ class AuthService(
     }
 
     suspend fun logoutLocal(service: String): Boolean {
+        val token = settingStore.getAccessToken()
         return try {
-
             val response = client.get("$AUTH_API_URL${Endpoint.LogoutLocal.path}") {
                 url { parameters.append("service", service) }
                 accept(ContentType.Application.Json)
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer $token")
+                    append("X-Client-Type", "MOBILE")
+                }
             }
 
             when (response.status) {
