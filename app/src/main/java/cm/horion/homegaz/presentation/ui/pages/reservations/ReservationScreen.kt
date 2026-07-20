@@ -11,13 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.order.dto.Order
-import cm.horion.homegaz.domain.model.reservation.Reservation
 import cm.horion.homegaz.presentation.state.ReservationsUiState
 import cm.horion.homegaz.presentation.ui.components.reservations.ReservationEmptyState
 import cm.horion.homegaz.presentation.ui.components.reservations.ReservationListItem
@@ -28,6 +30,8 @@ import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 fun ReservationsScreen(
     navController : NavController,
     viewModel     : ReservationsViewModel,
+    onNavigateToHomeTab: () -> Unit
+
 ) {
     LaunchedEffect(Unit) {
         viewModel.loadReservations()
@@ -80,6 +84,7 @@ fun ReservationsScreen(
                 onSearchQueryChange  = { searchQuery = it },
                 filteredReservations = filteredReservations,
                 onReservationClick   = { selectedReservation = it },
+                onNavigateToHomeTab  = onNavigateToHomeTab
             )
         }
     }
@@ -95,33 +100,36 @@ private fun ReservationListContent(
     onSearchQueryChange  : (String) -> Unit,
     filteredReservations : List<Order>,
     onReservationClick   : (Order) -> Unit,
+    onNavigateToHomeTab: () -> Unit
+
 ) {
     Scaffold(
-//        topBar = {
-//            Column(
-//                modifier = Modifier
-//                    .padding(horizontal = 8.dp),
-//            ) {
-//
-//                Row(
-//                    modifier          = Modifier
-//                        .fillMaxWidth()
-//                        .height(56.dp),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                ) {
-//
-//                    Text(
-//                        text  = stringResource(R.string.res_screen_title),
-//                        style = MaterialTheme.typography.titleLarge.copy(
-//                            fontWeight = FontWeight.Bold,
-//                            fontSize   = 20.sp,
-//                        ),
-//                        color = MaterialTheme.colorScheme.primary,
-//                    )
-//                }
-//
-//            }
-//        },
+        topBar = {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp),
+            ) {
+
+                Row(
+                    modifier          = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+
+                    Text(
+                        text  = stringResource(R.string.res_screen_title),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize   = 20.sp,
+                        ),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+
+            }
+        },
     ) { padding ->
         Box(
             modifier = Modifier
@@ -150,7 +158,9 @@ private fun ReservationListContent(
 
                 // Aucune réservation → état vide
                 uiState.orders.isEmpty() -> {
-                    ReservationEmptyState()
+                    ReservationEmptyState(
+                        onReserveClick = onNavigateToHomeTab
+                    )
                 }
 
                 // Recherche sans résultat
@@ -175,6 +185,7 @@ private fun ReservationListContent(
                             key   = { it.uuid },
                         ) { reservation ->
                             val company = viewModel.getCompany(reservation.gaz[0].bottleUuid)
+                            val weight  = viewModel.getWeight(reservation.gaz[0].bottleUuid)
                             AnimatedVisibility(
                                 visible = true,
                                 enter   = fadeIn(tween(300)) + slideInVertically(
@@ -185,6 +196,7 @@ private fun ReservationListContent(
                                 ReservationListItem(
                                     res     = reservation,
                                     company = company,
+                                    weight  = weight,
                                     onClick = { onReservationClick(reservation) },
                                 )
                             }
@@ -194,4 +206,14 @@ private fun ReservationListContent(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun ReservationsScreenPreview() {
+    ReservationsScreen(
+        navController = rememberNavController(),
+        viewModel = viewModel()
+    ) { }
+
 }

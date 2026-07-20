@@ -1,9 +1,8 @@
 package cm.horion.homegaz.presentation.ui.pages.account
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.result.contract.ActivityResultContracts
+import android.provider.Settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +13,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,12 +24,9 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.common.Screen
 import cm.horion.homegaz.presentation.ui.components.account.AccountMenuItem
 import cm.horion.homegaz.presentation.ui.components.account.DisplayPreferencesDialog
-import cm.horion.homegaz.presentation.ui.components.account.ProfileHeaderSection
 import cm.horion.homegaz.presentation.ui.components.account.SectionContainer
 import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.compose.koinInject
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,119 +34,127 @@ fun AccountScreen(
     navController: NavController,
     onSsoLogoutCall: () -> Unit
 ) {
-
+    val context = LocalContext.current
     val themeViewModel : ThemeViewModel = koinInject()
     val prefs by themeViewModel.prefs.collectAsStateWithLifecycle()
 
     var showDisplayPrefs by remember { mutableStateOf(false) }
 
-        Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
-
-        ) { paddingValues ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+                .verticalScroll(rememberScrollState())
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp)
             ) {
-                ProfileHeaderSection()
-
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 32.dp)
-                ) {
-                    // Consommation
-                    SectionContainer(title = stringResource(R.string.account_section_consumption)) {
-                        AccountMenuItem(
-                            icon     = Icons.Outlined.LocalFireDepartment,
-                            label    = stringResource(R.string.account_menu_gaz_profile),
-                            sublabel = stringResource(R.string.account_sub_gaz_profile),
-                            onClick  = { navController.navigate(Screen.GazProfile.route) }
-                        )
-                    }
-
-                    //Paramètres
-                    SectionContainer(title = stringResource(R.string.account_section_settings)) {
-                        AccountMenuItem(
-                            icon     = Icons.Outlined.Notifications,
-                            label    = stringResource(R.string.account_menu_notifications),
-                            sublabel = stringResource(R.string.account_sub_notifications),
-                            onClick  = { }
-                        )
-                        HorizontalDivider(
-                            modifier  = Modifier.padding(horizontal = 56.dp),
-                            thickness = 0.5.dp,
-                            color     = MaterialTheme.colorScheme.outlineVariant
-                        )
-                        AccountMenuItem(
-                            icon     = Icons.Outlined.SettingsSuggest,
-                            label    = stringResource(R.string.account_menu_display),
-                            sublabel = stringResource(R.string.account_sub_display),
-                            onClick  = { showDisplayPrefs = true }
-                        )
-                    }
-
-                    //Support
-                    SectionContainer(title = stringResource(R.string.account_section_support)) {
-                        AccountMenuItem(
-                            icon     = Icons.Outlined.HelpOutline,
-                            label    = stringResource(R.string.account_menu_help),
-                            sublabel = stringResource(R.string.account_sub_help),
-                            onClick  = { }
-                        )
-                        HorizontalDivider(
-                            modifier  = Modifier.padding(horizontal = 56.dp),
-                            thickness = 0.5.dp,
-                            color     = MaterialTheme.colorScheme.outlineVariant
-                        )
-                        AccountMenuItem(
-                            icon     = Icons.Outlined.VerifiedUser,
-                            label    = stringResource(R.string.account_menu_privacy),
-                            sublabel = stringResource(R.string.account_sub_privacy),
-                            onClick  = { }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Déconnexion
-                    Button(
-                        onClick  = {
-                            onSsoLogoutCall()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape  = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor   = MaterialTheme.colorScheme.error
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(0.dp)
-                    ) {
-                        Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text       = stringResource(R.string.account_menu_logout),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Text(
-                        text      = stringResource(R.string.account_version_format, "1.0.0", 24),
-                        modifier  = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 24.dp),
-                        style     = MaterialTheme.typography.labelSmall,
-                        color     = MaterialTheme.colorScheme.outline,
-                        textAlign = TextAlign.Center
+                // Consommation
+                SectionContainer(title = stringResource(R.string.account_section_consumption)) {
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.LocalFireDepartment,
+                        label    = stringResource(R.string.account_menu_gaz_profile),
+                        sublabel = stringResource(R.string.account_sub_gaz_profile),
+                        onClick  = { navController.navigate(Screen.GazProfile.route) }
                     )
                 }
+
+                // Paramètres
+                SectionContainer(title = stringResource(R.string.account_section_settings)) {
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.Notifications,
+                        label    = stringResource(R.string.account_menu_notifications),
+                        sublabel = stringResource(R.string.account_sub_notifications),
+                        onClick  = {
+                            // Action : Ouvre les paramètres système de notifications pour cette application
+                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
+                    HorizontalDivider(
+                        modifier  = Modifier.padding(horizontal = 56.dp),
+                        thickness = 0.5.dp,
+                        color     = MaterialTheme.colorScheme.outlineVariant
+                    )
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.SettingsSuggest,
+                        label    = stringResource(R.string.account_menu_display),
+                        sublabel = stringResource(R.string.account_sub_display),
+                        onClick  = { showDisplayPrefs = true }
+                    )
+                }
+
+                // Support
+                SectionContainer(title = stringResource(R.string.account_section_support)) {
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.HelpOutline,
+                        label    = stringResource(R.string.account_menu_help),
+                        sublabel = stringResource(R.string.account_sub_help),
+                        onClick  = {
+                            // Action : Ouvre le site web de support ou lance un appel au service client
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://homegaz.cm/support"))
+                            // Alternative pour un appel direct : Intent(Intent.ACTION_DIAL, Uri.parse("tel:+237xxxxxxxxx"))
+                            context.startActivity(intent)
+                        }
+                    )
+                    HorizontalDivider(
+                        modifier  = Modifier.padding(horizontal = 56.dp),
+                        thickness = 0.5.dp,
+                        color     = MaterialTheme.colorScheme.outlineVariant
+                    )
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.VerifiedUser,
+                        label    = stringResource(R.string.account_menu_privacy),
+                        sublabel = stringResource(R.string.account_sub_privacy),
+                        onClick  = {
+                            // Action : Ouvre les conditions de confidentialité dans le navigateur
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://homegaz.cm/privacy"))
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Déconnexion
+                Button(
+                    onClick  = { onSsoLogoutCall() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape  = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor   = MaterialTheme.colorScheme.error
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(0.dp)
+                ) {
+                    Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text       = stringResource(R.string.account_menu_logout),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(
+                    text      = stringResource(R.string.account_version_format, "1.0.0"),
+                    modifier  = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    style     = MaterialTheme.typography.labelSmall,
+                    color     = MaterialTheme.colorScheme.outline,
+                    textAlign = TextAlign.Center
+                )
             }
         }
-
+    }
 
     // Dialog préférences d'affichage
     if (showDisplayPrefs) {
@@ -161,6 +166,3 @@ fun AccountScreen(
         )
     }
 }
-
-
-

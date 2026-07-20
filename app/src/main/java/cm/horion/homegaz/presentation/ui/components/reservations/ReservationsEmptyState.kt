@@ -20,6 +20,7 @@ import cm.horion.homegaz.domain.model.reservation.Reservation
 @Composable
 fun ReservationEmptyState(
     onReserveClick: () -> Unit = {},
+
 ) {
     Box(
         modifier         = Modifier.fillMaxSize(),

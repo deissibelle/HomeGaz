@@ -1,6 +1,5 @@
 package cm.horion.homegaz.domain.usecase
 
-import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
@@ -26,9 +25,9 @@ class DistributorUseCase(
 
     suspend fun saveOrder(distributorUuid: String, amount: Int,bottleUuid: String,quantity: Int,deliveryOption: DeliveryOption) : Response {
         var deliveryMode = if (deliveryOption == DeliveryOption.LIVRAISON) {
-            DeliveryMode.DELIVERY
+            DeliveryMode.LIVRAISON
         } else {
-            DeliveryMode.PICKUP
+            DeliveryMode.RETRAIT
         }
         return payRepository.saveOrder(distributorUuid,amount,bottleUuid,quantity,deliveryMode)
     }
