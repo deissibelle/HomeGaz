@@ -30,7 +30,7 @@ fun ReservationListItem(
 ) {
     val colors = MaterialTheme.homeGazColors
 
-    // 🎯 Choix du badge de statut basé à 100% sur homeGazColors
+    // Choix du badge de statut basé à 100% sur homeGazColors
     val (statusBg, statusContentColor, statusLabel) = when (res.orderState) {
         OrderState.STARTING -> Triple(
             colors.pendingBg,
@@ -95,7 +95,7 @@ fun ReservationListItem(
     ) {
         // Ligne 1 : pastille de couleur issue du thème + Marque-Poids + Date
         Row(
-            modifier          = Modifier.fillMaxWidth(),
+            modifier= Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(

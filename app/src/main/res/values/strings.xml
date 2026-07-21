@@ -114,7 +114,7 @@
     <string name="advices_daily_4">Installer un détecteur de gaz si possible.</string>
     <string name="advices_daily_5">Avoir un petit extincteur dans la cuisine.</string>
 
-    //payment Screen
+    <!-- Payment Screen -->
     <string name="payment_title">Paiement</string>
     <string name="phone_number_label">Numéro de téléphone</string>
     <string name="payment_method_select">Choisir le mode de paiement</string>
@@ -185,7 +185,7 @@
     <string name="gaz_profile_saved">Profil enregistré !</string>
     <string name="gaz_profile_error_required">Ce champ est obligatoire</string>
 
-    //auth
+    <!-- Auth -->
     <string name="auth_login_btn">Connexion</string>
     <string name="auth_register_btn">Créer un compte</string>
     <string name="auth_forgot_password">Mot de passe oublié ?</string>
@@ -208,7 +208,6 @@
 
     <!-- ReservationSearchBar -->
     <string name="res_search_placeholder">Rechercher une réservation</string>
-
 
     <!-- Réservations — liste -->
     <string name="res_list_status_label">Statut</string>
@@ -253,12 +252,12 @@
     <string name="res_default_delay_delivery">1H30</string>
     <string name="res_default_delay_retrait">2 jours</string>
 
-
-    <string name="account_title">Mon Profile</string>
+    <!-- Account Screen -->
+    <string name="account_title">Mon Profil</string>
     <string name="account_user_default_name">Sibelle Djumeghe</string>
     <string name="account_btn_edit_profile">Modifier le profil</string>
 
-    <!-- Sections -->
+    <!-- Sections Compte -->
     <string name="account_section_consumption">Ma consommation</string>
     <string name="account_section_settings">Paramètres</string>
     <string name="account_section_support">Aide &amp; Support</string>
@@ -294,7 +293,34 @@
     <string name="gaz_profile_quartier_hint">Ex : Bastos, Messa…</string>
     <string name="gaz_profile_lieu_dit_hint">Ex : Carrefour Shell, Marché central…</string>
 
+    <!--  Écran Centre d\'aide (Style WhatsApp) -->
+    <string name="help_center_app_name">HomeGaz Business</string>
+    <string name="help_center_version_format">Version %1$s</string>
+    <string name="help_center_copyright">© 2010–2026 HomeGaz Inc.</string>
+    <string name="help_center_btn_licences">Licences</string>
 
+    <!--  Écran Confidentialité (Style LinkedIn) -->
+    <string name="privacy_title">Confidentialité des données</string>
 
+    <!-- Section 1 : Utilisation des données -->
+    <string name="privacy_sec_how_we_use">Comment HomeGaz utilise vos données</string>
+    <string name="privacy_item_permissions">Gérer les autorisations relatives aux données</string>
+    <string name="privacy_item_download">Télécharger vos données</string>
+    <string name="privacy_item_clear_search">Effacer l\'historique des recherches</string>
+    <string name="privacy_item_demographics">Informations démographiques personnelles</string>
+    <string name="privacy_item_research">Recherche académique et politique</string>
+    <string name="privacy_item_ai_opt_in">Données pour l\'amélioration de l\'IA générative</string>
+    <string name="privacy_status_enabled">Activé</string>
 
+    <!-- Section 2 : Qui peut vous contacter -->
+    <string name="privacy_sec_contacts">Qui peut vous contacter</string>
+    <string name="privacy_item_invitations_connect">Invitations à se connecter</string>
+    <string name="privacy_item_invitations_network">Invitations de votre réseau</string>
+    <string name="privacy_item_messages">Messages que vous recevez</string>
+    <string name="privacy_item_research_studies">Invitations à participer à une étude</string>
+    <string name="privacy_item_marketing_emails">E-mails marketing et promotions de HomeGaz</string>
+
+    <!-- Section 3 : Messagerie -->
+    <string name="privacy_sec_messaging">Expérience de messagerie</string>
+    <string name="privacy_item_read_receipts">Confirmations de lecture</string>
 </resources>

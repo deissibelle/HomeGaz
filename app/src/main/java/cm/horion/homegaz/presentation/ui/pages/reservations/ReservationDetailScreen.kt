@@ -212,7 +212,7 @@ fun ReservationDetailScreen(
             DetailRow(
                 icon = Icons.Outlined.SwapHoriz,
                 label = stringResource(R.string.res_detail_label_option),
-                value = reservation.deliveryMode.name,
+                value = if (reservation.deliveryMode.name == "Pickup") stringResource(R.string.res_retrait_label)  else stringResource(R.string.res_delivery_label)
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 

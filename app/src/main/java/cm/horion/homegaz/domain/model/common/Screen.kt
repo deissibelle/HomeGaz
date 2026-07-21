@@ -16,6 +16,8 @@ sealed class Screen(val route: String) {
     object PaymentInitiated   : Screen("payment_initiated")
     object PaymentSuccess     : Screen("payment_success")
     object GazProfile         : Screen("gaz_profile")
+    object HelpCenter : Screen("help_center_screen")
+    object PrivacySettings : Screen("privacy_settings_screen")
 
 
 }

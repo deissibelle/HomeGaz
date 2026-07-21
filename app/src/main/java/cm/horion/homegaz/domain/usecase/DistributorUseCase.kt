@@ -25,9 +25,9 @@ class DistributorUseCase(
 
     suspend fun saveOrder(distributorUuid: String, amount: Int,bottleUuid: String,quantity: Int,deliveryOption: DeliveryOption) : Response {
         var deliveryMode = if (deliveryOption == DeliveryOption.LIVRAISON) {
-            DeliveryMode.LIVRAISON
+            DeliveryMode.DELIVERY
         } else {
-            DeliveryMode.RETRAIT
+            DeliveryMode.PICKUP
         }
         return payRepository.saveOrder(distributorUuid,amount,bottleUuid,quantity,deliveryMode)
     }

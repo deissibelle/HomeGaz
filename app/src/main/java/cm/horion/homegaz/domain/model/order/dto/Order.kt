@@ -12,7 +12,7 @@ data class Order(
     val distributorUuid: String,
     val amount: Int,
     val orderState: OrderState = OrderState.LOADING,
-    val deliveryMode : DeliveryMode = DeliveryMode.RETRAIT,
+    val deliveryMode : DeliveryMode = DeliveryMode.PICKUP,
     val referenceTransaction: String? = null,
     val deliveryCode: String,
     val gaz:  List<GazItem> = emptyList(),

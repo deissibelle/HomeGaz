@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class OrderRequest(
     val distributorUuid: String,
     val amount: Int,
-    val deliveryMode : DeliveryMode = DeliveryMode.RETRAIT,
+    val deliveryMode : DeliveryMode = DeliveryMode.PICKUP,
     val gaz: List<GazItem> = emptyList()
 )

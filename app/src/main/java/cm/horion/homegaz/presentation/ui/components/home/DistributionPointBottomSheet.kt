@@ -112,7 +112,7 @@ fun DistributionPointBottomSheet(
                     Text(
                         text = "${stringResource(R.string.home_sheet_point_category)} | ${point.address.city ?: ""}",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -170,7 +170,8 @@ fun DistributionPointBottomSheet(
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
-                            )
+                            ),
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
@@ -202,7 +203,8 @@ fun DistributionPointBottomSheet(
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
-                            )
+                            ),
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }

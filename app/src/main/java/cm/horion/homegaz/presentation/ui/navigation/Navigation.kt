@@ -23,6 +23,8 @@ import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
 import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.Tab
+import cm.horion.homegaz.presentation.ui.pages.account.HelpCenterScreen
+import cm.horion.homegaz.presentation.ui.pages.account.PrivacySettingsScreen
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.gazprofile.GazProfileScreen
@@ -131,6 +133,26 @@ fun HomeGazApp(
                 onSsoLoginCall = onSsoLoginCall,
                 onSsoLogoutCall = onSsoLogoutCall
             )
+        }
+        //  Centre d'aide
+        composable(Screen.HelpCenter.route) {
+            HelpCenterScreen(
+                onBackClick = {
+                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                },                onLicencesClick = {  }
+            )
+        }
+
+        //  Confidentialité des données
+        composable(Screen.PrivacySettings.route) {
+            PrivacySettingsScreen(
+                onBackClick = {
+                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                },            )
         }
 
         // ── HOME WITH TAB ─────────────────────────────────────────────────────

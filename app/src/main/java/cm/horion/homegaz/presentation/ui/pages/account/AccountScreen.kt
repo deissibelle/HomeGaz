@@ -97,12 +97,7 @@ fun AccountScreen(
                         icon     = Icons.Outlined.HelpOutline,
                         label    = stringResource(R.string.account_menu_help),
                         sublabel = stringResource(R.string.account_sub_help),
-                        onClick  = {
-                            // Action : Ouvre le site web de support ou lance un appel au service client
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://homegaz.cm/support"))
-                            // Alternative pour un appel direct : Intent(Intent.ACTION_DIAL, Uri.parse("tel:+237xxxxxxxxx"))
-                            context.startActivity(intent)
-                        }
+                        onClick  = { navController.navigate(Screen.HelpCenter.route) }
                     )
                     HorizontalDivider(
                         modifier  = Modifier.padding(horizontal = 56.dp),
@@ -113,11 +108,7 @@ fun AccountScreen(
                         icon     = Icons.Outlined.VerifiedUser,
                         label    = stringResource(R.string.account_menu_privacy),
                         sublabel = stringResource(R.string.account_sub_privacy),
-                        onClick  = {
-                            // Action : Ouvre les conditions de confidentialité dans le navigateur
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://homegaz.cm/privacy"))
-                            context.startActivity(intent)
-                        }
+                        onClick  = { navController.navigate(Screen.PrivacySettings.route) }
                     )
                 }
 

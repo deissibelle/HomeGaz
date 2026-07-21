@@ -15,9 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.presentation.state.ReservationsUiState
@@ -208,12 +206,3 @@ private fun ReservationListContent(
     }
 }
 
-@Preview
-@Composable
-private fun ReservationsScreenPreview() {
-    ReservationsScreen(
-        navController = rememberNavController(),
-        viewModel = viewModel()
-    ) { }
-
-}
