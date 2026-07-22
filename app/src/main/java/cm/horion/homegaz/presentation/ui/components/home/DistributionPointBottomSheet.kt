@@ -171,7 +171,7 @@ fun DistributionPointBottomSheet(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             ),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color =Color.White
                         )
                     }
                 }

@@ -199,7 +199,8 @@ fun HomeGazApp(
                     point       = point,
                     battleUuid  = uiState.battleUuid,
                     viewModel   = distributorViewModel,
-                    onBackClick = { navController.popBackStack() },
+                    onBackClick = { navController.navigate(Screen.Home.route)
+                    },
                     onNextClick = { quantity, deliveryOption ->
                         navController.navigate(Screen.Payment.route)
                     }

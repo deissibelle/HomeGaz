@@ -69,11 +69,9 @@ fun PrivacySettingsScreen(
             PrivacyListItem(label = stringResource(R.string.privacy_item_demographics))
             PrivacyListItem(
                 label = stringResource(R.string.privacy_item_research),
-                status = stringResource(R.string.privacy_status_enabled)
             )
             PrivacyListItem(
                 label = stringResource(R.string.privacy_item_ai_opt_in),
-                status = stringResource(R.string.privacy_status_enabled)
             )
 
             // Espaceur gris
@@ -86,7 +84,6 @@ fun PrivacySettingsScreen(
             PrivacyListItem(label = stringResource(R.string.privacy_item_messages))
             PrivacyListItem(
                 label = stringResource(R.string.privacy_item_research_studies),
-                status = stringResource(R.string.privacy_status_enabled)
             )
             PrivacyListItem(label = stringResource(R.string.privacy_item_marketing_emails))
 
@@ -142,21 +139,6 @@ private fun PrivacyListItem(
                 modifier = Modifier.weight(1f)
             )
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (status != null) {
-                    Text(
-                        text = status,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.padding(end = 8.dp)
-                    )
-                }
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline
-                )
-            }
         }
         HorizontalDivider(
             thickness = 0.5.dp,

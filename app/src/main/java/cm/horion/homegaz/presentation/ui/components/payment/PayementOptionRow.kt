@@ -23,7 +23,7 @@ fun PaymentOptionRow(
     onMethodSelected: (PaymentMethod) -> Unit
 ) {
     val options = listOf("Orange Money", "MoMo MTN")
-    val logos = listOf(R.drawable.orange_money, R.drawable.momo)
+    val logos = listOf(R.drawable.branding_orion_scaled_black, R.drawable.orange_money)
     val selectedIndex = if (selectedMethod == PaymentMethod.OM) 0 else 1
 
     OptionSelectorRow(

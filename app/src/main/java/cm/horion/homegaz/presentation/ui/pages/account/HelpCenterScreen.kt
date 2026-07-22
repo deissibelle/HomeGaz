@@ -1,20 +1,25 @@
 package cm.horion.homegaz.presentation.ui.pages.account
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Language // Import de l'icône de site web
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler // Import pour gérer les liens cliquables
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
@@ -25,6 +30,8 @@ fun HelpCenterScreen(
     onBackClick: () -> Unit,
     onLicencesClick: () -> Unit
 ) {
+    val uriHandler = LocalUriHandler.current
+
     val imageRes = if (isSystemInDarkTheme()) {
         R.drawable.logo_homegaz_svg_icone_blanc
     } else {
@@ -134,6 +141,30 @@ fun HelpCenterScreen(
                         Text(
                             text = "orion@horion.io",
                             style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+
+                    // Site Web (Nouveau composant cliquable)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .clickable { uriHandler.openUri("https://horion.io/") } // Déclenche l'ouverture du navigateur
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Language,
+                            contentDescription = "Site web",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = "https://horion.io/",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline // Ajout d'un soulignement pour indiquer le lien
+                            )
                         )
                     }
                 }
