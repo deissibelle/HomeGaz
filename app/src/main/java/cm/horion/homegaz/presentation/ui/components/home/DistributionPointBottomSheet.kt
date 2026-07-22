@@ -147,7 +147,7 @@ fun DistributionPointBottomSheet(
                     onClick = onBuyClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor = Color.White
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -181,7 +181,7 @@ fun DistributionPointBottomSheet(
                     onClick = onRouteClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFE5E5E5),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor =  Color.White
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -195,7 +195,8 @@ fun DistributionPointBottomSheet(
                         Icon(
                             imageVector = Icons.Default.Directions,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp).bounceClick()
+                            modifier = Modifier.size(16.dp)
+                                .bounceClick()
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
@@ -204,7 +205,7 @@ fun DistributionPointBottomSheet(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             ),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color =   Color.White
                         )
                     }
                 }
