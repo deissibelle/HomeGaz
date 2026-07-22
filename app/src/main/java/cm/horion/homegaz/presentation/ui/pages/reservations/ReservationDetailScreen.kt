@@ -35,6 +35,7 @@ import cm.horion.homegaz.util.getTimeOnly
 
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.unit.Dp
+import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
 
 private fun Modifier.dashedBorder(
     color: Color,
@@ -212,7 +213,7 @@ fun ReservationDetailScreen(
             DetailRow(
                 icon = Icons.Outlined.SwapHoriz,
                 label = stringResource(R.string.res_detail_label_option),
-                value = if (reservation.deliveryMode.name == "Pickup") stringResource(R.string.res_retrait_label)  else stringResource(R.string.res_delivery_label)
+                value = if (reservation.deliveryMode == DeliveryMode.PICKUP) stringResource(R.string.res_retrait_label)  else stringResource(R.string.res_delivery_label)
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
