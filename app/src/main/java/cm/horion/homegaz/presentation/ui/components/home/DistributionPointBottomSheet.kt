@@ -130,7 +130,7 @@ fun DistributionPointBottomSheet(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.back),
-                        tint = Color(0xFFE5E5E5),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(20.dp)
                     )
                 }

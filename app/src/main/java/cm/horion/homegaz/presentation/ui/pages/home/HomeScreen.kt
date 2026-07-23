@@ -17,6 +17,7 @@ import cm.horion.homegaz.domain.model.consommateur.dto.Company
 import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
 import cm.horion.homegaz.domain.model.consommateur.dto.GazType
 import cm.horion.homegaz.presentation.ui.components.home.*
+import cm.horion.homegaz.presentation.ui.theme.LocalThemeIsDark
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -100,8 +101,7 @@ fun HomeScreen(
         }
     }
 
-    val isDark = isSystemInDarkTheme()
-
+    val isDark = LocalThemeIsDark.current
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

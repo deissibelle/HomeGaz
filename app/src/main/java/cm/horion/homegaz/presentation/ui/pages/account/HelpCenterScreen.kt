@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
+import cm.horion.homegaz.presentation.ui.theme.LocalThemeIsDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,7 +33,9 @@ fun HelpCenterScreen(
 ) {
     val uriHandler = LocalUriHandler.current
 
-    val imageRes = if (isSystemInDarkTheme()) {
+    val isDark = LocalThemeIsDark.current
+
+    val imageRes = if (isDark) {
         R.drawable.logo_homegaz_svg_icone_blanc
     } else {
         R.drawable.logo_homegaz_svg_icone
