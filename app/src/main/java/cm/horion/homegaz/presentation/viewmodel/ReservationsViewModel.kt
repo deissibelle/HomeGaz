@@ -64,4 +64,10 @@ class ReservationsViewModel(
         return bottle?.company?.name ?: "Inconnu"
     }
 
+    fun getWeight(uuid: String): String {
+        val bottle = _uiState.value.availableBottles?.find { it.uuid == uuid }
+        // Retourne le poids (ex: "12,5kg") si trouvé, sinon une chaîne vide
+        return bottle?.gazSize?.size?.let { "${it}kg" } ?: ""
+    }
+
 }

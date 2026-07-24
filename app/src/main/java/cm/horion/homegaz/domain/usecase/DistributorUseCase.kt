@@ -1,6 +1,5 @@
 package cm.horion.homegaz.domain.usecase
 
-import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.order.dto.DeliveryMode

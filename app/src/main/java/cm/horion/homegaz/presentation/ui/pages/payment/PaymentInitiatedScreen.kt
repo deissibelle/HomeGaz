@@ -98,7 +98,7 @@ fun PaymentInitiatedScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(
-            modifier            = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -107,7 +107,6 @@ fun PaymentInitiatedScreen(
                 StepRow(number = index + 1, text = text)
             }
         }
-
         Spacer(modifier = Modifier.weight(1f))
 
         HomeGazButton(
@@ -152,7 +151,8 @@ private fun StepRow(number: Int, text: String) {
                     fontFamily = poppinsFontFamily,
                     fontWeight = FontWeight.SemiBold,
                     fontSize   = 20.sp,
-                    textAlign  = TextAlign.Center
+                    textAlign  = TextAlign.Center,
+                    color = Color.White
                 )
             )
         }

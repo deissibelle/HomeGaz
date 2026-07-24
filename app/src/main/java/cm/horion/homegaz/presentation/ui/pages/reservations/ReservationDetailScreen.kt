@@ -1,3 +1,4 @@
+
 package cm.horion.homegaz.presentation.ui.pages.reservations
 
 import androidx.compose.foundation.background
@@ -34,7 +35,7 @@ import cm.horion.homegaz.util.getTimeOnly
 
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
 
 private fun Modifier.dashedBorder(
     color: Color,
@@ -70,16 +71,7 @@ fun ReservationDetailScreen(
 ) {
     val colors = MaterialTheme.homeGazColors
 
-//    val (statusBg, statusLabel) = when (reservation.orderState) {
-//        OrderState.LOADING ->
-//            colors.deliveringBg to stringResource(R.string.res_detail_status_delivering)
-//        OrderState.SENDING ->
-//            colors.pendingBg to stringResource(R.string.res_detail_status_pending)
-//        OrderState.ENDING ->
-//            colors.completedBg to stringResource(R.string.res_detail_status_completed)
-//        else -> colors.deliveringBg to stringResource(R.string.res_status_delivering_label)
-//    }
-
+    // 🎯 Logique des couleurs de statut synchronisée à 100% avec l'élément de liste
     val (statusBg, statusContentColor, statusLabel) = when (reservation.orderState) {
         OrderState.STARTING -> Triple(
             colors.pendingBg,
@@ -106,8 +98,8 @@ fun ReservationDetailScreen(
         )
 
         OrderState.DELIVERED -> Triple(
-            colors.success,
-            Color.White,
+            colors.deliveringBg,
+            colors.deliveringOnBg,
             stringResource(R.string.res_status_delivered_label)
         )
 
@@ -118,17 +110,15 @@ fun ReservationDetailScreen(
         )
 
         OrderState.CANCELLED -> Triple(
-            colors.completedBg,
-            colors.completedOnBg,
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
             stringResource(R.string.res_status_cancelled_label)
         )
     }
 
     val brandName = gaz?.company?.name ?: ""
     val quantity = reservation.gaz.getOrNull(0)?.quantity ?: 0
-
-    //val headerTitle = "${quantity.toString().padStart(2, '0')} bt $brandName"
-    val headerTitle = "$brandName"
+    val headerTitle = brandName
 
     val headerSubtitle = buildString {
         append(reservation.createdAt.getDateOnly())
@@ -223,14 +213,7 @@ fun ReservationDetailScreen(
             DetailRow(
                 icon = Icons.Outlined.SwapHoriz,
                 label = stringResource(R.string.res_detail_label_option),
-                value = reservation.deliveryMode.name,
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-            DetailRow(
-                icon = Icons.Outlined.Timer,
-                label = stringResource(R.string.res_detail_label_delais),
-                value = "1h30",
+                value = if (reservation.deliveryMode == DeliveryMode.PICKUP) stringResource(R.string.res_retrait_label)  else stringResource(R.string.res_delivery_label)
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
@@ -256,7 +239,7 @@ fun ReservationDetailScreen(
                     Spacer(Modifier.width(10.dp))
                     Surface(
                         shape = RoundedCornerShape(24.dp),
-                        color = Color(0xFF4CD964),
+                        color = statusBg, // Couleur dynamique issue du thème
                         modifier = Modifier.weight(1f),
                     ) {
                         Text(
@@ -269,7 +252,7 @@ fun ReservationDetailScreen(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 12.sp,
                             ),
-                            color = Color.White,
+                            color = statusContentColor, // Couleur de contenu dynamique issue du thème
                         )
                     }
                 }
@@ -305,12 +288,6 @@ fun ReservationDetailScreen(
                         ),
                         color = MaterialTheme.colorScheme.primary,
                     )
-//                    Spacer(Modifier.width(6.dp))
-//                    Text(
-//                        text = "| ${reservation.paymentMethod} - ${reservation.paymentPhoneNumber}",
-//                        style = MaterialTheme.typography.bodySmall,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    )
                 }
             }
         }
@@ -353,3 +330,4 @@ private fun DetailRow(
         }
     }
 }
+

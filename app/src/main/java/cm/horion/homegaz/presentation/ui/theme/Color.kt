@@ -85,8 +85,7 @@ val HG_Blue_Header_Bg     = Color(0xFFD6E4F7)
 val HG_Blue_Indicator     = Color(0xFF0056D2)
 val HG_Text_Dark_Header   = Color(0xFF001F5B)
 val HG_Background_Light   = Color(0xFFF1F4F8)
-val HG_Badge_Green_Bg     = Color(0xFFE6F7ED)
-val HG_Badge_Green_Text   = Color(0xFF198754)
+
 val HG_Map_Bg             = Color(0xFFE9ECEF)
 
 // ─────────────────────────────────────────────

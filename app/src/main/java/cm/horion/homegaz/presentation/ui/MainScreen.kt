@@ -56,6 +56,8 @@ fun MainScreen(
     onSsoLogoutCall       : () -> Unit
 ) {
     var selectedTab by remember(initialTab) { mutableStateOf(Tab.fromLabel(initialTab)) }
+    var currentTab by remember { mutableStateOf(Tab.fromLabel(initialTab)) }
+
 
     Scaffold(
         bottomBar = {
@@ -133,7 +135,9 @@ fun MainScreen(
                 } else {
                     ReservationsScreen(
                         navController = navController,
-                        viewModel     = reservationsViewModel
+                        viewModel     = reservationsViewModel,
+                        onNavigateToHomeTab = { selectedTab = Tab.HOME }
+
                     )
                 }
 
@@ -161,6 +165,7 @@ fun MainScreen(
                         navController = navController,
                         onSsoLogoutCall = onSsoLogoutCall
                     )
+
                 }
             }
         }

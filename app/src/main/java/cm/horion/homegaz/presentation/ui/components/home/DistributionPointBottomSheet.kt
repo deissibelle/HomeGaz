@@ -112,7 +112,7 @@ fun DistributionPointBottomSheet(
                     Text(
                         text = "${stringResource(R.string.home_sheet_point_category)} | ${point.address.city ?: ""}",
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -130,7 +130,7 @@ fun DistributionPointBottomSheet(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.back),
-                        tint = Color(0xFFE5E5E5),
+                        tint = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -147,7 +147,7 @@ fun DistributionPointBottomSheet(
                     onClick = onBuyClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor = Color.White
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -170,7 +170,8 @@ fun DistributionPointBottomSheet(
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
-                            )
+                            ),
+                            color =Color.White
                         )
                     }
                 }
@@ -180,7 +181,7 @@ fun DistributionPointBottomSheet(
                     onClick = onRouteClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFE5E5E5),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor =  Color.White
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -194,7 +195,8 @@ fun DistributionPointBottomSheet(
                         Icon(
                             imageVector = Icons.Default.Directions,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp).bounceClick()
+                            modifier = Modifier.size(16.dp)
+                                .bounceClick()
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
@@ -202,7 +204,8 @@ fun DistributionPointBottomSheet(
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
-                            )
+                            ),
+                            color =   Color.White
                         )
                     }
                 }
