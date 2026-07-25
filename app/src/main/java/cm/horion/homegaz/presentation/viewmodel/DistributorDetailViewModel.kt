@@ -9,6 +9,7 @@ import cm.horion.homegaz.data.datasource.remote.GazBottleLocal
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
+import cm.horion.homegaz.domain.model.distributor.dto.BottleStock
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
@@ -40,7 +41,7 @@ class DistributorDetailViewModel(
     }
 
 
-    fun loadAvailableBottles(battleUuid: String, stock: Map<String, Int>) {
+    fun loadAvailableBottles(battleUuid: String, stock: Map<String, BottleStock>) {
         if (stock.isEmpty()) return
 
         viewModelScope.launch {

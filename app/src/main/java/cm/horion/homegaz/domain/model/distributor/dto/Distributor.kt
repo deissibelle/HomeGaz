@@ -16,8 +16,13 @@ data class Distributor(
     val openTime : String,
     val closeTime : String,
     val accountState: AccountState,
-    val stock: Map<String, Int> = mapOf(),
+    val stock: Map<String, BottleStock> = mapOf(),
     val distance : Double,
     val createdAt: String,
     val updatedAt: String
+)
+@Serializable
+data class BottleStock(
+    val quantity: Int,
+    val isConsigne: Boolean = false,
 )
