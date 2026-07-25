@@ -57,12 +57,6 @@ fun BottomNavBar(
             label = "Réservations"
         ),
         NavItem(
-            id = "Conseils",
-            iconOutlined = Icons.Outlined.TipsAndUpdates,
-            iconFilled = Icons.Filled.TipsAndUpdates,
-            label = "Conseils"
-        ),
-        NavItem(
             id = "Compte",
             iconOutlined = Icons.Outlined.AccountCircle,
             iconFilled = Icons.Filled.AccountCircle,
