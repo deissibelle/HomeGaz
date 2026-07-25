@@ -1,6 +1,7 @@
-
 package cm.horion.homegaz.presentation.ui.pages.reservations
 
+import android.R.attr.phoneNumber
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,28 +15,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
+import cm.horion.homegaz.domain.model.distributor.OrderSummary
+import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
 import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.order.dto.OrderState
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
 import cm.horion.homegaz.util.getDateOnly
 import cm.horion.homegaz.util.getTimeOnly
-
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.unit.Dp
-import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.options.*
 
 private fun Modifier.dashedBorder(
     color: Color,
@@ -55,8 +60,8 @@ private fun Modifier.dashedBorder(
                 floatArrayOf(dashLength.toPx(), gapLength.toPx()), 0f
             )
         ),
-        topLeft = androidx.compose.ui.geometry.Offset(strokeWidthPx / 2, strokeWidthPx / 2),
-        size = androidx.compose.ui.geometry.Size(
+        topLeft = Offset(strokeWidthPx / 2, strokeWidthPx / 2),
+        size = Size(
             size.width - strokeWidthPx,
             size.height - strokeWidthPx
         ),
@@ -71,44 +76,37 @@ fun ReservationDetailScreen(
 ) {
     val colors = MaterialTheme.homeGazColors
 
-    // 🎯 Logique des couleurs de statut synchronisée à 100% avec l'élément de liste
     val (statusBg, statusContentColor, statusLabel) = when (reservation.orderState) {
         OrderState.STARTING -> Triple(
             colors.pendingBg,
             colors.pendingOnBg,
             stringResource(R.string.res_status_starting_label)
         )
-
         OrderState.LOADING -> Triple(
             colors.deliveringBg,
             colors.deliveringOnBg,
             stringResource(R.string.res_status_loading_label)
         )
-
         OrderState.SENDING -> Triple(
             colors.deliveringBg,
             colors.deliveringOnBg,
             stringResource(R.string.res_status_sending_label)
         )
-
         OrderState.SHIPPING -> Triple(
             colors.deliveringBg,
             colors.deliveringOnBg,
             stringResource(R.string.res_status_shipping_label)
         )
-
         OrderState.DELIVERED -> Triple(
             colors.deliveringBg,
             colors.deliveringOnBg,
             stringResource(R.string.res_status_delivered_label)
         )
-
         OrderState.ENDING -> Triple(
             colors.completedBg,
             colors.completedOnBg,
             stringResource(R.string.res_status_completed_label)
         )
-
         OrderState.CANCELLED -> Triple(
             MaterialTheme.colorScheme.errorContainer,
             MaterialTheme.colorScheme.onErrorContainer,
@@ -118,17 +116,23 @@ fun ReservationDetailScreen(
 
     val brandName = gaz?.company?.name ?: ""
     val quantity = reservation.gaz.getOrNull(0)?.quantity ?: 0
-    val headerTitle = brandName
+    val headerTitle = "$brandName-${gaz?.gazSize?.size ?: "12.5"}kg"
 
     val headerSubtitle = buildString {
         append(reservation.createdAt.getDateOnly())
         reservation.createdAt.getTimeOnly()?.let { append("  $it") }
     }
+    val amountValue = reservation.amount ?: 0
+    val phoneNumber = reservation.userUuid
+
+    // Chargement de l'icône de l'application ou de la flamme au centre du QR Code
+    val appLogoPainter = painterResource(id = R.drawable.ic_launcher_playstore)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         // Header / TopBar
@@ -142,7 +146,7 @@ fun ReservationDetailScreen(
                 onClick = onBackClick,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .semantics { contentDescription = "Retour" },
+//                    .semantics { contentDescription = stringResource(R.string.res_detail_desc_retour) },
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -174,122 +178,181 @@ fun ReservationDetailScreen(
             }
         }
 
-        // Boîte d'informations — bordure pointillée bleue
+        // Zone centrale défilante (Ticket + Code QR + Instructions)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.background)
-                .dashedBorder(
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 1.dp,
-                    cornerRadius = 16.dp,
-                )
+                .weight(1f)
                 .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            DetailRow(
-                icon = Icons.Outlined.Verified,
-                label = stringResource(R.string.res_detail_label_marque),
-                value = brandName,
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-            DetailRow(
-                icon = Icons.Outlined.PropaneTank,
-                label = stringResource(R.string.res_detail_label_poids),
-                value = "${gaz?.gazSize?.size} kg",
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-            DetailRow(
-                icon = Icons.Outlined.PropaneTank,
-                label = stringResource(R.string.res_detail_label_quantite),
-                value = quantity.toString(),
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-            DetailRow(
-                icon = Icons.Outlined.SwapHoriz,
-                label = stringResource(R.string.res_detail_label_option),
-                value = if (reservation.deliveryMode == DeliveryMode.PICKUP) stringResource(R.string.res_retrait_label)  else stringResource(R.string.res_delivery_label)
-            )
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-            // Ligne de statut
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.res_detail_label_statut),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(Modifier.height(6.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.Autorenew,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .dashedBorder(
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 1.dp,
+                        cornerRadius = 16.dp,
                     )
-                    Spacer(Modifier.width(10.dp))
-                    Surface(
-                        shape = RoundedCornerShape(24.dp),
-                        color = statusBg, // Couleur dynamique issue du thème
-                        modifier = Modifier.weight(1f),
-                    ) {
+                    .background(MaterialTheme.colorScheme.background),
+            ) {
+
+                DetailRow(
+                    icon = Icons.Outlined.Verified,
+                    label = stringResource(R.string.res_detail_label_marque),
+                    value = brandName,
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+
+                DetailRow(
+                    icon = Icons.Outlined.Scale,
+                    label = stringResource(R.string.res_detail_label_poids),
+                    value = "${gaz?.gazSize?.size ?: "12.5"}kg",
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+
+                DetailRow(
+                    icon = Icons.Outlined.Numbers,
+                    label = stringResource(R.string.res_detail_label_quantite),
+                    value = quantity.toString(),
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+
+                DetailRow(
+                    icon = Icons.Outlined.SwapHoriz,
+                    label = stringResource(R.string.res_detail_label_option),
+                    value = if (reservation.deliveryMode == DeliveryMode.PICKUP) stringResource(R.string.res_retrait_label) else stringResource(R.string.res_delivery_label)
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+
+
+                // Ligne de statut
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 14.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.res_detail_label_statut),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.Autorenew,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Surface(
+                            shape = RoundedCornerShape(24.dp),
+                            color = statusBg,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Text(
+                                text = statusLabel,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp,
+                                ),
+                                color = statusContentColor,
+                            )
+                        }
+                    }
+                }
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+
+                // 💵 Ligne de prix + méthode de paiement formatée dynamiquement
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.res_detail_label_montant),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Outlined.AccountBalanceWallet,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.width(10.dp))
+
                         Text(
-                            text = statusLabel,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(
+                            text = buildString {
+                                append(stringResource(R.string.res_detail_valeur_devise, amountValue))
+                                append(" | ")
+                                append(stringResource(R.string.res_payment_om_format, "655930157"))  },
+                            style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 12.sp,
+                                fontSize = 16.sp,
                             ),
-                            color = statusContentColor, // Couleur de contenu dynamique issue du thème
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
                 }
             }
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
+            Spacer(modifier = Modifier.height(24.dp))
+            val qrDarkColor = MaterialTheme.colorScheme.onBackground
+            val qrLightColor = MaterialTheme.colorScheme.background
+            val qrAccentColor = MaterialTheme.colorScheme.primary
+            val qrPainter = rememberQrCodePainter(
+                data = reservation.deliveryCode,
+                options = QrOptions {
+                    shapes {
+                        ball = QrBallShape.roundCorners(0.25f)
+                        frame = QrFrameShape.roundCorners(0.25f)
+                    }
+                    colors {
+                        dark = QrBrush.solid(qrDarkColor)
+                        light = QrBrush.solid(qrLightColor)
+                        frame = QrBrush.solid(qrAccentColor)
+                        ball = QrBrush.solid(qrAccentColor)
+                    }
+                    logo {
+                        painter = appLogoPainter
+                        size = 0.18f
+                        shape = QrLogoShape.circle()
 
-            // Ligne de prix + mode de paiement
-            Column(
+                    }
+                }
+            )
+
+            Image(
+                painter = qrPainter,
+                contentDescription = stringResource(R.string.res_detail_desc_qrcode),
+                modifier = Modifier
+                    .size(180.dp)
+                    .padding(8.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(R.string.res_detail_instructions_qr),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    lineHeight = 20.sp
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.res_detail_label_montant),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(Modifier.height(6.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Outlined.AccountBalanceWallet,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = stringResource(R.string.res_detail_price_format, reservation.amount),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        ),
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-            }
+                    .padding(horizontal = 32.dp)
+                    .padding(bottom = 32.dp)
+            )
         }
     }
 }
@@ -316,7 +379,7 @@ private fun DetailRow(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.width(10.dp))
             Text(
@@ -330,4 +393,3 @@ private fun DetailRow(
         }
     }
 }
-

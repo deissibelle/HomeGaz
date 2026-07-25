@@ -96,6 +96,8 @@ dependencies {
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("androidx.work:work-runtime-ktx:2.10.0")
     implementation("io.insert-koin:koin-androidx-workmanager:3.5.6")
+    //Qrose
+    implementation(libs.qrose)
 
     // Koin
     implementation(libs.koin.android)

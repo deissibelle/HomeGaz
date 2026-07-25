@@ -234,15 +234,17 @@
     <string name="res_detail_label_poids">Poids</string>
     <string name="res_detail_label_quantite">Quantité</string>
     <string name="res_detail_label_option">Option</string>
-    <string name="res_detail_label_delais">Délais</string>
     <string name="res_detail_label_statut">Statut</string>
     <string name="res_detail_label_montant">Montant de la commande</string>
-    <string name="res_detail_price_format">%1$d fr CFA</string>
     <string name="res_detail_status_delivering">En cours</string>
     <string name="res_detail_status_pending">En attente</string>
     <string name="res_detail_status_completed">Terminé</string>
     <string name="res_detail_no_delay">N/A</string>
-    <string name="res_detail_back_desc">Retour</string>
+    <string name="res_detail_valeur_devise">%1$d FCFA</string>
+    <string name="res_detail_instructions_qr">Présentez ce code QR lors de la livraison ou de la récupération de votre bouteille.</string>
+    <string name="res_detail_desc_retour">Retour</string>
+    <string name="res_detail_desc_qrcode">Code QR de validation de la commande</string>
+
 
     <!-- Réservations — modèle -->
     <string name="res_delivery_label">Livraison</string>
