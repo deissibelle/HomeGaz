@@ -45,7 +45,7 @@ fun dataModule() = module {
 
     //service
     single { SecureStorage(androidContext()) }
-    single { ConsumerService(get()) }
+    single { ConsumerService(get(),get()) }
     single { GazBottleLocal(get()) }
     single { PayService(get()) }
     single { AuthService(get()) }

@@ -1,6 +1,7 @@
 package cm.horion.homegaz.data.datasource.remote
 
 import android.util.Log
+import cm.horion.homegaz.data.security.UserDataStore
 import cm.horion.homegaz.domain.model.Endpoint
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.consommateur.dto.Profile
@@ -12,18 +13,21 @@ import cm.horion.homegaz.util.ApiClient.client
 import cm.horion.homegaz.util.Constants.GAZ_URL
 import io.ktor.client.request.accept
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import kotlinx.serialization.json.Json
 
 class ConsumerService(
-    private val loadProfile : LoadGazProfileUseCase
+    private val loadProfile : LoadGazProfileUseCase,
+    private val settingStore : UserDataStore
 ) {
 
     suspend fun getGaz() : List<GazBottle> {
@@ -40,29 +44,36 @@ class ConsumerService(
     }
 
     suspend fun saveProfil(request : ProfileRequest) : Response {
+        val token = settingStore.getExchangeToken()
         return try {
             val response: HttpResponse = client.post("$GAZ_URL${Endpoint.SaveProfile.path}") {
                 contentType(ContentType.Application.Json)
                 accept(ContentType.Application.Json)
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer $token")
+                }
                 setBody(request)
             }
             val responseText = response.bodyAsText()
-            Log.d("PROFILE",responseText)
             val profil = Json.decodeFromString<Response>(responseText)
             if (profil.profile != null) {
                 loadProfile.save(profil.profile)
             }
             profil
         } catch (e : Exception){
-            Response(false, e.message.toString())
+            Response(false, "Erreur réseau veiller essayer plus tard")
         }
 
     }
 
     suspend fun updateProfile(request : ProfileRequest) : Response {
+        val token = settingStore.getExchangeToken()
         val response: HttpResponse = client.put("$GAZ_URL${Endpoint.UpdateProfile.path}") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
+            headers {
+                append(HttpHeaders.Authorization, "Bearer $token")
+            }
             setBody(request)
         }
         val responseText = response.bodyAsText()
@@ -74,10 +85,14 @@ class ConsumerService(
     }
 
     suspend fun getProfile() : Response {
+        val token = settingStore.getExchangeToken()
         val response: HttpResponse = client.get("$GAZ_URL${Endpoint.GetProfile.path}") {
             accept(ContentType.Application.Json)
+            headers {
+                append(HttpHeaders.Authorization, "Bearer $token")
+            }
         }
-        Log.d("PROFILE",response.bodyAsText())
+
         if (response.status == HttpStatusCode.OK) {
             val responseText = response.bodyAsText()
             val profile = Json.decodeFromString<Profile>(responseText)
