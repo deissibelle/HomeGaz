@@ -65,13 +65,24 @@ fun AccountScreen(
                 }
 
                 // Paramètres
+                // Paramètres
                 SectionContainer(title = stringResource(R.string.account_section_settings)) {
+                    AccountMenuItem(
+                        icon     = Icons.Outlined.TipsAndUpdates,
+                        label    = stringResource(R.string.account_menu_advices),
+                        sublabel = stringResource(R.string.account_sub_advices),
+                        onClick  = { navController.navigate(Screen.Advices.route) }
+                    )
+                    HorizontalDivider(
+                        modifier  = Modifier.padding(horizontal = 56.dp),
+                        thickness = 0.5.dp,
+                        color     = MaterialTheme.colorScheme.outlineVariant
+                    )
                     AccountMenuItem(
                         icon     = Icons.Outlined.Notifications,
                         label    = stringResource(R.string.account_menu_notifications),
                         sublabel = stringResource(R.string.account_sub_notifications),
                         onClick  = {
-                            // Action : Ouvre les paramètres système de notifications pour cette application
                             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                             }

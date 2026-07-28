@@ -1,17 +1,24 @@
 package cm.horion.homegaz.presentation.ui.pages.advices
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.advices.AdviceSection
 import cm.horion.homegaz.domain.model.advices.AdviceTip
-import cm.horion.homegaz.presentation.ui.theme.AdvicesBackground
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderEconomiser
 import cm.horion.homegaz.presentation.ui.theme.AdvicesHeaderIncendies
 import cm.horion.homegaz.presentation.ui.components.advices.DailyPracticesBlock
@@ -19,7 +26,9 @@ import cm.horion.homegaz.presentation.ui.components.advices.AdviceSectionBlock
 
 
 @Composable
-fun AdvicesScreen() {
+fun AdvicesScreen(
+    onBackClick: () -> Unit = {}
+) {
     val adviceSections = listOf(
         AdviceSection(
             sectionTitle = stringResource(R.string.advices_section_economiser),
@@ -139,18 +148,53 @@ fun AdvicesScreen() {
     )
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+        modifier = Modifier.fillMaxSize()
+            .statusBarsPadding()
     ) {
-        adviceSections.forEach { section ->
-            AdviceSectionBlock(section = section)
+        // Header / TopBar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .height(56.dp),
+        ) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.align(Alignment.CenterStart),
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Text(
+                text = stringResource(R.string.account_menu_advices),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.Center),
+            )
         }
-        DailyPracticesBlock(
-            title     = stringResource(R.string.advices_section_quotidien),
-            practices = dailyPractices
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+
+        // Contenu défilant
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            adviceSections.forEach { section ->
+                AdviceSectionBlock(section = section)
+            }
+            DailyPracticesBlock(
+                title     = stringResource(R.string.advices_section_quotidien),
+                practices = dailyPractices
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }

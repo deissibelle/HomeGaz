@@ -263,6 +263,8 @@
     <string name="account_section_consumption">Ma consommation</string>
     <string name="account_section_settings">Paramètres</string>
     <string name="account_section_support">Aide &amp; Support</string>
+    <string name="account_menu_advices">Conseils</string>
+    <string name="account_sub_advices">Astuces pour bien utiliser votre gaz</string>
 
     <!-- Menu Items Labels -->
     <string name="account_menu_gaz_profile">Mon Profil Gaz</string>

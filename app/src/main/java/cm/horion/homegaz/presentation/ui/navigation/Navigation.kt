@@ -25,6 +25,7 @@ import cm.horion.homegaz.presentation.ui.MainScreen
 import cm.horion.homegaz.presentation.ui.Tab
 import cm.horion.homegaz.presentation.ui.pages.account.HelpCenterScreen
 import cm.horion.homegaz.presentation.ui.pages.account.PrivacySettingsScreen
+import cm.horion.homegaz.presentation.ui.pages.advices.AdvicesScreen
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.gazprofile.GazProfileScreen
@@ -310,7 +311,18 @@ fun HomeGazApp(
                 }
             )
         }
+        // ── ADVICES (Conseils) ───────────────────────────────────────────────
+        composable(Screen.Advices.route) {
+            AdvicesScreen(
+                onBackClick = {
+                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
+
 
 
 }

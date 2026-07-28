@@ -34,7 +34,6 @@ import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 enum class Tab(val label: String) {
     HOME("Accueil"),
     RESERVATIONS("Réservations"),
-    ADVICES("Conseils"),
     ACCOUNT("Compte");
 
     companion object {
@@ -141,10 +140,6 @@ fun MainScreen(
                     )
                 }
 
-            }
-
-            if (selectedTab == Tab.ADVICES) {
-                AdvicesScreen()
             }
 
             if (selectedTab == Tab.ACCOUNT) {
