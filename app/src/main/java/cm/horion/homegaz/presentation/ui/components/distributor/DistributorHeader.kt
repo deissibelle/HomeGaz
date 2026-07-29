@@ -66,7 +66,7 @@ fun DistributorHeader(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = logoRes ?: R.drawable.distributor_logo),
+                painter = painterResource(id = logoRes ?: R.drawable.total),
                 contentDescription = title,
                 modifier = Modifier.size(69.dp),
                 contentScale = ContentScale.Fit

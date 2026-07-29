@@ -63,7 +63,7 @@ fun HomeGazApp(
         Screen.Onboarding.route
     }
 
-    val homeViewModel: HomeViewModel               = koinViewModel()
+    val homeViewModel: HomeViewModel = koinViewModel()
     val consumerViewModel: ConsumerViewModel = koinViewModel()
     val distributorViewModel  : DistributorDetailViewModel = koinViewModel()
     val reservationsViewModel: ReservationsViewModel = koinViewModel()
@@ -142,7 +142,7 @@ fun HomeGazApp(
                     navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
                         popUpTo(Screen.Home.route) { inclusive = true }
                     }
-                },                onLicencesClick = {  }
+                },
             )
         }
 

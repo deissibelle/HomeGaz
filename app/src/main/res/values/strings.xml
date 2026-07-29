@@ -299,7 +299,7 @@
 
     <!--  Écran Centre d\'aide (Style WhatsApp) -->
     <string name="help_center_version_format">Version %1$s</string>
-    <string name="contact_us">Contactez-nous</string>
+    <string name="contact_us">Contactez-nous:</string>
 
     <string name="help_center_copyright">© 2025–2026 HomeGaz Inc.</string>
 
