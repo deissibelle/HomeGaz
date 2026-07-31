@@ -78,9 +78,6 @@ dependencies {
     // Fonts
     implementation(libs.androidx.ui.text.google.fonts)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
-
     // Pager / Foundation
     implementation(libs.androidx.foundation)
 
@@ -93,9 +90,9 @@ dependencies {
 
     // DataStore
     implementation(libs.datastore.preferences)
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    implementation("androidx.work:work-runtime-ktx:2.10.0")
-    implementation("io.insert-koin:koin-androidx-workmanager:3.5.6")
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.koin.androidx.workmanager)
     //Qrose
     implementation(libs.qrose)
 
@@ -110,7 +107,7 @@ dependencies {
 
     // Yandex MapKit SDK
     implementation(libs.maps.mobile)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // Client Http
     implementation(libs.ktor.client.core)
@@ -122,15 +119,21 @@ dependencies {
 
     //splashscreen
     implementation(libs.androidx.core.splashscreen)
-    implementation("androidx.core:core-splashscreen:1.1.0-rc01")
+    implementation(libs.androidx.core.splashscreen.v110rc01)
 
-    implementation("androidx.browser:browser:1.8.0")
+    implementation(libs.androidx.browser)
+
+    // Navigation 3 (remplace androidx-navigation-compose / Nav 2)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3) // koinViewModel() scopé par NavEntry
+    implementation(libs.kotlinx.serialization.core)               // @Serializable sur les NavKey
 
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    implementation(libs.kotlinx.coroutines.test)
 
     androidTestImplementation(
         platform(libs.androidx.compose.bom)

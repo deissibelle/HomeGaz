@@ -19,9 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
 import cm.horion.homegaz.R
-import cm.horion.homegaz.domain.model.common.Screen
+import cm.horion.homegaz.domain.model.common.Destination
 import cm.horion.homegaz.presentation.ui.components.account.AccountMenuItem
 import cm.horion.homegaz.presentation.ui.components.account.DisplayPreferencesDialog
 import cm.horion.homegaz.presentation.ui.components.account.SectionContainer
@@ -31,7 +32,7 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountScreen(
-    navController: NavController,
+    backStack: NavBackStack<NavKey>,
     onSsoLogoutCall: () -> Unit
 ) {
     val context = LocalContext.current
@@ -60,18 +61,17 @@ fun AccountScreen(
                         icon     = Icons.Outlined.LocalFireDepartment,
                         label    = stringResource(R.string.account_menu_gaz_profile),
                         sublabel = stringResource(R.string.account_sub_gaz_profile),
-                        onClick  = { navController.navigate(Screen.GazProfile.route) }
+                        onClick  = { backStack.add(Destination.GazProfile) }
                     )
                 }
 
-                // Paramètres
                 // Paramètres
                 SectionContainer(title = stringResource(R.string.account_section_settings)) {
                     AccountMenuItem(
                         icon     = Icons.Outlined.TipsAndUpdates,
                         label    = stringResource(R.string.account_menu_advices),
                         sublabel = stringResource(R.string.account_sub_advices),
-                        onClick  = { navController.navigate(Screen.Advices.route) }
+                        onClick  = { backStack.add(Destination.Advices) }
                     )
                     HorizontalDivider(
                         modifier  = Modifier.padding(horizontal = 56.dp),
@@ -108,7 +108,7 @@ fun AccountScreen(
                         icon     = Icons.Outlined.HelpOutline,
                         label    = stringResource(R.string.account_menu_help),
                         sublabel = stringResource(R.string.account_sub_help),
-                        onClick  = { navController.navigate(Screen.HelpCenter.route) }
+                        onClick  = { backStack.add(Destination.HelpCenter) }
                     )
                     HorizontalDivider(
                         modifier  = Modifier.padding(horizontal = 56.dp),
@@ -119,7 +119,7 @@ fun AccountScreen(
                         icon     = Icons.Outlined.VerifiedUser,
                         label    = stringResource(R.string.account_menu_privacy),
                         sublabel = stringResource(R.string.account_sub_privacy),
-                        onClick  = { navController.navigate(Screen.PrivacySettings.route) }
+                        onClick  = { backStack.add(Destination.PrivacySettings) }
                     )
                 }
 
