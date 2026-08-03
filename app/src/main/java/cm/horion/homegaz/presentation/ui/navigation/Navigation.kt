@@ -3,21 +3,20 @@ package cm.horion.homegaz.presentation.ui.navigation
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import cm.horion.homegaz.domain.model.common.Screen
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import cm.horion.homegaz.domain.model.common.Destination
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
 import cm.horion.homegaz.domain.repository.UserPreferencesRepository
@@ -41,288 +40,202 @@ import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
+private fun NavBackStack<NavKey>.popUntil(predicate: (NavKey) -> Boolean) {
+    while (size > 1 && !predicate(last())) {
+        removeLastOrNull()
+    }
+}
+
 @Composable
 fun HomeGazApp(
     userPrefs: UserPreferencesRepository,
-    isLoggedIn            : Boolean,
-    onSsoLoginCall        : () -> Unit,
-    onSsoLogoutCall       : () -> Unit
+    isLoggedIn      : Boolean,
+    onSsoLoginCall  : () -> Unit,
+    onSsoLogoutCall : () -> Unit
 ) = HomeGazTheme {
 
-    val navController = rememberNavController()
-
-    val onboardingCompleted by userPrefs
-        .isOnboardingCompleted
-        .collectAsState(initial = null)
-
+    val onboardingCompleted by userPrefs.isOnboardingCompleted.collectAsState(initial = null)
     if (onboardingCompleted == null) return@HomeGazTheme
 
-    val startDestination = if (onboardingCompleted == true) {
-        Screen.Home.route
-    } else {
-        Screen.Onboarding.route
-    }
+    val backStack = rememberNavBackStack(
+        if (onboardingCompleted == true) Destination.Home else Destination.Onboarding
+    )
 
-    val homeViewModel: HomeViewModel               = koinViewModel()
+    var pendingHomeTab by remember { mutableStateOf<Tab?>(null) }
+
+    val homeViewModel: HomeViewModel = koinViewModel()
     val consumerViewModel: ConsumerViewModel = koinViewModel()
-    val distributorViewModel  : DistributorDetailViewModel = koinViewModel()
+    val distributorViewModel: DistributorDetailViewModel = koinViewModel()
     val reservationsViewModel: ReservationsViewModel = koinViewModel()
     val sharedUiState by distributorViewModel.uiState.collectAsState()
 
+    NavDisplay(
+        backStack = backStack,
+        onBack    = { backStack.removeLastOrNull() },
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator()
+        ),
+        entryProvider = entryProvider {
 
-
-    NavHost(
-        navController    = navController,
-        startDestination = startDestination
-    ) {
-
-        // ── ONBOARDING ────────────────────────────────────────────────────────
-        composable(Screen.Onboarding.route) {
-            OnboardingScreen(
-                onFinish = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            )
-        }
-
-        // ── LOCATION PERMISSION ───────────────────────────────────────────────
-        composable(Screen.LocationPermission.route) {
-
-            val locationPermissionLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestMultiplePermissions()
-            ) { permissions ->
-                val granted = permissions.values.all { it }
-                homeViewModel.onLocationPermissionResult(granted)
-                if (granted) {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.LocationPermission.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-
-            LocationPermissionScreen(
-                onActivateClick = {
-                    locationPermissionLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
-            )
-        }
-
-        // ── HOME ──────────────────────────────────────────────────────────────
-        composable(Screen.Home.route) {
-            MainScreen(
-                navController         = navController,
-                reservationsViewModel = reservationsViewModel,
-                consumerViewModel = consumerViewModel,
-                onRouteClick          = { lat, lng ->
-                    homeViewModel.calculateRouteToPoint(lat, lng)
-                },
-                onRequestLocation = {
-                    navController.navigate(Screen.LocationPermission.route) {
-                        launchSingleTop = true
-                    }
-                },
-                isLoggedIn = isLoggedIn,
-                onSsoLoginCall = onSsoLoginCall,
-                onSsoLogoutCall = onSsoLogoutCall
-            )
-        }
-        //  Centre d'aide
-        composable(Screen.HelpCenter.route) {
-            HelpCenterScreen(
-                onBackClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                },                onLicencesClick = {  }
-            )
-        }
-
-        //  Confidentialité des données
-        composable(Screen.PrivacySettings.route) {
-            PrivacySettingsScreen(
-                onBackClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                },            )
-        }
-
-        // ── HOME WITH TAB ─────────────────────────────────────────────────────
-        composable(
-            route     = "${Screen.Home.route}/{initialTab}",
-            arguments = listOf(navArgument("initialTab") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val initialTab = backStackEntry.arguments?.getString("initialTab") ?: Tab.HOME.label
-            MainScreen(
-                navController         = navController,
-                reservationsViewModel = reservationsViewModel,
-                consumerViewModel = consumerViewModel,
-                initialTab            = initialTab,
-                onRouteClick          = { lat, lng ->
-                    homeViewModel.calculateRouteToPoint(lat, lng)
-                },
-                onRequestLocation = {
-                    navController.navigate(Screen.LocationPermission.route) {
-                        launchSingleTop = true
-                    }
-                },
-                isLoggedIn = isLoggedIn,
-                onSsoLoginCall = onSsoLoginCall,
-                onSsoLogoutCall = onSsoLogoutCall
-            )
-        }
-
-        // ── DISTRIBUTOR DETAIL ────────────────────────────────────────────────
-        composable(
-            route           = Screen.DistributorDetail.route,
-            arguments       = listOf(navArgument("pointId") { type = NavType.StringType }),
-            enterTransition = { fadeIn(tween(400)) + scaleIn(initialScale = 0.92f) }
-        ) { backStackEntry ->
-
-            // 2. 🚀 COLLECTE L'ÉTAT ICI EN DESSOUS : Compose va maintenant observer les changements réels !
-            val uiState by consumerViewModel.uiState.collectAsState()
-
-            val pointId = backStackEntry.arguments?.getString("pointId") ?: ""
-
-            // 3. On cherche le point dans l'état fraîchement collecté
-            val point = uiState.allPoints.find { it.enterpriseUuid == pointId }
-            if (point != null) {
-                DistributorPointDetailScreen(
-                    point       = point,
-                    battleUuid  = uiState.battleUuid,
-                    viewModel   = distributorViewModel,
-                    onBackClick = { navController.navigate(Screen.Home.route)
-                    },
-                    onNextClick = { quantity, deliveryOption ->
-                        navController.navigate(Screen.Payment.route)
+            // ── ONBOARDING ────────────────────────────────────────────────
+            entry<Destination.Onboarding> {
+                OnboardingScreen(
+                    onFinish = {
+                        backStack.clear()
+                        backStack.add(Destination.Home)
                     }
                 )
-            } else {
-                // Optionnel : Affiche un écran de chargement ou d'erreur temporaire au lieu du noir total
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+            }
+
+            // ── LOCATION PERMISSION ──────────────────────────────────────
+            entry<Destination.LocationPermission> {
+                val locationPermissionLauncher = rememberLauncherForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions()
+                ) { permissions ->
+                    val granted = permissions.values.all { it }
+                    homeViewModel.onLocationPermissionResult(granted)
+                    if (granted) backStack.removeLastOrNull()
+                }
+                LocationPermissionScreen(
+                    onActivateClick = {
+                        locationPermissionLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+                    }
+                )
+            }
+
+            // ── HOME ──────────────────────────────────────────────────────
+            entry<Destination.Home> {
+                MainScreen(
+                    backStack              = backStack,
+                    reservationsViewModel  = reservationsViewModel,
+                    consumerViewModel      = consumerViewModel,
+                    onRouteClick           = { lat, lng -> homeViewModel.calculateRouteToPoint(lat, lng) },
+                    onRequestLocation      = { backStack.add(Destination.LocationPermission) },
+                    requestedTab           = pendingHomeTab,
+                    onRequestedTabConsumed = { pendingHomeTab = null },
+                    isLoggedIn             = isLoggedIn,
+                    onSsoLoginCall         = onSsoLoginCall,
+                    onSsoLogoutCall        = onSsoLogoutCall
+                )
+            }
+
+            // ── ÉCRANS SECONDAIRES DE COMPTE ─────────────────────────────
+            entry<Destination.HelpCenter> {
+                HelpCenterScreen(onBackClick = { backStack.removeLastOrNull() })
+            }
+
+            entry<Destination.PrivacySettings> {
+                PrivacySettingsScreen(onBackClick = { backStack.removeLastOrNull() })
+            }
+
+            entry<Destination.GazProfile> {
+                GazProfileScreen(
+                    onBackClick = { backStack.removeLastOrNull() },
+                    onSaved     = { backStack.removeLastOrNull() }
+                )
+            }
+
+            entry<Destination.Advices> {
+                AdvicesScreen(onBackClick = { backStack.removeLastOrNull() })
+            }
+
+            // ── DISTRIBUTEUR DETAIL ──────────────────────────────────────
+            entry<Destination.DistributorDetail> { key ->
+                val uiState by consumerViewModel.uiState.collectAsState()
+                val point = uiState.allPoints.find { it.enterpriseUuid == key.pointId }
+
+                if (point != null) {
+                    DistributorPointDetailScreen(
+                        point       = point,
+                        battleUuid  = uiState.battleUuid,
+                        viewModel   = distributorViewModel,
+                        onBackClick = { backStack.removeLastOrNull() },
+                        onNextClick = { _, _ -> backStack.add(Destination.Payment) }
+                    )
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
             }
-        }
 
-        // ── PAYMENT ───────────────────────────────────────────────────────────
-        composable(Screen.Payment.route) {
-            PaymentScreen(
-                uiState          = sharedUiState,
-                onPhoneChange    = { distributorViewModel.onPhoneNumberChange(it) },
-                onMethodSelected = { distributorViewModel.onPaymentMethodChange(it) },
-                onBackClick    = { navController.popBackStack() },
-                onNextClick    = {
-                    navController.navigate(Screen.Confirmation.route)
-                }
-            )
-        }
+            // ── PAYMENT ───────────────────────────────────────────────────
+            entry<Destination.Payment> {
+                PaymentScreen(
+                    uiState          = sharedUiState,
+                    onPhoneChange    = distributorViewModel::onPhoneNumberChange,
+                    onMethodSelected = distributorViewModel::onPaymentMethodChange,
+                    onBackClick      = { backStack.removeLastOrNull() },
+                    onNextClick      = { backStack.add(Destination.Confirmation) }
+                )
+            }
 
-        // ── CONFIRMATION ──────────────────────────────────────────────────────
-        composable(Screen.Confirmation.route) {
+            // ── CONFIRMATION ──────────────────────────────────────────────
+            entry<Destination.Confirmation> {
                 ConfirmationScreen(
                     uiState        = sharedUiState,
-                    onBackClick    = { navController.popBackStack() },
+                    onBackClick    = { backStack.removeLastOrNull() },
                     onStartOrder   = distributorViewModel::initOrder,
                     onStartPayment = distributorViewModel::initPayment,
                     dismissError   = distributorViewModel::dismissError,
-                    viewModel   = distributorViewModel,
+                    viewModel      = distributorViewModel,
                     onModifyClick  = {
-                        navController.popBackStack(Screen.DistributorDetail.route, false)
+                        backStack.popUntil { it is Destination.DistributorDetail }
                     },
                     onConfirmClick = {
                         distributorViewModel.cleanPayment()
-                        navController.navigate(Screen.PaymentInitiated.route)
+                        backStack.add(Destination.PaymentInitiated)
                     }
                 )
-        }
+            }
 
-        // ── PAYMENT INITIATED ─────────────────────────────────────────────────
-        composable(Screen.PaymentInitiated.route) {
-            PaymentInitiatedScreen(
-                uiState       = sharedUiState,
-                paymentMethod = sharedUiState.selectedMethod ?: PaymentMethod.OM,
-                onDone        = {
-                    // Le worker a fini en SUCCEEDED -> Direction l'écran de succès
-                    navController.navigate(Screen.PaymentSuccess.route) {
-                        // On efface l'écran d'attente de la pile pour éviter un retour arrière dessus
-                        popUpTo(Screen.PaymentInitiated.route) { inclusive = true }
+            // ── PAYMENT INITIATED ─────────────────────────────────────────
+            entry<Destination.PaymentInitiated> {
+                PaymentInitiatedScreen(
+                    uiState       = sharedUiState,
+                    paymentMethod = sharedUiState.selectedMethod ?: PaymentMethod.OM,
+                    onDone = {
+                        backStack.removeLastOrNull()
+                        backStack.add(Destination.PaymentSuccess)
+                    },
+                    onEchec = {
+                        backStack.removeLastOrNull()
+                        backStack.add(Destination.PaymentSuccess)
                     }
-                },
-                onEchec = {
-                    // Le worker a fini en FAILED -> Direction le même écran mais configuré en échec
-                    navController.navigate(Screen.PaymentSuccess.route) {
-                        popUpTo(Screen.PaymentInitiated.route) { inclusive = true }
-                    }
-                }
-            )
-        }
+                )
+            }
 
-        // ── PAYMENT SUCCESS / FAILED (Écran partagé) ───────────────────────────
-        composable(Screen.PaymentSuccess.route) {
-            // 🛠️ On lit l'état final directement depuis ton sharedUiState
-            val isPaymentValid = sharedUiState.isPaySuccess == PaymentStatus.SUCCESS
-
-            PaymentSuccessScreen(
-                isSuccess = isPaymentValid,
-                errorMsg  = sharedUiState.error, // Transmet la vraie erreur (ex: solde insuffisant) si elle existe
-                onCloseClick = {
-                    distributorViewModel.cleanPayment()
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                },
-                onReservationsClick = {
-                    if (isPaymentValid) {
-                        // Si succès -> On l'envoie voir ses réservations
+            // ── PAYMENT SUCCESS / ÉCHEC ─────────────────────────────────────
+            entry<Destination.PaymentSuccess> {
+                val isPaymentValid = sharedUiState.isPaySuccess == PaymentStatus.SUCCESS
+                PaymentSuccessScreen(
+                    isSuccess = isPaymentValid,
+                    errorMsg  = sharedUiState.error,
+                    onCloseClick = {
                         distributorViewModel.cleanPayment()
-                        navController.navigate("${Screen.Home.route}/${Tab.RESERVATIONS.label}") {
-                            popUpTo(Screen.Home.route) { inclusive = true }
+                        pendingHomeTab = Tab.HOME
+                        backStack.clear()
+                        backStack.add(Destination.Home)
+                    },
+                    onReservationsClick = {
+                        distributorViewModel.cleanPayment()
+                        if (isPaymentValid) {
+                            pendingHomeTab = Tab.RESERVATIONS
+                            backStack.clear()
+                            backStack.add(Destination.Home)
+                        } else {
+                            backStack.popUntil { it is Destination.Payment }
                         }
-                    } else {
-                        distributorViewModel.cleanPayment()
-                        navController.popBackStack(Screen.Payment.route, false)
                     }
-                }
-            )
+                )
+            }
         }
-
-        // ── PROFILE ───────────────────────────────────────────────────────────
-        composable(Screen.GazProfile.route) {
-            GazProfileScreen(
-                onBackClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                },
-                onSaved = {
-                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-        // ── ADVICES (Conseils) ───────────────────────────────────────────────
-        composable(Screen.Advices.route) {
-            AdvicesScreen(
-                onBackClick = {
-                    navController.navigate("${Screen.Home.route}/${Tab.ACCOUNT.label}") {
-                        popUpTo(Screen.Home.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-    }
-
-
-
+    )
 }

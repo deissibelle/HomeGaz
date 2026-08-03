@@ -11,8 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import cm.horion.homegaz.domain.model.common.Screen
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavKey
+import cm.horion.homegaz.domain.model.common.Destination
 import cm.horion.homegaz.domain.model.consommateur.dto.Company
 import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
 import cm.horion.homegaz.domain.model.consommateur.dto.GazType
@@ -29,7 +30,7 @@ private sealed class PendingAction {
 @Composable
 fun HomeScreen(
     consumerViewModel : ConsumerViewModel = koinViewModel(),
-    navController     : NavController,
+    backStack         : NavBackStack<NavKey>,
     onRouteClick      : (Double, Double) -> Unit,
     onRequestLocation : () -> Unit
 ) {
@@ -170,7 +171,7 @@ fun HomeScreen(
                     },
                     onBuyClick = {
                         consumerViewModel.onDismissPopup()
-                        navController.navigate(Screen.DistributorDetail.createRoute(selectedPoint.enterpriseUuid!!))
+                        backStack.add(Destination.DistributorDetail(selectedPoint.enterpriseUuid!!))
                     },
                     onRouteClick = {
                         if (uiState.locationGranted) {

@@ -1,5 +1,6 @@
 package cm.horion.homegaz.presentation.ui.pages.reservations
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
@@ -15,7 +16,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.presentation.state.ReservationsUiState
@@ -26,7 +26,6 @@ import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 
 @Composable
 fun ReservationsScreen(
-    navController : NavController,
     viewModel     : ReservationsViewModel,
     onNavigateToHomeTab: () -> Unit
 
@@ -38,8 +37,11 @@ fun ReservationsScreen(
     val uiState     by viewModel.uiState.collectAsStateWithLifecycle()
     var searchQuery by remember { mutableStateOf("") }
 
-    // Réservation sélectionnée
     var selectedReservation by remember { mutableStateOf<Order?>(null) }
+
+    BackHandler(enabled = selectedReservation != null) {
+        selectedReservation = null
+    }
 
     val filteredReservations = remember(uiState.orders, searchQuery) {
         if (searchQuery.isBlank()) {
@@ -205,4 +207,3 @@ private fun ReservationListContent(
         }
     }
 }
-

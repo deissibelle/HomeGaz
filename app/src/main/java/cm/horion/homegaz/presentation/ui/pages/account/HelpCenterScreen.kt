@@ -2,19 +2,33 @@ package cm.horion.homegaz.presentation.ui.pages.account
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Language // Import de l'icône de site web
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler // Import pour gérer les liens cliquables
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,10 +43,8 @@ import cm.horion.homegaz.presentation.ui.theme.LocalThemeIsDark
 @Composable
 fun HelpCenterScreen(
     onBackClick: () -> Unit,
-    onLicencesClick: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
-
     val isDark = LocalThemeIsDark.current
 
     val imageRes = if (isDark) {
@@ -97,24 +109,31 @@ fun HelpCenterScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.outline
                 )
-                Spacer(modifier = Modifier.height(16.dp))
 
-                // Section Contact
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .width(280.dp)
+                        .padding(vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.contact_us),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
 
                     // Téléphone
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { uriHandler.openUri("mailto:contact@horion.io") }
+                            .padding(vertical = 4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Phone,
@@ -122,17 +141,24 @@ fun HelpCenterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "+237 699 46 86 36 / +237 679 82 75 43",
-                            style = MaterialTheme.typography.bodyMedium
+                            text = "contact@horion.io",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline
+                            )
                         )
                     }
 
                     // Email
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { uriHandler.openUri("mailto:orion@horion.io") }
+                            .padding(vertical = 4.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Email,
@@ -140,19 +166,23 @@ fun HelpCenterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = "orion@horion.io",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                textDecoration = TextDecoration.Underline
+                            )
                         )
                     }
 
-                    // Site Web (Nouveau composant cliquable)
+                    // Site Web
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.Start,
                         modifier = Modifier
-                            .clickable { uriHandler.openUri("https://horion.io/") } // Déclenche l'ouverture du navigateur
+                            .fillMaxWidth()
+                            .clickable { uriHandler.openUri("https://homegaz.horion.io") }
                             .padding(vertical = 4.dp)
                     ) {
                         Icon(
@@ -161,17 +191,18 @@ fun HelpCenterScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "https://horion.io/",
+                            text = "homegaz.horion.io",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = MaterialTheme.colorScheme.primary,
-                                textDecoration = TextDecoration.Underline // Ajout d'un soulignement pour indiquer le lien
+                                textDecoration = TextDecoration.Underline
                             )
                         )
                     }
                 }
             }
+
             // Zone basse fixe (Copyright)
             Text(
                 text = stringResource(R.string.help_center_copyright),
