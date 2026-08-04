@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import androidx.compose.ui.res.stringResource
+import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.common.Destination
 import cm.horion.homegaz.domain.model.consommateur.dto.Company
 import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
@@ -40,7 +42,10 @@ fun HomeScreen(
     val mapController = remember { MapController(context) }
     var pendingAction by remember { mutableStateOf<PendingAction?>(null) }
 
-    // Extraction dynamique des distributeurs proposant du BUTANE
+    // Récupération de la traduction de "Tous" pour comparaison locale
+    val labelAll = stringResource(R.string.home_filter_all)
+
+    // Extraction dynamique des distributeurs
     val distributorOptions = remember(uiState.availableBottles) {
         val butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
@@ -51,7 +56,7 @@ fun HomeScreen(
         }
     }
 
-    // Extraction dynamique des tailles/poids disponibles en BUTANE
+    // Extraction dynamique des tailles/poids
     val weightOptions = remember(uiState.availableBottles, uiState.selectedDistributor) {
         var butaneBottles = uiState.availableBottles.filter { it.gazType == GazType.BUTANE }
 
@@ -65,6 +70,14 @@ fun HomeScreen(
             butaneBottles.map { "${it.gazSize.size} kg" }.distinct()
         }
     }
+
+    val distanceOptions = listOf(
+        "100 ${stringResource(R.string.unit_meter)}",
+        "500 ${stringResource(R.string.unit_meter)}",
+        "1 ${stringResource(R.string.unit_km)}",
+        "5 ${stringResource(R.string.unit_km)}",
+        "10 ${stringResource(R.string.unit_km)}"
+    )
 
     SideEffect {
         mapController.onPointClick   = { point -> consumerViewModel.onPointClick(point) }
@@ -107,7 +120,7 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         Text(
-            text = "HomeGaz",
+            text = stringResource(R.string.app_name),
             modifier = Modifier.padding(start = 24.dp, bottom = 8.dp),
             style = MaterialTheme.typography.titleLarge,
             color = if (isDark) Color.White else MaterialTheme.colorScheme.primary,
@@ -133,23 +146,24 @@ fun HomeScreen(
             )
 
             HomeFilterCard(
-                modifier            = Modifier.align(Alignment.TopCenter),
-                distributor         = uiState.selectedDistributor,
+                modifier   = Modifier.align(Alignment.TopCenter),
+                distributor = uiState.selectedDistributor.ifEmpty { labelAll },
                 onDistributorChange = { brand ->
-                    consumerViewModel.onDismissPopup()
-                    consumerViewModel.onDistributorChange(brand)
+                    // Si l'utilisateur clique sur "Tous"/"All", on envoie une chaîne vide au ViewModel
+                    val techBrand = if (brand == labelAll) "" else brand
+                    consumerViewModel.onDistributorChange(techBrand)
                 },
-                distance            = uiState.selectedDistance,
+                distance   = uiState.selectedDistance,
                 onDistanceChange    = { dist ->
                     consumerViewModel.onDismissPopup()
                     consumerViewModel.onDistanceChange(dist)
                 },
-                weight              = uiState.selectedWeight,
-                onWeightChange      = { weight ->
-                    consumerViewModel.onDismissPopup()
-                    consumerViewModel.onWeightChange(weight)
+                weight = uiState.selectedWeight.ifEmpty { labelAll },
+                onWeightChange = { weight ->
+                    val techWeight = if (weight == labelAll) "" else weight
+                    consumerViewModel.onWeightChange(techWeight)
 
-                    if (weight == "Tous") {
+                    if (techWeight.isEmpty()) {
                         consumerViewModel.onBattleUuidChange("")
                     } else {
                         val matchingBottle = uiState.availableBottles.find { "${it.gazSize.size} kg" == weight }
@@ -158,13 +172,12 @@ fun HomeScreen(
                 },
                 onRefresh           = { runWithLocation(PendingAction.Refresh) },
                 distributorOptions  = distributorOptions,
-                distanceOptions     = listOf("100 mètre", "500 mètre", "1 km", "5 km", "10 km"),
+                distanceOptions     = distanceOptions,
                 weightOptions       = weightOptions
             )
 
-
             uiState.selectedPoint?.let { selectedPoint ->
-                DistributionPointBottomSheet(
+                DistributorPointBottomSheet(
                     point = selectedPoint,
                     onDismissRequest = {
                         consumerViewModel.onDismissPopup()

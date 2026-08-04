@@ -1,0 +1,368 @@
+<resources>
+    <string name="app_name">HomeGaz</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_by_orion">By Orion</string>
+    <string name="splash_logo_description">HomeGaz logo</string>
+
+    <!-- Onboarding -->
+    <string name="skip">Skip</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="onboarding_finish">Let\'s Go</string>
+
+    <string name="onboarding_title_1">Find your gas now</string>
+    <string name="onboarding_desc_1">See on our map where to find the nearest gas point and head straight there.</string>
+
+    <string name="onboarding_title_2">Book online</string>
+    <string name="onboarding_desc_2">Book your gas bottle and choose between home delivery or pickup at the point of sale.</string>
+
+    <string name="onboarding_title_3">Buy and get delivered</string>
+    <string name="onboarding_desc_3">Stop wasting time searching for gas around town. Buy on HomeGaz and get delivered (home, office, etc.)</string>
+
+    <!-- Location Permission -->
+    <string name="location_title">Turn on\nlocation and\ndiscover the gas point\nclosest to you</string>
+    <string name="location_subtitle">Your location is only used to show you the nearest gas points.</string>
+    <string name="location_btn_activate">Turn on</string>
+    <string name="location_icon_desc">Location disabled icon</string>
+
+    <!-- Home Screen -->
+    <string name="home_btn_refresh">Refresh</string>
+    <string name="home_marker_desc">Gas distribution point</string>
+    <string name="home_user_pos_desc">My current location</string>
+
+    <!-- Distribution Point Sheet (Details) -->
+    <string name="home_sheet_distance">%1$s from you</string>
+    <string name="home_sheet_btn_route">Directions</string>
+
+    <!-- Bottom Navigation Bar -->
+    <string name="nav_home">Home</string>
+    <string name="nav_reservations">My Purchases</string>
+    <string name="nav_account">Account</string>
+
+
+    <!-- Advices Screen — Section titles -->
+    <string name="advices_section_economiser">TIPS TO SAVE GAS</string>
+    <string name="advices_section_incendies">TIPS TO PREVENT FIRES</string>
+    <string name="advices_section_quotidien">GOOD DAILY PRACTICES</string>
+
+    <!-- Advices Screen — Save section: block titles -->
+    <string name="advices_eco_tip1_title">Prepare well before lighting</string>
+    <string name="advices_eco_tip2_title">Adjust the flame</string>
+    <string name="advices_eco_tip3_title">Use the right cookware</string>
+    <string name="advices_eco_tip4_title">Optimize cooking</string>
+    <string name="advices_eco_tip5_title">Check for leaks</string>
+
+    <!-- Advices Screen — Save section: bullets -->
+    <string name="advices_eco_tip1_b1">Prepare all ingredients before lighting the flame.</string>
+    <string name="advices_eco_tip1_b2">Never leave the gas on unnecessarily.</string>
+    <string name="advices_eco_tip1_b3">Use thawed food (not straight from frozen).</string>
+
+    <string name="advices_eco_tip2_b1">The flame should be blue and steady.</string>
+    <string name="advices_eco_tip2_b2">If it\'s yellow/orange → poor combustion = wasted gas.</string>
+    <string name="advices_eco_tip2_b3">The flame should not extend past the base of the pot.</string>
+
+    <string name="advices_eco_tip3_b1">Use pots sized to fit the burner.</string>
+    <string name="advices_eco_tip3_b2">Prefer flat-bottomed pots.</string>
+    <string name="advices_eco_tip3_b3">Always cover the pot while cooking.</string>
+
+    <string name="advices_eco_tip4_b1">Cut food into small pieces.</string>
+    <string name="advices_eco_tip4_b2">Turn off the gas a few minutes before the end (residual heat continues cooking).</string>
+    <string name="advices_eco_tip4_b3">Use a pressure cooker to reduce cooking time.</string>
+
+    <string name="advices_eco_tip5_b1">A small leak means a big money loss. Tip:</string>
+    <string name="advices_eco_tip5_b2">a) Mix water and soap,</string>
+    <string name="advices_eco_tip5_b3">b) Apply to the hose and fittings:</string>
+    <string name="advices_eco_tip5_b4">→ If bubbles appear, that\'s a sign of a gas leak.</string>
+
+    <!-- Advices Screen — Fires section: block titles -->
+    <string name="advices_inc_tip1_title">Correct setup</string>
+    <string name="advices_inc_tip2_title">Check the equipment</string>
+    <string name="advices_inc_tip3_title">If you smell gas</string>
+    <string name="advices_inc_tip4_title">Behaviors to avoid</string>
+    <string name="advices_inc_tip5_title">Safe placement</string>
+
+    <!-- Advices Screen — Fires section: bullets -->
+    <string name="advices_inc_tip1_b1">Always keep the bottle upright.</string>
+    <string name="advices_inc_tip1_b2">Never lay the bottle on its side.</string>
+    <string name="advices_inc_tip1_b3">Install it in a well-ventilated place.</string>
+    <string name="advices_inc_tip1_b4">Avoid enclosed spaces (cupboards, unventilated kitchens).</string>
+
+    <string name="advices_inc_tip2_b1">Replace the hose at least every 2 years.</string>
+    <string name="advices_inc_tip2_b2">Use an approved hose.</string>
+    <string name="advices_inc_tip2_b3">Never use a cracked hose.</string>
+    <string name="advices_inc_tip2_b4">Check the regulator regularly.</string>
+
+    <string name="advices_inc_tip3_b1">If you smell gas:</string>
+    <string name="advices_inc_tip3_b2">Do not light a match or lighter.</string>
+    <string name="advices_inc_tip3_b3">Do not touch any switches.</string>
+    <string name="advices_inc_tip3_b4">Open doors and windows immediately.</string>
+    <string name="advices_inc_tip3_b5">Close the valve on the gas bottle.</string>
+    <string name="advices_inc_tip3_b6">Leave the room if necessary.</string>
+
+    <string name="advices_inc_tip4_b1">Never heat the bottle in the sun.</string>
+    <string name="advices_inc_tip4_b2">Never expose it to a heat source.</string>
+    <string name="advices_inc_tip4_b3">Never repair a hose with tape.</string>
+    <string name="advices_inc_tip4_b4">Don\'t let children handle the gas.</string>
+
+    <string name="advices_inc_tip5_b1">Keep the bottle away from: the oven, electrical outlets, flames, and electrical appliances.</string>
+
+    <!-- Advices Screen — Good daily practices -->
+    <string name="advices_daily_1">Close the valve after each use.</string>
+    <string name="advices_daily_2">Clean the burners regularly.</string>
+    <string name="advices_daily_3">Check that the flame is nicely blue.</string>
+    <string name="advices_daily_4">Install a gas detector if possible.</string>
+    <string name="advices_daily_5">Keep a small fire extinguisher in the kitchen.</string>
+
+    <!-- Payment Screen -->
+    <string name="payment_title">Payment</string>
+    <string name="phone_number_label">Phone number</string>
+    <string name="payment_method_select">Choose a payment method</string>
+    <string name="payment_warning_note">A confirmation request will be sent to your phone. Please validate the transaction by entering your PIN as soon as the system prompt appears.</string>
+    <string name="compose_ussd">Dial %1$s</string>
+    <string name="payment_initiated_title">Payment initiated</string>
+    <string name="payment_step_1">A payment request will appear on your phone.</string>
+    <string name="payment_step_2">Enter your PIN to confirm the purchase.</string>
+    <string name="payment_step_3">If the prompt doesn\'t appear, tap the button below to dial %1$s.</string>
+    <string name="payment_success_title">Payment successful</string>
+    <string name="payment_success_message">Your payment has been received.\nSee the list of your purchases in the \"Reservations\" section</string>
+    <string name="btn_my_reservations">My reservations</string>
+    <string name="close_description">Close</string>
+    <string name="label_brand">Brand</string>
+    <string name="label_weight">Weight</string>
+    <string name="delivery_warning_note">Payment will be made upon delivery or pickup of your bottle.</string>
+    <string name="confirmation_title">Payment confirmation</string>
+    <string name="confirmation_warning_note">By tapping confirm, you start the payment request. Make sure your phone is at hand to validate the transaction.</string>
+    <string name="btn_modify">Edit</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="label_quantity">Quantity</string>
+    <string name="label_option">Option</string>
+    <string name="label_payment_method">Payment method</string>
+    <string name="delivery_option_delivery">Delivery</string>
+    <string name="delivery_option_pickup">Pickup</string>
+    <string name="payment_method_om">Orange Money</string>
+    <string name="payment_method_momo" translatable="false">MTN MoMo</string>
+    <string name="recenter_btn">Recenter</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="home_sheet_btn_order">Order</string>
+    <string name="home_sheet_point_category">Service station</string>
+    <string name="home_sheet_image_desc">Photo of the %s station</string>
+
+    <!-- Gas Profile -->
+    <string name="gaz_profile_title">My Gas Profile</string>
+    <string name="gaz_profile_subtitle">Add the details of the gas bottle you use.</string>
+
+    <string name="gaz_profile_capacity">Capacity (kg)</string>
+    <string name="gaz_profile_capacity_6">6.5 kg</string>
+    <string name="gaz_profile_capacity_12">12.5 kg</string>
+    <string name="gaz_profile_capacity_38">22.5 kg</string>
+
+    <string name="gaz_profile_brand">Brand</string>
+    <string name="gaz_profile_brand_hint">E.g.: Total, Tradex, SCTM…</string>
+
+    <string name="gaz_profile_position">GPS coordinates</string>
+    <string name="gaz_profile_location">Location</string>
+
+    <string name="gaz_profile_location_hint">E.g.: Bastos</string>
+    <string name="gaz_profile_location_detect">Detect my location</string>
+
+    <string name="gaz_profile_consumption">Average consumption</string>
+    <string name="gaz_profile_consumption_half">About ½ bottle / month</string>
+    <string name="gaz_profile_consumption_1">About 1 bottle / month</string>
+    <string name="gaz_profile_consumption_2">About 2 bottles / month</string>
+    <string name="gaz_profile_consumption_3">3 bottles or more / month</string>
+
+    <string name="gaz_profile_photo">Photo</string>
+    <string name="gaz_profile_photo_optional">(optional)</string>
+    <string name="gaz_profile_photo_add">+ Add a photo</string>
+    <string name="gaz_profile_photo_desc">Photo of the bottle</string>
+
+    <string name="gaz_profile_notes">Notes</string>
+    <string name="gaz_profile_notes_hint">E.g.: Gas mainly used for cooking…</string>
+
+    <string name="gaz_profile_save">Save my gas profile</string>
+    <string name="gaz_profile_saving">Saving…</string>
+    <string name="gaz_profile_saved">Profile saved!</string>
+    <string name="gaz_profile_error_required">This field is required</string>
+
+    <!-- Auth -->
+    <string name="auth_login_btn">Log in</string>
+    <string name="auth_register_btn">Create an account</string>
+    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="auth_legal_footer">By logging in or creating an account, you agree to the Terms of Use and Privacy Policy</string>
+    <string name="auth_or_separator">Or</string>
+    <string name="auth_title_account">My Account</string>
+    <string name="auth_desc_account">Log in to access your personal information and manage your profile.</string>
+
+    <!-- Reservations — empty state -->
+    <string name="res_empty_title">Make a reservation</string>
+    <string name="res_empty_desc">Find your orders in the Reservations tab. Place as many orders as you\'d like</string>
+    <string name="res_empty_cta">Reserve gas</string>
+    <string name="res_empty_icon_desc">No reservations</string>
+
+    <!-- StatusHeader -->
+    <string name="res_screen_title">My Purchases</string>
+    <string name="res_header_active">Ongoing</string>
+    <string name="res_header_completed">Completed</string>
+
+    <!-- ReservationSearchBar -->
+    <string name="res_search_placeholder">Search a reservation</string>
+
+    <!-- Reservations — list -->
+    <string name="res_list_status_label">Status</string>
+    <string name="res_list_delay_label">Time: %1$s</string>
+    <string name="res_list_no_delay">N/A</string>
+    <string name="res_list_option_format">[%1$s]</string>
+    <string name="res_list_title_format">%1$s  %2$s</string>
+    <string name="res_search_no_result">No results for “%1$s”</string>
+    <string name="res_error_unknown">Unknown error</string>
+
+    <!-- Reservations — statuses (badges) -->
+    <string name="res_status_delivering_label">Ongoing</string>
+    <string name="res_status_pending_label">Pending</string>
+    <string name="res_status_completed_label">Completed</string>
+    <string name="res_status_starting_label">Started</string>
+    <string name="res_status_loading_label">Loading</string>
+    <string name="res_status_sending_label">Sending</string>
+    <string name="res_status_shipping_label">Out for delivery</string>
+    <string name="res_status_delivered_label">Delivered</string>
+    <string name="res_status_cancelled_label">Cancelled</string>
+
+    <!-- Reservations — detail -->
+    <string name="res_detail_label_marque">Brand</string>
+    <string name="res_detail_label_poids">Weight</string>
+    <string name="res_detail_label_quantite">Quantity</string>
+    <string name="res_detail_label_option">Option</string>
+    <string name="res_detail_label_statut">Status</string>
+    <string name="res_detail_label_montant">Order amount</string>
+    <string name="res_detail_status_delivering">Ongoing</string>
+    <string name="res_detail_status_pending">Pending</string>
+    <string name="res_detail_status_completed">Completed</string>
+    <string name="res_detail_no_delay">N/A</string>
+    <string name="res_detail_valeur_devise">%1$d FCFA</string>
+    <string name="res_detail_instructions_qr">Show this QR code upon delivery or pickup of your bottle.</string>
+    <string name="res_detail_desc_retour">Back</string>
+    <string name="res_detail_desc_qrcode">Order validation QR code</string>
+
+
+    <!-- Reservations — model -->
+    <string name="res_delivery_label">Delivery</string>
+    <string name="res_retrait_label">Pickup</string>
+    <string name="res_payment_om_format">OM - %1$s</string>
+    <string name="res_payment_momo_format">MoMo - %1$s</string>
+    <string name="res_default_delay_delivery">1h30</string>
+    <string name="res_default_delay_retrait">2 days</string>
+
+    <!-- Account Screen -->
+    <string name="account_title">My Profile</string>
+    <string name="account_user_default_name">Sibelle Djumeghe</string>
+    <string name="account_btn_edit_profile">Edit profile</string>
+
+    <!-- Account sections -->
+    <string name="account_section_consumption">My consumption</string>
+    <string name="account_section_settings">Settings</string>
+    <string name="account_section_support">Help &amp; Support</string>
+    <string name="account_menu_advices">Tips</string>
+    <string name="account_sub_advices">Tips to get the most out of your gas</string>
+
+    <!-- Menu Items Labels -->
+    <string name="account_menu_gaz_profile">My Gas Profile</string>
+    <string name="account_menu_notifications">Notifications</string>
+    <string name="account_menu_display">Display preferences</string>
+    <string name="account_menu_help">Help Center</string>
+    <string name="account_menu_privacy">Privacy</string>
+    <string name="account_menu_logout">Log out</string>
+
+    <!-- Menu Items Sublabels -->
+    <string name="account_sub_gaz_profile">Capacity, brand, consumption…</string>
+    <string name="account_sub_notifications">Manage alerts and reminders</string>
+    <string name="account_sub_display">Theme and language</string>
+    <string name="account_sub_help">FAQ and technical support</string>
+    <string name="account_sub_privacy">Manage your data</string>
+    <string name="account_version_format">Version %1$s</string>
+
+    <string name="auth_title_reservations">Authentication required</string>
+    <string name="auth_desc_reservations">Please log in to access your reservations.</string>
+
+    <!-- Location fields -->
+    <string name="gaz_profile_region">Region</string>
+    <string name="gaz_profile_ville">City</string>
+    <string name="gaz_profile_quartier">District</string>
+    <string name="gaz_profile_lieu_dit">Landmark</string>
+
+    <!-- Placeholders -->
+    <string name="gaz_profile_ville_hint">Select a city</string>
+    <string name="gaz_profile_ville_hint_select_region">Choose a region first</string>
+    <string name="gaz_profile_quartier_hint">E.g.: Bastos, Messa…</string>
+    <string name="gaz_profile_lieu_dit_hint">E.g.: Shell Roundabout, Central Market…</string>
+
+    <!-- Help Center Screen (WhatsApp-style) -->
+    <string name="help_center_version_format">Version %1$s</string>
+    <string name="contact_us">Contact us:</string>
+
+    <string name="help_center_copyright">© 2025–2026 HomeGaz Inc.</string>
+
+    <!-- Privacy Screen -->
+    <string name="privacy_title">Data privacy</string>
+
+    <!-- Section 1: How we use your data -->
+    <string name="privacy_sec_how_we_use">How HomeGaz uses your data</string>
+    <string name="privacy_item_permissions">Manage access permissions (Location, Photos)</string>
+    <string name="privacy_item_download">Download my order history</string>
+    <string name="privacy_item_clear_search">Clear delivery address history</string>
+    <string name="privacy_item_demographics">Profile information and saved addresses</string>
+    <string name="privacy_item_research">Consumption and refill statistics</string>
+    <string name="privacy_item_ai_opt_in">Gas delivery route optimization</string>
+    <string name="privacy_status_enabled">Enabled</string>
+
+    <!-- Section 2: Who can contact you -->
+    <string name="privacy_sec_contacts">Communications and alerts</string>
+    <string name="privacy_item_invitations_connect">Delivery status alerts (Couriers)</string>
+    <string name="privacy_item_invitations_network">Safety notifications (Leaks, Instructions)</string>
+    <string name="privacy_item_messages">Messages from HomeGaz customer service</string>
+    <string name="privacy_item_research_studies">Delivery satisfaction surveys</string>
+    <string name="privacy_item_marketing_emails">HomeGaz promotional offers and refills</string>
+
+    <!-- Section 3: Messaging -->
+    <string name="privacy_sec_messaging">Tracking and direct messaging</string>
+    <string name="privacy_item_read_receipts">Read receipts with the courier</string>
+
+    <string name="home_filter_all">All</string>
+    <string name="unit_meter">meter</string>
+    <string name="unit_km">km</string>
+
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_en">English</string>
+
+    <string name="theme_desc_light">Always in light mode</string>
+    <string name="theme_desc_dark">Always in dark mode</string>
+    <string name="theme_desc_system">Follows phone settings</string>
+
+    <string name="prefs_title">Display Preferences</string>
+    <string name="prefs_subtitle">Customize your experience</string>
+    <string name="prefs_theme">Theme</string>
+    <string name="prefs_language">Language</string>
+    <string name="prefs_btn_close">Close</string>
+    <string name="prefs_theme_title">Choose theme</string>
+    <string name="prefs_btn_cancel">Cancel</string>
+
+    <string name="dist_detail_no_gas_title">No gas available</string>
+    <string name="dist_detail_no_gas_desc">This depot currently has no bottles in stock matching your search.</string>
+    <string name="dist_detail_select_format">Select your bottle format :</string>
+    <string name="dist_detail_label_brand">Selected brand</string>
+    <string name="dist_detail_label_type_weight">Gas Type / Weight</string>
+    <string name="dist_detail_no_gas_found">No gas found</string>
+
+
+    <string name="payment_failed_title">Payment Failed</string>
+    <string name="payment_failed_message">The payment has failed. Please try again.</string>
+    <string name="payment_btn_retry">Retry payment</string>
+
+    <string name="error_dialog_title">An error occurred</string>
+    <string name="error_dialog_confirm">OK</string>
+
+
+</resources>

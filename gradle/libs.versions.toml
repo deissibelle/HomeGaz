@@ -36,6 +36,9 @@ lifecycleViewmodelNav3 = "2.10.0-rc01"
 kotlinxSerializationCore = "1.8.1"
 workRuntimeKtx = "2.10.0"
 
+appcompat = "1.7.0"
+
+
 
 
 [libraries]
@@ -92,6 +95,7 @@ androidx-navigation3-ui      = { module = "androidx.navigation3:navigation3-ui",
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

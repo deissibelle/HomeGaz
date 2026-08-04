@@ -19,7 +19,10 @@ fun DeliveryOptionRow(
     selectedOption: DeliveryOption,
     onOptionSelected: (DeliveryOption) -> Unit
 ) {
-    val options = listOf("Livraison", "Retrait")
+    val options = listOf(
+        stringResource(R.string.res_delivery_label),
+        stringResource(R.string.res_retrait_label)
+    )
     val selectedIndex = if (selectedOption == DeliveryOption.LIVRAISON) 0 else 1
     val borderStroke = MaterialTheme.colorScheme.outlineVariant
 
