@@ -364,5 +364,8 @@
     <string name="error_dialog_title">An error occurred</string>
     <string name="error_dialog_confirm">OK</string>
 
+    <string name="auth_title_payment">Login Required</string>
+    <string name="auth_desc_payment">You must be logged into your account to finalize your order and proceed to secure payment.</string>
+
 
 </resources>

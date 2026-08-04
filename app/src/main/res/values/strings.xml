@@ -365,6 +365,9 @@
     <string name="error_dialog_title">Une erreur est survenue</string>
     <string name="error_dialog_confirm">D\'accord</string>
 
+    <string name="auth_title_payment">Connexion requise</string>
+    <string name="auth_desc_payment">Vous devez être connecté à votre compte pour finaliser votre commande et procéder au paiement sécurisé.</string>
+
 
 
 </resources>
