@@ -1,8 +1,10 @@
 package cm.horion.homegaz.presentation.ui.pages.account
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity // 🎯 Import crucial pour le correctif
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +38,9 @@ fun AccountScreen(
     onSsoLogoutCall: () -> Unit
 ) {
     val context = LocalContext.current
+
+    val activity = LocalActivity.current
+
     val themeViewModel : ThemeViewModel = koinInject()
     val prefs by themeViewModel.prefs.collectAsStateWithLifecycle()
 
@@ -64,7 +69,6 @@ fun AccountScreen(
                         onClick  = { backStack.add(Destination.GazProfile) }
                     )
                 }
-
                 // Paramètres
                 SectionContainer(title = stringResource(R.string.account_section_settings)) {
                     AccountMenuItem(
@@ -86,7 +90,13 @@ fun AccountScreen(
                             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                             }
-                            context.startActivity(intent)
+
+                            if (activity != null) {
+                                activity.startActivity(intent)
+                            } else {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            }
                         }
                     )
                     HorizontalDivider(
@@ -146,7 +156,7 @@ fun AccountScreen(
                     )
                 }
                 Text(
-                    text      = stringResource(R.string.account_version_format, "1.0.0"),
+                    text= stringResource(R.string.account_version_format, "1.0.0"),
                     modifier  = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp),

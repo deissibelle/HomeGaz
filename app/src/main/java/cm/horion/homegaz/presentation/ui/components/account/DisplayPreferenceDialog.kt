@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,12 +26,9 @@ import androidx.compose.ui.window.DialogProperties
 import cm.horion.homegaz.presentation.viewmodel.AppLanguage
 import cm.horion.homegaz.presentation.viewmodel.AppTheme
 import cm.horion.homegaz.presentation.viewmodel.DisplayPreferences
+import cm.horion.homegaz.R
 
-/**
- * Popup "Préférences d'affichage" :
- *  - Thème (ouvre un second dialog)
- *  - Langue
- */
+
 @Composable
 fun DisplayPreferencesDialog(
     prefs        : DisplayPreferences,
@@ -39,101 +38,106 @@ fun DisplayPreferencesDialog(
 ) {
     var showThemePicker by remember { mutableStateOf(false) }
 
+    // On capture le contexte localisé fourni par le HomeGazTheme parent
+    val currentLocalizedContext = LocalContext.current
+
     // ── Dialog principal ──────────────────────────────────────────────────────
     Dialog(
         onDismissRequest = onDismiss,
         properties       = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Surface(
-            modifier  = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            shape     = RoundedCornerShape(24.dp),
-            color     = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
-        ) {
-            Column(modifier = Modifier.padding(24.dp)) {
+        CompositionLocalProvider(LocalContext provides currentLocalizedContext) {
+            Surface(
+                modifier  = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                shape     = RoundedCornerShape(24.dp),
+                color     = MaterialTheme.colorScheme.surface,
+                tonalElevation = 6.dp
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
 
-                // Titre
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(12.dp)
-                            ),
-                        contentAlignment = Alignment.Center
+                    // Titre
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = RoundedCornerShape(12.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector        = Icons.Outlined.SettingsSuggest,
+                                contentDescription = null,
+                                tint               = MaterialTheme.colorScheme.primary,
+                                modifier           = Modifier.size(20.dp)
+                            )
+                        }
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text       = stringResource(R.string.prefs_title),
+                                style      = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text  = stringResource(R.string.prefs_subtitle),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(24.dp))
+
+                    // ── Thème ─────────────────────────────────────────────────────
+                    PreferenceRow(
+                        icon        = themeIcon(prefs.theme),
+                        label       = stringResource(R.string.prefs_theme),
+                        valueLabel  = prefs.theme.label(),
+                        onClick     = { showThemePicker = true }
+                    )
+
+                    HorizontalDivider(
+                        modifier  = Modifier.padding(vertical = 8.dp),
+                        thickness = 0.5.dp,
+                        color     = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
+
+                    // ── Langue ────────────────────────────────────────────────────
+                    Text(
+                        text       = stringResource(R.string.prefs_language),
+                        style      = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color      = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier   = Modifier.padding(bottom = 10.dp)
+                    )
+                    Row(
+                        modifier              = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector        = Icons.Outlined.SettingsSuggest,
-                            contentDescription = null,
-                            tint               = MaterialTheme.colorScheme.primary,
-                            modifier           = Modifier.size(20.dp)
-                        )
+                        AppLanguage.entries.forEach { lang ->
+                            LanguageChip(
+                                language   = lang,
+                                isSelected = prefs.language == lang,
+                                onClick    = { onLangChange(lang) },
+                                modifier   = Modifier.weight(1f)
+                            )
+                        }
                     }
-                    Spacer(Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text       = "Préférences d'affichage",
-                            style      = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text  = "Personnalisez votre expérience",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+
+                    Spacer(Modifier.height(24.dp))
+
+                    // Bouton fermer
+                    Button(
+                        onClick  = onDismiss,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape    = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(stringResource(R.string.prefs_btn_close), fontWeight = FontWeight.SemiBold)
                     }
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                // ── Thème ─────────────────────────────────────────────────────
-                PreferenceRow(
-                    icon        = themeIcon(prefs.theme),
-                    label       = "Thème",
-                    valueLabel  = prefs.theme.label(),
-                    onClick     = { showThemePicker = true }
-                )
-
-                HorizontalDivider(
-                    modifier  = Modifier.padding(vertical = 8.dp),
-                    thickness = 0.5.dp,
-                    color     = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-
-                // ── Langue ────────────────────────────────────────────────────
-                Text(
-                    text       = "Langue",
-                    style      = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color      = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier   = Modifier.padding(bottom = 10.dp)
-                )
-                Row(
-                    modifier              = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    AppLanguage.entries.forEach { lang ->
-                        LanguageChip(
-                            language   = lang,
-                            isSelected = prefs.language == lang,
-                            onClick    = { onLangChange(lang) },
-                            modifier   = Modifier.weight(1f)
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(24.dp))
-
-                // Bouton fermer
-                Button(
-                    onClick  = onDismiss,
-                    modifier = Modifier.fillMaxWidth(),
-                    shape    = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Fermer", fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -147,63 +151,66 @@ fun DisplayPreferencesDialog(
                 onThemeChange(theme)
                 showThemePicker = false
             },
-            onDismiss = { showThemePicker = false }
+            onDismiss = { showThemePicker = false },
+            localizedContext = currentLocalizedContext // On transmet le contexte au sous-dialogue
         )
     }
 }
 
 
-// ─── Dialog sélection du thème ────────────────────────────────────────────────
 
 @Composable
 fun ThemePickerDialog(
     current   : AppTheme,
     onSelect  : (AppTheme) -> Unit,
-    onDismiss : () -> Unit
+    onDismiss : () -> Unit,
+    localizedContext: android.content.Context // Reçu ici pour la traduction
 ) {
     Dialog(
         onDismissRequest = onDismiss,
         properties       = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Surface(
-            modifier       = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp),
-            shape          = RoundedCornerShape(24.dp),
-            color          = MaterialTheme.colorScheme.surface,
-            tonalElevation = 8.dp
-        ) {
-            Column(modifier = Modifier.padding(24.dp)) {
+        CompositionLocalProvider(LocalContext provides localizedContext) {
+            Surface(
+                modifier       = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp),
+                shape          = RoundedCornerShape(24.dp),
+                color          = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
 
-                Text(
-                    text       = "Choisir le thème",
-                    style      = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier   = Modifier.padding(bottom = 20.dp)
-                )
-
-                AppTheme.entries.forEach { theme ->
-                    ThemeOptionRow(
-                        theme      = theme,
-                        isSelected = theme == current,
-                        onClick    = { onSelect(theme) }
+                    Text(
+                        text       = stringResource(R.string.prefs_theme_title),
+                        style      = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier   = Modifier.padding(bottom = 20.dp)
                     )
-                    if (theme != AppTheme.entries.last()) {
-                        HorizontalDivider(
-                            modifier  = Modifier.padding(vertical = 4.dp),
-                            thickness = 0.5.dp,
-                            color     = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+
+                    AppTheme.entries.forEach { theme ->
+                        ThemeOptionRow(
+                            theme      = theme,
+                            isSelected = theme == current,
+                            onClick    = { onSelect(theme) }
                         )
+                        if (theme != AppTheme.entries.last()) {
+                            HorizontalDivider(
+                                modifier  = Modifier.padding(vertical = 4.dp),
+                                thickness = 0.5.dp,
+                                color     = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            )
+                        }
                     }
-                }
 
-                Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(16.dp))
 
-                TextButton(
-                    onClick  = onDismiss,
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Annuler")
+                    TextButton(
+                        onClick  = onDismiss,
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(stringResource(R.string.prefs_btn_cancel))
+                    }
                 }
             }
         }
@@ -345,7 +352,6 @@ private fun ThemeOptionRow(
         }
     }
 }
-
 @Composable
 private fun LanguageChip(
     language   : AppLanguage,
@@ -407,13 +413,27 @@ fun themeIcon(theme: AppTheme): ImageVector = when (theme) {
     AppTheme.SYSTEM -> Icons.Outlined.Contrast
 }
 
+@Composable
 private fun themeDescription(theme: AppTheme): String = when (theme) {
-    AppTheme.LIGHT  -> "Toujours en mode clair"
-    AppTheme.DARK   -> "Toujours en mode sombre"
-    AppTheme.SYSTEM -> "Suit les réglages du téléphone"
+    AppTheme.LIGHT  -> stringResource(R.string.theme_desc_light)
+    AppTheme.DARK   -> stringResource(R.string.theme_desc_dark)
+    AppTheme.SYSTEM -> stringResource(R.string.theme_desc_system)
 }
 
 private fun languageFlag(lang: AppLanguage): String = when (lang) {
     AppLanguage.FRENCH  -> "🇫🇷"
     AppLanguage.ENGLISH -> "🇬🇧"
+}
+
+@Composable
+fun AppTheme.label(): String = when (this) {
+    AppTheme.LIGHT  -> stringResource(R.string.theme_light)
+    AppTheme.DARK   -> stringResource(R.string.theme_dark)
+    AppTheme.SYSTEM -> stringResource(R.string.theme_system)
+}
+
+@Composable
+fun AppLanguage.label(): String = when (this) {
+    AppLanguage.FRENCH  -> stringResource(R.string.lang_fr)
+    AppLanguage.ENGLISH -> stringResource(R.string.lang_en)
 }

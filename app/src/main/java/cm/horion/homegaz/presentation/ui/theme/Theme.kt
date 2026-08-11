@@ -1,5 +1,6 @@
 package cm.horion.homegaz.presentation.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,9 +10,16 @@ import cm.horion.homegaz.presentation.viewmodel.AppTheme
 import cm.horion.homegaz.presentation.viewmodel.ThemeViewModel
 import org.koin.compose.koinInject
 import android.app.Activity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.WindowCompat
+import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.LocalActivityResultRegistryOwner
+import androidx.activity.result.ActivityResultRegistryOwner
+
 
 
 data class HomeGazColors(
@@ -198,6 +206,8 @@ private val DarkColorScheme = darkColorScheme(
     outlineVariant         = OutlineVariantDark,
 )
 
+
+@SuppressLint("LocalContextConfigurationRead")
 @Composable
 fun HomeGazTheme(
     content: @Composable () -> Unit
@@ -206,30 +216,58 @@ fun HomeGazTheme(
     val prefs          by themeViewModel.prefs.collectAsStateWithLifecycle()
     val isSystemDark    = isSystemInDarkTheme()
 
+    // 1. Détermination du mode sombre ou clair
     val isDark = when (prefs.theme) {
         AppTheme.LIGHT  -> false
         AppTheme.DARK   -> true
         AppTheme.SYSTEM -> isSystemDark
     }
 
+    // 2. Application de la langue au niveau du système Android (AppCompatDelegate)
+    LaunchedEffect(prefs.language) {
+        val current = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        val targetCode = prefs.language.code() // Doit retourner "fr" ou "en"
+        if (current != targetCode) {
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(targetCode)
+            )
+        }
+    }
+
+    val context = LocalContext.current
+    val localizedContext = remember(prefs.language, context) {
+        val locale = java.util.Locale(prefs.language.code())
+        java.util.Locale.setDefault(locale) // Met à jour la locale par défaut du thread
+
+        val config = android.content.res.Configuration(context.resources.configuration).apply {
+            setLocale(locale)
+            setLayoutDirection(locale)
+        }
+        context.createConfigurationContext(config)
+    }
+
     val colorScheme   = if (isDark) DarkColorScheme   else LightColorScheme
-    //val homeGazColors = if (isDark) DarkColorScheme  else LightColorScheme
     val homeGazColors = if (isDark) DarkHomeGazColors  else LightHomeGazColors
 
+    // 4. Gestion des couleurs de la barre d'état et de navigation
     val view = LocalView.current
+    val activity = view.context as? Activity
+
     if (!view.isInEditMode) {
         SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.surface.toArgb()
-
-//            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !isDark
-            val insetsController = WindowCompat.getInsetsController(window, view)
-            insetsController.isAppearanceLightStatusBars = !isDark
-            insetsController.isAppearanceLightNavigationBars = !isDark
+            activity?.window?.let { window ->
+                window.statusBarColor = colorScheme.surface.toArgb()
+                val insetsController = WindowCompat.getInsetsController(window, view)
+                insetsController.isAppearanceLightStatusBars = !isDark
+                insetsController.isAppearanceLightNavigationBars = !isDark
+            }
         }
     }
 
     CompositionLocalProvider(
+        LocalContext provides localizedContext,
+        LocalActivity provides activity,
+        (activity as? ActivityResultRegistryOwner)?.let { LocalActivityResultRegistryOwner provides (it) } as ProvidedValue<*>,
         LocalThemeIsDark  provides isDark,
         LocalHomeGazColors provides homeGazColors,
     ) {

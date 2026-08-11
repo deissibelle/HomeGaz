@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import cm.horion.homegaz.R
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.distributor.OrderSummary
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
@@ -59,15 +58,19 @@ fun ConfirmationScreen(
     if (!uiState.error.isNullOrBlank()) {
         AlertDialog(
             onDismissRequest = { dismissError() },
-            title = { Text(text = "Une erreur est survenue") },
+            title = { Text(text = stringResource(R.string.error_dialog_title)) },
             text = { Text(text = uiState.error) },
             confirmButton = {
                 TextButton(onClick = { dismissError() }) {
-                    Text("D'accord", color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        text = stringResource(R.string.error_dialog_confirm),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         )
     }
+
 
     Column(
         modifier = Modifier

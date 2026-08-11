@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Scale
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -26,7 +25,6 @@ import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.distributor.DeliveryOption
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
-import cm.horion.homegaz.domain.model.home.DistributorPoint
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
@@ -71,7 +69,6 @@ fun DistributorPointDetailScreen(
     )
 }
 
-
 @Composable
 private fun DistributorDetailContent(
     uiState                : DistributorDetailUiState,
@@ -103,7 +100,6 @@ private fun DistributorDetailContent(
         if (!uiState.isLoading && uiState.availableBottles.isEmpty() && uiState.gaz == null) {
             Box(
                 modifier = Modifier
-                    //.fill someMaxSize()
                     .weight(1f)
                     .padding(horizontal = 32.dp),
                 contentAlignment = Alignment.Center
@@ -113,20 +109,20 @@ private fun DistributorDetailContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.Info, // Tu peux mettre un icône de bouteille barrée si tu as
+                        imageVector = Icons.Outlined.Info,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(64.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Aucun gaz disponible",
+                        text = stringResource(R.string.dist_detail_no_gas_title),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Ce dépôt n'a actuellement aucune bouteille en stock correspondant à votre recherche.",
+                        text = stringResource(R.string.dist_detail_no_gas_desc),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -145,7 +141,7 @@ private fun DistributorDetailContent(
         ) {
             if (battleUuid.isEmpty()) {
                 Text(
-                    text = "Sélectionnez votre format de bouteille :",
+                    text = stringResource(R.string.dist_detail_select_format),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 20.dp)
@@ -179,13 +175,13 @@ private fun DistributorDetailContent(
             }
 
             ProductInfoRow(
-                label = "Marque sélectionnée",
-                value = uiState.gaz?.company?.name ?: "Aucun gaz trouvé",
+                label = stringResource(R.string.dist_detail_label_brand),
+                value = uiState.gaz?.company?.name ?: stringResource(R.string.dist_detail_no_gas_found),
                 icon = Icons.Outlined.Settings
             )
 
             ProductInfoRow(
-                label = "Type de Gaz / Poids",
+                label = stringResource(R.string.dist_detail_label_type_weight),
                 value = uiState.gaz?.let { "${it.gazType} - ${it.gazSize.size} kg" } ?: "--",
                 icon = Icons.Outlined.Scale
             )

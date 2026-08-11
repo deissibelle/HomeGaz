@@ -26,14 +26,10 @@ import cm.horion.homegaz.presentation.ui.pages.reservations.ReservationsScreen
 import cm.horion.homegaz.presentation.viewmodel.ConsumerViewModel
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 
-enum class Tab(val label: String) {
-    HOME("Accueil"),
-    RESERVATIONS("Réservations"),
-    ACCOUNT("Compte");
-
-    companion object {
-        fun fromLabel(label: String) = entries.firstOrNull { it.label == label } ?: HOME
-    }
+enum class Tab(val labelRes: Int) {
+    HOME(R.string.nav_home),
+    RESERVATIONS(R.string.nav_reservations),
+    ACCOUNT(R.string.nav_account);
 }
 
 private val TabSaver = Saver<Tab, String>(
@@ -57,7 +53,6 @@ fun MainScreen(
 ) {
     var selectedTab by rememberSaveable(stateSaver = TabSaver) { mutableStateOf(Tab.HOME) }
 
-
     LaunchedEffect(requestedTab) {
         requestedTab?.let {
             selectedTab = it
@@ -71,8 +66,10 @@ fun MainScreen(
     Scaffold(
         bottomBar = {
             BottomNavBar(
-                selectedTab   = selectedTab.label,
-                onTabSelected = { label -> selectedTab = Tab.fromLabel(label) }
+                selectedTab   = selectedTab.name,
+                onTabSelected = { tabName ->
+                    selectedTab = Tab.valueOf(tabName)
+                }
             )
         }
     ) { innerPadding ->

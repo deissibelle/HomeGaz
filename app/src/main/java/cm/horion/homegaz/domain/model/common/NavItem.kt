@@ -1,10 +1,8 @@
 package cm.horion.homegaz.domain.model.common
 
-import androidx.compose.ui.graphics.vector.ImageVector
-
-data class NavItem(
-    val label: String,
-    val iconOutlined: ImageVector,
-    val iconFilled: ImageVector,
-    val id: String
+ data class NavItem(
+    val Id: String,
+    val labelResId: Int,
+    val iconOutlined: androidx.compose.ui.graphics.vector.ImageVector,
+    val iconFilled: androidx.compose.ui.graphics.vector.ImageVector
 )

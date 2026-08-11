@@ -1,8 +1,6 @@
 package cm.horion.homegaz.presentation.state
 
-import cm.horion.homegaz.domain.model.consommateur.dto.Company
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
-import cm.horion.homegaz.domain.model.consommateur.dto.GazSize
 import cm.horion.homegaz.domain.model.distributor.dto.Distributor
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Point
@@ -13,9 +11,9 @@ data class ConsumerUiState(
     val selectedPoint  : Distributor?      = null,
 
     // Filtres
-    val selectedDistributor: String = "Tous",
+    val selectedDistributor: String = "",
     val selectedDistance: String = "5 km",
-    val selectedWeight: String = "Tous",
+    val selectedWeight: String = "",
     val battleUuid: String = "",
     val availableBottles: List<GazBottle> = emptyList(),
 

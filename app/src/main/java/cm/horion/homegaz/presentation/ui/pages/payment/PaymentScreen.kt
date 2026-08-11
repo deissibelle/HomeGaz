@@ -11,17 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cm.horion.homegaz.domain.model.distributor.DeliveryOption
-import cm.horion.homegaz.domain.model.distributor.OrderSummary
-import cm.horion.homegaz.presentation.state.PaymentUiState
 import cm.horion.homegaz.presentation.ui.components.common.HomeGazButton
 import cm.horion.homegaz.presentation.ui.components.common.WarningNote
 import cm.horion.homegaz.presentation.ui.components.distributor.TotalAmountCard
 import cm.horion.homegaz.presentation.ui.components.payment.PaymentOptionRow
 import cm.horion.homegaz.presentation.ui.components.payment.PaymentTopBar
 import cm.horion.homegaz.presentation.ui.components.payment.PhoneNumberField
-import cm.horion.homegaz.presentation.viewmodel.PaymentViewModel
-import org.koin.androidx.compose.koinViewModel
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.presentation.state.DistributorDetailUiState

@@ -37,9 +37,9 @@
 
     <!-- Bottom Navigation Bar -->
     <string name="nav_home">Accueil</string>
-    <string name="nav_reservations">Réservations</string>
-    <string name="nav_advices">Astuces</string>
+    <string name="nav_reservations">Mes Achats</string>
     <string name="nav_account">Compte</string>
+
 
     <!-- Advices Screen — Titres de sections -->
     <string name="advices_section_economiser">ASTUCES POUR ÉCONOMISER LE GAZ</string>
@@ -201,10 +201,9 @@
     <string name="res_empty_icon_desc">Aucune réservation</string>
 
     <!-- StatusHeader -->
-    <string name="res_screen_title">Mes Réservations</string>
+    <string name="res_screen_title">Mes Achats</string>
     <string name="res_header_active">En cours</string>
     <string name="res_header_completed">Terminé</string>
-    <string name="res_header_global">Global</string>
 
     <!-- ReservationSearchBar -->
     <string name="res_search_placeholder">Rechercher une réservation</string>
@@ -265,6 +264,7 @@
     <string name="account_section_support">Aide &amp; Support</string>
     <string name="account_menu_advices">Conseils</string>
     <string name="account_sub_advices">Astuces pour bien utiliser votre gaz</string>
+
 
     <!-- Menu Items Labels -->
     <string name="account_menu_gaz_profile">Mon Profil Gaz</string>
@@ -327,5 +327,47 @@
     <!-- Section 3 : Messagerie -->
     <string name="privacy_sec_messaging">Suivi et messagerie directe</string>
     <string name="privacy_item_read_receipts">Confirmations de lecture avec le livreur</string>
+
+    <string name="home_filter_all">Tous</string>
+    <string name="unit_meter">mètre</string>
+    <string name="unit_km">km</string>
+
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_system">Système</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_en">Anglais</string>
+
+    <string name="theme_desc_light">Toujours en mode clair</string>
+    <string name="theme_desc_dark">Toujours en mode sombre</string>
+    <string name="theme_desc_system">Suit les réglages du téléphone</string>
+
+    <string name="prefs_title">Préférences d\'affichage</string>
+    <string name="prefs_subtitle">Personnalisez votre expérience</string>
+    <string name="prefs_theme">Thème</string>
+    <string name="prefs_language">Langue</string>
+    <string name="prefs_btn_close">Fermer</string>
+    <string name="prefs_theme_title">Choisir le thème</string>
+    <string name="prefs_btn_cancel">Annuler</string>
+
+    <string name="dist_detail_no_gas_title">Aucun gaz disponible</string>
+    <string name="dist_detail_no_gas_desc">Ce dépôt n\'a actuellement aucune bouteille en stock correspondant à votre recherche.</string>
+    <string name="dist_detail_select_format">Sélectionnez votre format de bouteille :</string>
+    <string name="dist_detail_label_brand">Marque sélectionnée</string>
+    <string name="dist_detail_label_type_weight">Type de Gaz / Poids</string>
+    <string name="dist_detail_no_gas_found">Aucun gaz trouvé</string>
+
+
+    <string name="payment_failed_title">Échec du paiement</string>
+    <string name="payment_failed_message">Le paiement a échoué. Veuillez réessayer.</string>
+    <string name="payment_btn_retry">Réessayer le paiement</string>
+
+    <string name="error_dialog_title">Une erreur est survenue</string>
+    <string name="error_dialog_confirm">D\'accord</string>
+
+    <string name="auth_title_payment">Connexion requise</string>
+    <string name="auth_desc_payment">Vous devez être connecté à votre compte pour finaliser votre commande et procéder au paiement sécurisé.</string>
+
+
 
 </resources>

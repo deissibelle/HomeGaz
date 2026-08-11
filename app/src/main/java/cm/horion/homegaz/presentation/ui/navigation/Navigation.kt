@@ -5,10 +5,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Payment
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -16,6 +19,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import cm.horion.homegaz.domain.model.auth.AuthContext
 import cm.horion.homegaz.domain.model.common.Destination
 import cm.horion.homegaz.domain.model.distributor.PaymentMethod
 import cm.horion.homegaz.domain.model.payment.dto.PaymentStatus
@@ -25,6 +29,7 @@ import cm.horion.homegaz.presentation.ui.Tab
 import cm.horion.homegaz.presentation.ui.pages.account.HelpCenterScreen
 import cm.horion.homegaz.presentation.ui.pages.account.PrivacySettingsScreen
 import cm.horion.homegaz.presentation.ui.pages.advices.AdvicesScreen
+import cm.horion.homegaz.presentation.ui.pages.auth.AuthGuardScreen
 import cm.horion.homegaz.presentation.ui.pages.confirmation.ConfirmationScreen
 import cm.horion.homegaz.presentation.ui.pages.distributor.DistributorPointDetailScreen
 import cm.horion.homegaz.presentation.ui.pages.gazprofile.GazProfileScreen
@@ -39,6 +44,7 @@ import cm.horion.homegaz.presentation.viewmodel.DistributorDetailViewModel
 import cm.horion.homegaz.presentation.viewmodel.HomeViewModel
 import cm.horion.homegaz.presentation.viewmodel.ReservationsViewModel
 import org.koin.androidx.compose.koinViewModel
+import cm.horion.homegaz.R
 
 
 private fun NavBackStack<NavKey>.popUntil(predicate: (NavKey) -> Boolean) {
@@ -168,14 +174,28 @@ fun HomeGazApp(
 
             // ── PAYMENT ───────────────────────────────────────────────────
             entry<Destination.Payment> {
-                PaymentScreen(
-                    uiState          = sharedUiState,
-                    onPhoneChange    = distributorViewModel::onPhoneNumberChange,
-                    onMethodSelected = distributorViewModel::onPaymentMethodChange,
-                    onBackClick      = { backStack.removeLastOrNull() },
-                    onNextClick      = { backStack.add(Destination.Confirmation) }
-                )
+                if (!isLoggedIn) {
+                    AuthGuardScreen(
+                        authContext = AuthContext(
+                            title = stringResource(R.string.auth_title_payment),
+                            description = stringResource(R.string.auth_desc_payment),
+                            icon = Icons.Outlined.Payment
+                        ),
+                        onLoginClick          = onSsoLoginCall,
+                        onRegisterClick       = onSsoLoginCall,
+                        onForgotPasswordClick = {}
+                    )
+                } else {
+                    PaymentScreen(
+                        uiState          = sharedUiState,
+                        onPhoneChange    = distributorViewModel::onPhoneNumberChange,
+                        onMethodSelected = distributorViewModel::onPaymentMethodChange,
+                        onBackClick      = { backStack.removeLastOrNull() },
+                        onNextClick      = { backStack.add(Destination.Confirmation) }
+                    )
+                }
             }
+
 
             // ── CONFIRMATION ──────────────────────────────────────────────
             entry<Destination.Confirmation> {

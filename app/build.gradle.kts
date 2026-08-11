@@ -129,6 +129,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3) // koinViewModel() scopé par NavEntry
     implementation(libs.kotlinx.serialization.core)               // @Serializable sur les NavKey
 
+    // AppCompatDelegate.setApplicationLocales
+    implementation(libs.androidx.appcompat)
+
     // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
