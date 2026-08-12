@@ -1,6 +1,5 @@
 package cm.horion.homegaz.presentation.ui.pages.reservations
 
-import android.R.attr.phoneNumber
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -32,13 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
-import cm.horion.homegaz.domain.model.distributor.OrderSummary
-import cm.horion.homegaz.domain.model.order.dto.DeliveryMode
 import cm.horion.homegaz.domain.model.order.dto.Order
 import cm.horion.homegaz.domain.model.order.dto.OrderState
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
 import cm.horion.homegaz.util.getDateOnly
 import cm.horion.homegaz.util.getTimeOnly
+import com.google.gson.Gson
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.qrose.options.*
 
@@ -77,41 +75,13 @@ fun ReservationDetailScreen(
     val colors = MaterialTheme.homeGazColors
 
     val (statusBg, statusContentColor, statusLabel) = when (reservation.orderState) {
-        OrderState.STARTING -> Triple(
-            colors.pendingBg,
-            colors.pendingOnBg,
-            stringResource(R.string.res_status_starting_label)
-        )
-        OrderState.LOADING -> Triple(
-            colors.deliveringBg,
-            colors.deliveringOnBg,
-            stringResource(R.string.res_status_loading_label)
-        )
-        OrderState.SENDING -> Triple(
-            colors.deliveringBg,
-            colors.deliveringOnBg,
-            stringResource(R.string.res_status_sending_label)
-        )
-        OrderState.SHIPPING -> Triple(
-            colors.deliveringBg,
-            colors.deliveringOnBg,
-            stringResource(R.string.res_status_shipping_label)
-        )
-        OrderState.DELIVERED -> Triple(
-            colors.deliveringBg,
-            colors.deliveringOnBg,
-            stringResource(R.string.res_status_delivered_label)
-        )
-        OrderState.ENDING -> Triple(
-            colors.completedBg,
-            colors.completedOnBg,
-            stringResource(R.string.res_status_completed_label)
-        )
-        OrderState.CANCELLED -> Triple(
-            MaterialTheme.colorScheme.errorContainer,
-            MaterialTheme.colorScheme.onErrorContainer,
-            stringResource(R.string.res_status_cancelled_label)
-        )
+        OrderState.STARTING -> Triple(colors.pendingBg, colors.pendingOnBg, stringResource(R.string.res_status_starting_label))
+        OrderState.LOADING -> Triple(colors.deliveringBg, colors.deliveringOnBg, stringResource(R.string.res_status_loading_label))
+        OrderState.SENDING -> Triple(colors.deliveringBg, colors.deliveringOnBg, stringResource(R.string.res_status_sending_label))
+        OrderState.SHIPPING -> Triple(colors.deliveringBg, colors.deliveringOnBg, stringResource(R.string.res_status_shipping_label))
+        OrderState.DELIVERED -> Triple(colors.deliveringBg, colors.deliveringOnBg, stringResource(R.string.res_status_delivered_label))
+        OrderState.ENDING -> Triple(colors.completedBg, colors.completedOnBg, stringResource(R.string.res_status_completed_label))
+        OrderState.CANCELLED -> Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, stringResource(R.string.res_status_cancelled_label))
     }
 
     val brandName = gaz?.company?.name ?: ""
@@ -125,8 +95,18 @@ fun ReservationDetailScreen(
     val amountValue = reservation.amount ?: 0
     val phoneNumber = reservation.userUuid
 
-    // Chargement de l'icône de l'application ou de la flamme au centre du QR Code
     val appLogoPainter = painterResource(id = R.drawable.ic_launcher_playstore)
+
+    //  CONVERSION DE LA DATA CLASS EN STRING JSON
+    val orderJsonData = Gson().toJson(reservation)
+
+    // CRÉATION DU PAINTER DE QR CODE AVEC LA STRING OBTENUE
+    val qrCodePainter = rememberQrCodePainter(data = orderJsonData) {
+        logo {
+            painter = appLogoPainter
+            size = 0.2f
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -134,7 +114,6 @@ fun ReservationDetailScreen(
             .background(MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         // Header / TopBar
         Box(
             modifier = Modifier
@@ -144,9 +123,7 @@ fun ReservationDetailScreen(
         ) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-//                    .semantics { contentDescription = stringResource(R.string.res_detail_desc_retour) },
+                modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBackIosNew,
@@ -162,10 +139,7 @@ fun ReservationDetailScreen(
             ) {
                 Text(
                     text = headerTitle,
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    ),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold, fontSize = 20.sp),
                     color = MaterialTheme.colorScheme.primary,
                 )
                 if (headerSubtitle.isNotBlank()) {
@@ -178,7 +152,7 @@ fun ReservationDetailScreen(
             }
         }
 
-        // Zone centrale défilante (Ticket + Code QR + Instructions)
+        // Zone centrale défilante (Ticket + Code QR)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -198,7 +172,6 @@ fun ReservationDetailScreen(
                     )
                     .background(MaterialTheme.colorScheme.background),
             ) {
-
                 DetailRow(
                     icon = Icons.Outlined.Verified,
                     label = stringResource(R.string.res_detail_label_marque),
@@ -215,153 +188,51 @@ fun ReservationDetailScreen(
 
                 DetailRow(
                     icon = Icons.Outlined.Numbers,
-                    label = stringResource(R.string.res_detail_label_quantite),
-                    value = quantity.toString(),
+                    label = stringResource(R.string.label_quantity),
+                    value = quantity.toString()
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
 
                 DetailRow(
-                    icon = Icons.Outlined.SwapHoriz,
-                    label = stringResource(R.string.res_detail_label_option),
-                    value = if (reservation.deliveryMode == DeliveryMode.PICKUP) stringResource(R.string.res_retrait_label) else stringResource(R.string.res_delivery_label)
+                    icon = Icons.Outlined.Payments,
+                    label = stringResource(R.string.total_amount),
+                    value = "$amountValue FCFA"
                 )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-
-                // Ligne de statut
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 14.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.res_detail_label_statut),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.Autorenew,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(Modifier.width(10.dp))
-                        Surface(
-                            shape = RoundedCornerShape(24.dp),
-                            color = statusBg,
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Text(
-                                text = statusLabel,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 12.sp,
-                                ),
-                                color = statusContentColor,
-                            )
-                        }
-                    }
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.6.dp)
-
-                // 💵 Ligne de prix + méthode de paiement formatée dynamiquement
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 16.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.res_detail_label_montant),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.AccountBalanceWallet,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(Modifier.width(10.dp))
-
-                        Text(
-                            text = buildString {
-                                append(stringResource(R.string.res_detail_valeur_devise, amountValue))
-                                append(" | ")
-                                append(stringResource(R.string.res_payment_om_format, "655930157"))  },
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                            ),
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            val qrDarkColor = MaterialTheme.colorScheme.onBackground
-            val qrLightColor = MaterialTheme.colorScheme.background
-            val qrAccentColor = MaterialTheme.colorScheme.primary
-            val qrPainter = rememberQrCodePainter(
-                data = reservation.deliveryCode,
-                options = QrOptions {
-                    shapes {
-                        ball = QrBallShape.roundCorners(0.25f)
-                        frame = QrFrameShape.roundCorners(0.25f)
-                    }
-                    colors {
-                        dark = QrBrush.solid(qrDarkColor)
-                        light = QrBrush.solid(qrLightColor)
-                        frame = QrBrush.solid(qrAccentColor)
-                        ball = QrBrush.solid(qrAccentColor)
-                    }
-                    logo {
-                        painter = appLogoPainter
-                        size = 0.18f
-                        shape = QrLogoShape.circle()
 
-                    }
-                }
-            )
 
-            Image(
-                painter = qrPainter,
-                contentDescription = stringResource(R.string.res_detail_desc_qrcode),
-                modifier = Modifier
-                    .size(180.dp)
-                    .padding(8.dp)
-            )
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(16.dp).size(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = qrCodePainter,
+                        contentDescription = stringResource(R.string.res_detail_desc_qrcode),
+                        modifier = Modifier.fillMaxSize()
+                    )
+
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 text = stringResource(R.string.res_detail_instructions_qr),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    lineHeight = 20.sp
-                ),
-                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-                    .padding(bottom = 32.dp)
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 32.dp)
             )
         }
     }
 }
 
-@Composable
+        @Composable
 private fun DetailRow(
-    icon: ImageVector,
-    label: String,
-    value: String,
+            icon: ImageVector,
+            label: String,
+            value: String,
 ) {
     Column(
         modifier = Modifier
