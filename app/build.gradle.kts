@@ -95,7 +95,8 @@ dependencies {
     implementation(libs.koin.androidx.workmanager)
     //Qrose
     implementation(libs.qrose)
-
+    //gson
+    implementation("com.google.code.gson:gson:2.11.0")
     // Koin
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
