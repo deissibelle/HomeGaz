@@ -32,13 +32,12 @@ import androidx.compose.ui.unit.sp
 import cm.horion.homegaz.R
 import cm.horion.homegaz.domain.model.consommateur.dto.GazBottle
 import cm.horion.homegaz.domain.model.order.dto.Order
+import cm.horion.homegaz.domain.model.order.dto.OrderQrCodeData
 import cm.horion.homegaz.domain.model.order.dto.OrderState
 import cm.horion.homegaz.presentation.ui.theme.homeGazColors
 import cm.horion.homegaz.util.getDateOnly
 import cm.horion.homegaz.util.getTimeOnly
-import com.google.gson.Gson
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
-import io.github.alexzhirkevich.qrose.options.*
 
 private fun Modifier.dashedBorder(
     color: Color,
@@ -93,13 +92,25 @@ fun ReservationDetailScreen(
         reservation.createdAt.getTimeOnly()?.let { append("  $it") }
     }
     val amountValue = reservation.amount ?: 0
-    val phoneNumber = reservation.userUuid
+
+    val firstGazItem = reservation.gaz.getOrNull(0)
+    val qte = firstGazItem?.quantity ?: 0
+    val uuidBouteille = firstGazItem?.bottleUuid ?: ""
+
+    val qrData = OrderQrCodeData(
+        uuid = reservation.uuid,
+        quantity = qte,
+        bottleUuid = uuidBouteille,
+        amount = amountValue
+    )
 
     val appLogoPainter = painterResource(id = R.drawable.ic_launcher_playstore)
 
     //  CONVERSION DE LA DATA CLASS EN STRING JSON
-    val orderJsonData = Gson().toJson(reservation)
-
+    val orderJsonData = kotlinx.serialization.json.Json.encodeToString(
+        OrderQrCodeData.serializer(),
+        qrData
+    )
     // CRÉATION DU PAINTER DE QR CODE AVEC LA STRING OBTENUE
     val qrCodePainter = rememberQrCodePainter(data = orderJsonData) {
         logo {
