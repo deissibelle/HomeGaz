@@ -39,6 +39,9 @@ class AuthService(
         val response: HttpResponse = client.post("$AUTH_API_URL${Endpoint.Token.path}?code=$code&item=$item") {
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
+            url {
+                parameters.append("service", "HOMEGAZ")
+            }
         }
         val responseText = response.bodyAsText()
         return if (response.status == HttpStatusCode.OK) {
@@ -58,7 +61,7 @@ class AuthService(
             contentType(ContentType.Application.Json)
             accept(ContentType.Application.Json)
             url {
-                parameters.append("service", "GAZ")
+                parameters.append("service", "HOMEGAZ")
             }
             headers {
                 append(HttpHeaders.Authorization, "Bearer $token")
